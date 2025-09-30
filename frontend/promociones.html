@@ -1,1 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Catálogo - Jardín Real</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">Jardín Real</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>Catálogo de Vestimentas</h2>
+    <div id="filters">
+      <input id="search" placeholder="Buscar producto..." oninput="filterProducts()">
+      <select id="category" onchange="filterProducts()">
+        <option value="">Todas</option>
+        <option value="Ropa">Ropa</option>
+        <option value="Calzado">Calzado</option>
+        <option value="Disfraz">Disfraz</option>
+        <option value="Accesorio">Accesorio</option>
+      </select>
+    </div>
+
+    <div id="productList" class="grid">
+      <!-- Productos renderizados por JS -->
+    </div>
+  </main>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
 
