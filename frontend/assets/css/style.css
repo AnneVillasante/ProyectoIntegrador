@@ -1,1 +1,102 @@
+:root {
+  --midnight-blue: #1B263B;      /* Azul noche */
+  --lunar-gray: #B0B3C6;         /* Gris lunar */
+  --pearl-white: #F4F4F9;        /* Blanco perla */
+  --silver: #C0C0C0;             /* Plata metálica */
+  --soft-lavender: #9A8CFF;      /* Lavanda suave */
+  --champagne-gold: #E6CDB5;     /* Champán dorado */
+}
 
+/* 🔹 Estilos generales */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--pearl-white);
+  color: var(--midnight-blue);
+  margin: 0;
+  padding: 0;
+}
+
+/* 🔹 Header / Navbar */
+header {
+  background-color: var(--midnight-blue);
+  color: var(--pearl-white);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  color: var(--pearl-white);
+  margin: 0 1rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  color: var(--champagne-gold);
+}
+
+/* 🔹 Botones */
+button, .btn {
+  background-color: var(--soft-lavender);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  color: var(--pearl-white);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button.secondary, .btn.secondary {
+  background-color: var(--champagne-gold);
+  color: var(--midnight-blue);
+}
+
+button:hover, .btn:hover {
+  background-color: var(--midnight-blue);
+  color: var(--soft-lavender);
+}
+
+/* 🔹 Tarjetas de producto */
+.producto {
+  background: var(--pearl-white);
+  border: 1px solid var(--silver);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.producto:hover {
+  box-shadow: 0 4px 12px rgba(27, 38, 59, 0.2);
+  transform: translateY(-5px);
+}
+
+/* 🔹 Tablas de Reportes */
+table {
+  width: 90%;
+  margin: 2rem auto;
+  border-collapse: collapse;
+  background-color: var(--pearl-white);
+  border: 1px solid var(--silver);
+}
+
+th, td {
+  padding: 0.8rem;
+  text-align: center;
+  border: 1px solid var(--silver);
+}
+
+th {
+  background-color: var(--midnight-blue);
+  color: var(--pearl-white);
+}
+
+tr:nth-child(even) {
+  background-color: var(--lunar-gray);
+  color: var(--midnight-blue);
+}
