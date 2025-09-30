@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reportes - Jardín Real</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">Jardín Real - Reportes</h1>
+  </header>
+
+  <main class="container">
+    <h2>Prototipo de Reportes</h2>
+    <div class="report-controls">
+      <label>Periodo:
+        <select id="periodo" onchange="renderReport()">
+          <option value="daily">Diario</option>
+          <option value="monthly">Mensual</option>
+        </select>
+      </label>
+      <button onclick="exportReport()">Exportar PDF</button>
+    </div>
+    <section id="reportArea">
+      <h3>Ventas</h3>
+      <div id="chartPlaceholder">[Gráfica: ventas por categoría]</div>
+      <table id="reportTable">
+        <thead><tr><th>Producto</th><th>Unidades</th><th>Ingresos</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
