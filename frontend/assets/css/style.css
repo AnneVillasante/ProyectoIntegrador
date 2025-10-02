@@ -1,102 +1,147 @@
 :root {
-  --midnight-blue: #1B263B;      /* Azul noche */
-  --lunar-gray: #B0B3C6;         /* Gris lunar */
-  --pearl-white: #F4F4F9;        /* Blanco perla */
-  --silver: #C0C0C0;             /* Plata metálica */
-  --soft-lavender: #9A8CFF;      /* Lavanda suave */
-  --champagne-gold: #E6CDB5;     /* Champán dorado */
+  --midnight-blue: #1B263B;
+  --lunar-gray: #B0B3C6;
+  --pearl-white: #F4F4F9;
+  --silver: #C0C0C0;
+  --soft-lavender: #9A8CFF;
+  --champagne-gold: #E6CDB5;
 }
 
-/* 🔹 Estilos generales */
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--pearl-white);
-  color: var(--midnight-blue);
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* 🔹 Header / Navbar */
-header {
+body {
   background-color: var(--midnight-blue);
   color: var(--pearl-white);
-  padding: 1rem 2rem;
+  min-height: 100vh;
+}
+
+header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem 2rem;
+  background: var(--midnight-blue);
 }
 
-nav a {
+header h1 {
+  font-size: 1.5rem;
+  color: var(--soft-lavender);
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+nav ul li a {
   color: var(--pearl-white);
-  margin: 0 1rem;
   text-decoration: none;
   font-weight: 500;
   transition: 0.3s;
 }
 
-nav a:hover {
+nav ul li a:hover,
+nav ul li a.active {
   color: var(--champagne-gold);
 }
 
-/* 🔹 Botones */
-button, .btn {
-  background-color: var(--soft-lavender);
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--midnight-blue);
+}
+
+.hero h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
   color: var(--pearl-white);
-  font-size: 1rem;
+}
+
+.hero p {
+  margin-top: 1rem;
+  color: var(--lunar-gray);
+}
+
+.hero button {
+  margin-top: 1.5rem;
+  padding: 0.8rem 2rem;
+  background: var(--soft-lavender);
+  border: none;
+  border-radius: 5px;
+  color: var(--pearl-white);
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
 }
 
-button.secondary, .btn.secondary {
-  background-color: var(--champagne-gold);
+.hero button:hover {
+  background: var(--champagne-gold);
   color: var(--midnight-blue);
 }
 
-button:hover, .btn:hover {
-  background-color: var(--midnight-blue);
-  color: var(--soft-lavender);
-}
-
-/* 🔹 Tarjetas de producto */
-.producto {
-  background: var(--pearl-white);
-  border: 1px solid var(--silver);
+/* Formularios */
+form {
+  max-width: 400px;
+  margin: 3rem auto;
+  background: var(--midnight-blue);
+  padding: 2rem;
   border-radius: 10px;
-  padding: 1rem;
-  text-align: center;
-  transition: 0.3s;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.4);
 }
 
-.producto:hover {
-  box-shadow: 0 4px 12px rgba(27, 38, 59, 0.2);
-  transform: translateY(-5px);
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-/* 🔹 Tablas de Reportes */
-table {
-  width: 90%;
-  margin: 2rem auto;
-  border-collapse: collapse;
-  background-color: var(--pearl-white);
-  border: 1px solid var(--silver);
-}
-
-th, td {
+form input {
+  width: 100%;
   padding: 0.8rem;
-  text-align: center;
-  border: 1px solid var(--silver);
-}
-
-th {
-  background-color: var(--midnight-blue);
+  margin-bottom: 1.5rem;
+  border: 2px solid var(--soft-lavender);
+  border-radius: 8px;
+  background: var(--midnight-blue);
   color: var(--pearl-white);
 }
 
-tr:nth-child(even) {
-  background-color: var(--lunar-gray);
+form input:focus {
+  border-color: var(--champagne-gold);
+  outline: none;
+}
+
+form button {
+  width: 48%;
+  padding: 0.8rem;
+  background: var(--soft-lavender);
+  color: var(--pearl-white);
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+form button:hover {
+  background: var(--champagne-gold);
   color: var(--midnight-blue);
+}
+
+/* Secciones */
+section {
+  padding: 3rem 2rem;
+}
+
+footer {
+  background: var(--midnight-blue);
+  color: var(--lunar-gray);
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
 }
