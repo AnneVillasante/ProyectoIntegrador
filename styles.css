@@ -1,0 +1,191 @@
+/*
+  Lunaria Threads – estilos base
+*/
+
+:root {
+  --bg: #0b0c10;
+  --surface: #101217;
+  --card: #151922;
+  --text: #e7ecf3;
+  --muted: #a9b1bd;
+  --brand: #8b5cf6; /* violeta */
+  --brand-2: #22d3ee; /* cian */
+  --ring: rgba(139, 92, 246, 0.35);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  background: radial-gradient(1200px 600px at 10% -10%, #1b2130, transparent),
+              radial-gradient(900px 500px at 110% 20%, #1c1f2b, transparent),
+              var(--bg);
+  color: var(--text);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header / Navbar */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: saturate(180%) blur(10px);
+  background: rgba(16, 18, 23, 0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 72px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo-mark { font-size: 22px; }
+.logo-text { letter-spacing: 0.2px; }
+
+.main-nav { flex: 1 1 auto; }
+.menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.menu a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.menu a:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.06);
+}
+.menu-spacer {
+  flex: 1 1 auto;
+}
+
+.socials { display: flex; align-items: center; gap: 8px; }
+
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: var(--text);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+}
+.icon-btn:hover { border-color: rgba(255,255,255,0.18); }
+.icon-btn:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+
+/* Hero */
+.hero {
+  padding: 56px 0 72px;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero-image {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  background: radial-gradient(circle at 70% 30%, rgba(139,92,246,0.25), transparent 60%),
+              radial-gradient(circle at 30% 70%, rgba(34,211,238,0.18), transparent 55%),
+              var(--card);
+  box-shadow: 0 0 0 10px rgba(255,255,255,0.03), 0 30px 80px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) contrast(1.02);
+}
+
+.hero-content h1 {
+  font-size: 48px;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+.tagline {
+  color: var(--brand-2);
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+.subtitle {
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+.btn-primary {
+  display: inline-block;
+  color: #06070a;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 0;
+  box-shadow: 0 10px 30px rgba(34,211,238,0.25), inset 0 0 14px rgba(255,255,255,0.2);
+}
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-primary:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 3px; }
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 28px 0 38px;
+  color: var(--muted);
+}
+.site-footer p { margin: 0; text-align: center; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 28px; }
+  .hero-content h1 { font-size: 40px; }
+}
+
+@media (max-width: 720px) {
+  .nav { height: auto; padding: 12px 0; align-items: flex-start; }
+  .menu { gap: 10px; }
+  .menu a { padding: 6px 8px; }
+  .icon-btn { width: 36px; height: 36px; }
+  .hero { padding: 40px 0 56px; }
+  .hero-content h1 { font-size: 34px; }
+}
