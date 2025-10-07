@@ -3,26 +3,31 @@
 */
 
 :root {
-  --bg: #0b0c10;
-  --surface: #101217;
-  --card: #151922;
-  --text: #e7ecf3;
-  --muted: #a9b1bd;
-  --brand: #8b5cf6; /* violeta */
-  --brand-2: #22d3ee; /* cian */
-  --ring: rgba(139, 92, 246, 0.35);
+  --bg: #1B263B;
+  --surface: #1B263B;
+  --card: #1B263B;
+
+  --text: #F4F4F9;
+  --muted: #B0B3C6;
+
+  --brand: #9A8CFF;   /* primario */
+  --brand-2: #D6A5B5; /* secundario */
+
+  --neutral: #C0C0C0;
+  --accent-soft: #E6CDB5;
+  --ring: rgba(154, 140, 255, 0.35);
 }
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
-  margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-  background: radial-gradient(1200px 600px at 10% -10%, #1b2130, transparent),
-              radial-gradient(900px 500px at 110% 20%, #1c1f2b, transparent),
-              var(--bg);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(154,140,255,0.10), transparent),
+    radial-gradient(900px 500px at 110% 20%, rgba(214,165,181,0.08), transparent),
+    var(--bg);
   color: var(--text);
 }
+
 
 .container {
   width: 100%;
