@@ -2,27 +2,31 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
+const path = require('path');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Agregar esta línea para servir archivos estáticos
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 // Configuración de la conexión (lee de .env)
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST || '127.0.0.1',
   port: process.env.MYSQL_PORT ? Number(process.env.MYSQL_PORT) : 3306,
   user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || '',
-  database: process.env.MYSQL_DATABASE || 'lunaria_threads',
+  password: process.env.MYSQL_PASSWORD || 'Sapphire_27',
+  database: process.env.MYSQL_DATABASE || 'LunariaThreadsDB',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
 // Ruta de prueba
-app.get('/', async (req, res) => {
-  res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' });
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
 });
 
 // Ejemplo: obtener usuarios (ajusta la consulta a tu esquema)
