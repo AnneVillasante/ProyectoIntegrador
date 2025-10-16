@@ -1,0 +1,104 @@
+/* ---------------------------------------------------------
+   Lunaria Threads – Página de Productos
+----------------------------------------------------------*/
+
+.container {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+}
+
+.productos-section {
+  padding: 80px 0;
+  text-align: center;
+}
+
+.productos-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.productos-subtitle {
+  color: var(--muted);
+  font-size: 1.1rem;
+  margin-bottom: 50px;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+}
+
+.producto-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.producto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+.producto-card img {
+  width: 100%;
+  border-radius: var(--radius);
+  margin-bottom: 15px;
+  object-fit: cover;
+  aspect-ratio: 1 / 1.2;
+}
+
+.producto-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  color: var(--text);
+  margin: 8px 0;
+}
+
+.precio {
+  color: var(--brand-2);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.acciones {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn-outline {
+  flex: 1;
+  border: 1px solid var(--brand);
+  background: transparent;
+  color: var(--brand);
+  border-radius: var(--radius);
+  padding: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-outline:hover {
+  background: var(--brand);
+  color: #06070a;
+}
+
+.btn-primary {
+  flex: 1;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .acciones {
+    flex-direction: column;
+  }
+}
