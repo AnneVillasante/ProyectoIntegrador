@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/api.js" defer></script>
   </head>
 
   <body>
@@ -84,7 +85,25 @@
     </footer>
 
     <script>
+      // Año actual en el footer
       document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Cargar categorías dinámicamente en el menú
+      async function loadCategories() {
+        const categories = await fetchCategories();
+        const menu = document.querySelector('.menu');
+        const menuItems = categories.map(category => 
+          `<li><a href="productos.html?categoria=${category.id}">${category.name}</a></li>`
+        ).join('');
+        
+        // Reemplazar los items estáticos del menú con los dinámicos
+        menu.innerHTML = menuItems + menu.innerHTML.slice(menu.innerHTML.indexOf('<li class="menu-spacer"'));
+      }
+
+      // Cargar datos al iniciar
+      document.addEventListener('DOMContentLoaded', () => {
+        loadCategories();
+      });
     </script>
   </body>
 </html>
