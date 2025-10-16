@@ -1,0 +1,5 @@
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=Sapphire_27
+DB_NAME=LunariaThreadsDB
+PORT=3000
