@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const path = require('path');
+const ProductoDao = require('./dao/productoDao');
+const ProductoDto = require('./dto/productoDto');
 
 const app = express();
 
@@ -38,6 +40,24 @@ app.get('/users', async (req, res) => {
     console.error('DB query error:', err);
     res.status(500).json({ error: 'Error en la consulta' });
   }
+});
+
+// Ruta para obtener productos
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await ProductoDao.getAllProducts();
+        const productDtos = products.map(product => new ProductoDto(
+            product.idProducto,
+            product.nombre,
+            product.categoria,
+            product.precio,
+            product.stock
+        ));
+        res.json(productDtos);
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({ error: 'Error al obtener productos' });
+    }
 });
 
 // Iniciar servidor y verificar conexión a MySQL
