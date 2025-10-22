@@ -1,4 +1,4 @@
-const pool = require('../db'); // Asegúrate de tener un archivo db.js que exporte tu pool de conexión
+const pool = require('../config/db'); // Asegúrate de tener un archivo db.js que exporte tu pool de conexión
 
 class ProductoDao {
     async getAllProducts() {

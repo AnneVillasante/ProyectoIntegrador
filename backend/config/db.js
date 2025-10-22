@@ -1,20 +1,15 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
+require('dotenv').config();
 
-// Crear la conexión
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Sapphire_27',
-  database: 'LunariaThreadsDB'
+const pool = mysql.createPool({
+  host: process.env.MYSQL_HOST || '127.0.0.1',
+  port: process.env.MYSQL_PORT ? Number(process.env.MYSQL_PORT) : 3306,
+  user: process.env.MYSQL_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || 'Sapphire_27',
+  database: process.env.MYSQL_DATABASE || 'LunariaThreadsDB',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-// Verificar la conexión
-connection.connect((err) => {
-  if (err) {
-    console.error('Error de conexión a la base de datos: ' + err.stack);
-    return;
-  }
-  console.log('Conectado a la base de datos con ID ' + connection.threadId);
-});
-
-module.exports = connection;
+module.exports = pool;

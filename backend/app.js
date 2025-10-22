@@ -5,7 +5,7 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 const ProductoDao = require('./dao/productoDao');
 const ProductoDto = require('./dto/productoDto');
-const pool = require('..backend/config/db');
+const pool = require('./config/db');
 
 // ---- API server (puerto 4000) ----
 const apiApp = express();
