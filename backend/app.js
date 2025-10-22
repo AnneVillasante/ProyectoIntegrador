@@ -5,72 +5,41 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 const ProductoDao = require('./dao/productoDao');
 const ProductoDto = require('./dto/productoDto');
+const pool = require('..backend/config/db');
 
-const app = express();
+// ---- API server (puerto 4000) ----
+const apiApp = express();
+apiApp.use(express.json());
+// permitir peticiones desde el frontend servido en 3000
+apiApp.use(cors({ origin: 'http://localhost:3000' }));
 
-app.use(cors());
-app.use(express.json());
+// Ruta ejemplo para comprobar conexión
+apiApp.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-// Agregar esta línea para servir archivos estáticos
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// Configuración de la conexión (lee de .env)
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST || '127.0.0.1',
-  port: process.env.MYSQL_PORT ? Number(process.env.MYSQL_PORT) : 3306,
-  user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || 'Sapphire_27',
-  database: process.env.MYSQL_DATABASE || 'LunariaThreadsDB',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
-
-// Ruta de prueba
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
-});
-
-// Ejemplo: obtener usuarios (ajusta la consulta a tu esquema)
-app.get('/users', async (req, res) => {
+// Ruta para obtener productos (usa tu DAO/DTO)
+apiApp.get('/api/products', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM users LIMIT 100');
-    res.json(rows);
+    const products = await ProductoDao.getAllProducts(); // debe usar pool internamente
+    const productDtos = products.map(p => new ProductoDto(
+      p.idProducto, p.nombre, p.categoria, p.precio, p.stock
+    ));
+    res.json(productDtos);
   } catch (err) {
-    console.error('DB query error:', err);
-    res.status(500).json({ error: 'Error en la consulta' });
+    console.error('Error al obtener productos:', err);
+    res.status(500).json({ error: 'Error al obtener productos' });
   }
 });
 
-// Ruta para obtener productos
-app.get('/api/products', async (req, res) => {
-    try {
-        const products = await ProductoDao.getAllProducts();
-        const productDtos = products.map(product => new ProductoDto(
-            product.idProducto,
-            product.nombre,
-            product.categoria,
-            product.precio,
-            product.stock
-        ));
-        res.json(productDtos);
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({ error: 'Error al obtener productos' });
-    }
-});
-
-// Iniciar servidor y verificar conexión a MySQL
-async function startServer() {
+// Iniciar API en el puerto 4000 y verificar conexión a MySQL
+async function startApi() {
   try {
     const conn = await pool.getConnection();
     await conn.ping();
     conn.release();
-    console.log('Conectado a MySQL');
-
-    const PORT = process.env.PORT || 4000;
-    app.listen(PORT, () => {
-      console.log(`Servidor escuchando en http://localhost:${PORT}`);
+    const API_PORT = process.env.API_PORT || 4000;
+    apiServer = apiApp.listen(API_PORT, () => {
+      console.log(`API escuchando en http://localhost:${API_PORT}`);
+      console.log('Conexión a MySQL verificada');
     });
   } catch (err) {
     console.error('Error conectando a MySQL:', err);
@@ -78,20 +47,47 @@ async function startServer() {
   }
 }
 
-startServer();
+// ---- Static server (puerto 3000) ----
+const staticApp = express();
+// servir toda la carpeta frontend (index.html en frontend/pages/index.html)
+staticApp.use(express.static(path.join(__dirname, '../frontend')));
 
-// Cerrar pool al terminar el proceso
-process.on('SIGINT', async () => {
-  console.log('Cerrando conexión MySQL...');
-  await pool.end();
-  process.exit(0);
+// al acceder a / servir index.html (ruta relativa dentro frontend/pages)
+staticApp.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
 });
 
-process.on('SIGTERM', async () => {
-  console.log('Cerrando conexión MySQL...');
-  await pool.end();
-  process.exit(0);
-});
+function startStatic() {
+  const STATIC_PORT = process.env.STATIC_PORT || 3000;
+  staticServer = staticApp.listen(STATIC_PORT, () => {
+    console.log(`Frontend estático escuchando en http://localhost:${STATIC_PORT}`);
+  });
+}
 
-module.exports = app;
+// ---- Arranque ----
+let apiServer;
+let staticServer;
+
+startApi();
+startStatic();
+
+// ---- Cierre limpio ----
+async function shutdown() {
+  console.log('Cerrando servidores y pool MySQL...');
+  try {
+    if (apiServer) await new Promise(r => apiServer.close(r));
+    if (staticServer) await new Promise(r => staticServer.close(r));
+    await pool.end();
+  } catch (e) {
+    console.error('Error durante shutdown:', e);
+  } finally {
+    process.exit(0);
+  }
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+
+// export opcional (no necesario pero útil para tests)
+module.exports = { apiApp, staticApp, pool };
 
