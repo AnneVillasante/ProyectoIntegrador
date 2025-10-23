@@ -33,19 +33,41 @@
     <div id="footer"></div>
     <script>
       async function includeComponent(id, file) {
-        const res = await fetch(file);
-        document.getElementById(id).innerHTML = await res.text();
-      }
-      includeComponent('navbar','../components/navbar.html');
-      includeComponent('footer','../components/footer.html');
-      document.addEventListener('DOMContentLoaded', async () => {
-        const categories = await fetchCategories();
-        const navMenu = document.querySelector('#navbar .menu');
-        if(navMenu){
-          const staticPart = navMenu.innerHTML.substring(navMenu.innerHTML.indexOf('<li class="menu-spacer"'));
-          navMenu.innerHTML = categories.map(c=>`<li><a href="productos.html?categoria=${c.id}">${c.name}</a></li>`).join('') + staticPart;
+        try {
+          const res = await fetch(file, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error(`HTTP ${res.status} al cargar ${file}`);
+          const html = await res.text();
+          const target = document.getElementById(id);
+          if (target) target.innerHTML = html;
+        } catch (err) {
+          console.error('Error incluyendo componente', id, file, err);
         }
-        document.getElementById('year')?.textContent = new Date().getFullYear();
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Cargar navbar y footer primero
+        await Promise.all([
+          includeComponent('navbar','/components/navbar.html'),
+          includeComponent('footer','/components/footer.html')
+        ]);
+
+        // Intentar poblar categorías si existe fetchCategories
+        try {
+          if (typeof fetchCategories === 'function') {
+            const categories = await fetchCategories();
+            const navMenu = document.querySelector('#navbar .menu');
+            if (navMenu && Array.isArray(categories)) {
+              const staticPart = navMenu.innerHTML.substring(navMenu.innerHTML.indexOf('<li class="menu-spacer"'));
+              navMenu.innerHTML = categories.map(c => `<li><a href="productos.html?categoria=${c.id}">${c.name}</a></li>`).join('') + staticPart;
+            }
+          }
+        } catch (e) {
+          console.warn('No se pudieron cargar categorías dinámicas:', e);
+        }
+
+        // Año en el footer
+        const yearSpan = document.getElementById('year');
+        if (yearSpan) yearSpan.textContent = new Date().getFullYear();
       });
     </script>
   </body>
