@@ -6,6 +6,7 @@ const path = require('path');
 const ProductoDao = require('./dao/productoDao');
 const ProductoDto = require('./dto/productoDto');
 const pool = require('./config/db');
+const authRouter = require('./routes/auth'); // <-- añade esta línea
 
 // ---- API server (puerto 4000) ----
 const apiApp = express();
@@ -30,6 +31,9 @@ apiApp.get('/api/products', async (req, res) => {
   }
 });
 
+// monta las rutas de auth en la API
+apiApp.use('/api/auth', authRouter);
+
 // Iniciar API en el puerto 4000 y verificar conexión a MySQL
 async function startApi() {
   try {
@@ -49,12 +53,32 @@ async function startApi() {
 
 // ---- Static server (puerto 3000) ----
 const staticApp = express();
-// servir toda la carpeta frontend (index.html en frontend/pages/index.html)
-staticApp.use(express.static(path.join(__dirname, '../frontend')));
+const frontendRoot = path.join(__dirname, '../frontend');
 
-// al acceder a / servir index.html (ruta relativa dentro frontend/pages)
+// servir assets y páginas de forma explícita (rutas absolutas en HTML funcionarán)
+staticApp.use('/assets', express.static(path.join(frontendRoot, 'assets')));
+staticApp.use('/pages', express.static(path.join(frontendRoot, 'pages')));
+
+// accesos directos amigables
 staticApp.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
+  res.sendFile(path.join(frontendRoot, 'pages', 'index.html'));
+});
+
+staticApp.get('/productos', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'productos.html'));
+});
+
+staticApp.get('/login', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'login.html'));
+});
+
+// servir cualquier página estática en /<nombre> que exista en frontend/pages/<nombre>.html
+staticApp.get('/:page', (req, res, next) => {
+  const page = req.params.page;
+  const filePath = path.join(frontendRoot, 'pages', `${page}.html`);
+  res.sendFile(filePath, (err) => {
+    if (err) return next(); // si no existe, seguir con el middleware de static (o 404)
+  });
 });
 
 function startStatic() {
