@@ -1,9 +1,11 @@
-require('dotenv').config({ debug: true });
+const path = require('path');
+require('dotenv').config({
+  path: path.resolve(__dirname, 'config/env.js'),
+  debug: true
+});
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
-const fs = require('fs').promises;
-const path = require('path');
 const ProductoDao = require('./dao/productoDao');
 const ProductoDto = require('./dto/productoDto');
 const pool = require('./config/db');
