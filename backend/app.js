@@ -63,6 +63,8 @@ const frontendRoot = path.join(__dirname, '../frontend');
 // servir assets y páginas de forma explícita (rutas absolutas en HTML funcionarán)
 staticApp.use('/assets', express.static(path.join(frontendRoot, 'assets')));
 staticApp.use('/pages', express.static(path.join(frontendRoot, 'pages')));
+// servir componentes HTML (navbar, footer, etc.)
+staticApp.use('/components', express.static(path.join(frontendRoot, 'components')));
 
 // accesos directos amigables
 staticApp.get('/', (req, res) => {
