@@ -36,8 +36,8 @@
         const res = await fetch(file);
         document.getElementById(id).innerHTML = await res.text();
       }
-      includeComponent('navbar','../frontend/components/navbar.html');
-      includeComponent('footer','../frontend/components/footer.html');
+      includeComponent('navbar','../components/navbar.html');
+      includeComponent('footer','../components/footer.html');
       document.addEventListener('DOMContentLoaded', async () => {
         const categories = await fetchCategories();
         const navMenu = document.querySelector('#navbar .menu');
