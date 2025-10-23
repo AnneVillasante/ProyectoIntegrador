@@ -2,11 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
+const fs = require('fs').promises;
 const path = require('path');
 const ProductoDao = require('./dao/productoDao');
 const ProductoDto = require('./dto/productoDto');
 const pool = require('./config/db');
-const authRouter = require('./routes/auth'); // <-- añade esta línea
+const authRouter = require('./routes/auth');
+const productsRouter = require('./routes/productRoutes');
 
 // ---- API server (puerto 4000) ----
 const apiApp = express();
@@ -33,6 +35,9 @@ apiApp.get('/api/products', async (req, res) => {
 
 // monta las rutas de auth en la API
 apiApp.use('/api/auth', authRouter);
+
+// montar API de productos en el mismo servidor estático (localhost:3000)
+apiApp.use('/api/products', productsRouter);
 
 // Iniciar API en el puerto 4000 y verificar conexión a MySQL
 async function startApi() {
@@ -63,11 +68,9 @@ staticApp.use('/pages', express.static(path.join(frontendRoot, 'pages')));
 staticApp.get('/', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'index.html'));
 });
-
 staticApp.get('/productos', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'productos.html'));
 });
-
 staticApp.get('/login', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'login.html'));
 });
@@ -79,6 +82,41 @@ staticApp.get('/:page', (req, res, next) => {
   res.sendFile(filePath, (err) => {
     if (err) return next(); // si no existe, seguir con el middleware de static (o 404)
   });
+});
+
+// RENDER SERVER-SIDE de productos en el servidor estático (puerto 3000)
+staticApp.get('/productos', async (req, res) => {
+  try {
+    // consulta a la tabla Producto
+    const [rows] = await pool.query('SELECT idProducto, nombre, categoria, precio, stock FROM Producto');
+
+    // construir tarjetas HTML
+    const cardsHtml = rows.map(p => `
+      <div class="producto-card">
+        <img src="../assets/img/placeholder.png" alt="${p.nombre}">
+        <h3>${p.nombre}</h3>
+        <p class="categoria">${p.categoria || ''}</p>
+        <p class="precio">S/ ${Number(p.precio).toFixed(2)}</p>
+        <p class="stock">Disponibles: ${p.stock}</p>
+        <div class="acciones">
+          <button class="btn-outline ver" data-id="${p.idProducto}">Ver más</button>
+          <button class="btn-primary agregar" data-id="${p.idProducto}">Añadir al carrito</button>
+        </div>
+      </div>
+    `).join('');
+
+    // leer el fichero template
+    const filePath = path.join(frontendRoot, 'pages', 'productos.html');
+    let html = await fs.readFile(filePath, 'utf8');
+
+    // reemplazar el placeholder
+    html = html.replace('<!-- PRODUCTS_PLACEHOLDER -->', cardsHtml);
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error render productos:', err);
+    res.status(500).send('Error interno al mostrar productos');
+  }
 });
 
 function startStatic() {
