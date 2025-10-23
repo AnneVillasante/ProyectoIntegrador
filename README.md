@@ -135,3 +135,65 @@ Conexiones, base de datos activa
 ├── .gitignore
 ├── package.json
 └── README.md
+
+📂 FRONTEND (solo vista, sin lógica backend)
+
+/frontend → Interfaz gráfica (HTML, CSS, JS) que ve el usuario.
+
+/frontend/assets → Recursos estáticos.
+
+css/ → Estilos visuales globales.
+
+js/ → JavaScript para comportamiento del frontend (no accede DB).
+
+img/ → Imágenes, logos, banners.
+
+/frontend/pages/ → Todas las páginas HTML del sitio (públicas y privadas).
+
+/frontend/components/ → Fragmentos reutilizables (navbar, footer, sidebar).
+
+⚙️ BACKEND (API REST, lógica y negocio)
+
+/backend/controllers/ → Reciben request, llaman servicios y devuelven respuesta JSON.
+
+/backend/models/ → Definen las clases base del dominio (estructura lógica, opcional si usas ORM).
+
+/backend/dao/ → ÚNICO lugar donde se consulta directamente la base de datos.
+
+/backend/dto/ → Formato final enviado como respuesta al frontend (limpio y seguro).
+
+/backend/services/ → Reglas de negocio (validaciones, procesos, cálculos).
+
+/backend/middlewares/ → Autenticación, roles, validación antes del controlador.
+
+/backend/routes/ → Define endpoints de la API REST (/api/productos, /api/auth, etc.).
+
+/backend/config/ → Configuración global (DB, correos, pagos, .env).
+
+/backend/utils/ → Utilidades reutilizables (logs, tokens, helpers).
+
+/backend/facades/ → Orquestadores que combinan varios servicios en una sola operación.
+
+app.js → Configura Express, middlewares y monta rutas.
+
+server.js → Inicia el servidor (puerto, modo producción, etc.).
+
+🗄️ DATABASE
+
+/database/schema.sql → Crea todas las tablas de la base de datos.
+
+/database/seed.sql → Inserta datos de prueba iniciales.
+
+/database/migrations/ → Cambios de versión/control histórico del esquema.
+
+📑 DOCUMENTACIÓN
+
+/docs/ → Diagramas, modelos y documentación funcional / técnica.
+
+ROOT DEL PROYECTO
+
+.env → Variables críticas (credenciales, claves, puertos).
+
+package.json → Dependencias, scripts npm.
+
+README.md → Guía de instalación, ejecución y despliegue.
