@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script src="../assets/js/api.js" defer></script>
+    <script src="../assets/js/main.js" defer></script>
   </head>
   <body>
     <div id="navbar"></div>
@@ -68,6 +69,8 @@
         // Año en el footer
         const yearSpan = document.getElementById('year');
         if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+        // Señal para posibles listeners
+        document.dispatchEvent(new Event('navbar:loaded'));
       });
     </script>
   </body>
