@@ -24,8 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle handlers
     if (menuToggle && menuPanel && !menuToggle.__bound) {
-      menuToggle.addEventListener('click', () => toggleMenu());
+      menuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+      });
       menuToggle.__bound = true;
+      // close when menu item clicked
+      menuPanel.addEventListener('click', (ev) => {
+        const target = ev.target;
+        if (target && (target.closest('.menu-item') || target.closest('.icon-btn'))) {
+          toggleMenu(false);
+        }
+      });
     }
 
     if (searchBtn && searchPopover && !searchBtn.__bound) {
