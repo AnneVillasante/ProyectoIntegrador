@@ -6,6 +6,7 @@
   <title>Lunaria Threads | Productos</title>
   <link rel="stylesheet" href="../assets/css/styles.css">
   <link rel="stylesheet" href="../assets/css/productos.css">
+  <script src="../components/layout.js" defer></script>
 </head>
 <body>
   <div id="navbar"></div>
@@ -21,28 +22,7 @@
   </main>
 
   <div id="footer"></div>
-
-  <script>
-  async function includeComponent(id, file) {
-    try {
-      const res = await fetch(file, { credentials: 'same-origin' });
-      if (!res.ok) throw new Error(`HTTP ${res.status} al cargar ${file}`);
-      const html = await res.text();
-      const target = document.getElementById(id);
-      if (target) target.innerHTML = html;
-    } catch (err) {
-      console.error('Error incluyendo componente', id, file, err);
-    }
-  }
-  document.addEventListener('DOMContentLoaded', async () => {
-    await Promise.all([
-      includeComponent('navbar','/components/navbar.html'),
-      includeComponent('footer','/components/footer.html')
-    ]);
-    document.dispatchEvent(new Event('navbar:loaded'));
-  });
-</script>
-<script src="../components/navbar.js" defer></script>
+  <script src="../components/navbar.js" defer></script>
 <script src="../assets/js/productos.js" defer></script>
 </body>
 </html>

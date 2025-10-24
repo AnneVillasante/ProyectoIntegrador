@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script src="../assets/js/api.js" defer></script>
     <script src="../components/navbar.js" defer></script>
+    <script src="../components/layout.js" defer></script>
   </head>
   <body>
     <div id="navbar"></div>
@@ -32,46 +33,5 @@
       </section>
     </main>
     <div id="footer"></div>
-    <script>
-      async function includeComponent(id, file) {
-        try {
-          const res = await fetch(file, { credentials: 'same-origin' });
-          if (!res.ok) throw new Error(`HTTP ${res.status} al cargar ${file}`);
-          const html = await res.text();
-          const target = document.getElementById(id);
-          if (target) target.innerHTML = html;
-        } catch (err) {
-          console.error('Error incluyendo componente', id, file, err);
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', async () => {
-        // Cargar navbar y footer primero
-        await Promise.all([
-          includeComponent('navbar','/components/navbar.html'),
-          includeComponent('footer','/components/footer.html')
-        ]);
-
-        // Intentar poblar categorías si existe fetchCategories
-        try {
-          if (typeof fetchCategories === 'function') {
-            const categories = await fetchCategories();
-            const navMenu = document.querySelector('#navbar .menu');
-            if (navMenu && Array.isArray(categories)) {
-              const staticPart = navMenu.innerHTML.substring(navMenu.innerHTML.indexOf('<li class="menu-spacer"'));
-              navMenu.innerHTML = categories.map(c => `<li><a href="productos.html?categoria=${c.id}">${c.name}</a></li>`).join('') + staticPart;
-            }
-          }
-        } catch (e) {
-          console.warn('No se pudieron cargar categorías dinámicas:', e);
-        }
-
-        // Año en el footer
-        const yearSpan = document.getElementById('year');
-        if (yearSpan) yearSpan.textContent = new Date().getFullYear();
-        // Señal para posibles listeners
-        document.dispatchEvent(new Event('navbar:loaded'));
-      });
-    </script>
   </body>
 </html>
