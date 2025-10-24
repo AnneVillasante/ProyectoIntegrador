@@ -114,6 +114,78 @@ html, body {
   color: var(--brand-2);
 }
 
+/* Dropdown menu container */
+.menu-dropdown { position: relative; }
+
+.menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+}
+
+.menu-toggle:hover { border-color: var(--brand); color: var(--brand-2); }
+
+.menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 240px;
+  padding: 10px;
+  background: rgba(10, 12, 20, 0.98);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  display: grid;
+  gap: 6px;
+}
+
+.menu-item {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.menu-item:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+
+.menu-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 6px 0; }
+
+.menu-socials { display: flex; gap: 8px; }
+
+/* Search popover */
+.search-popover {
+  position: absolute;
+  right: 90px; /* room for account and cart */
+  top: 60px;
+  background: rgba(10, 12, 20, 0.98);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+}
+
+#searchInput {
+  width: 280px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #0c1020;
+  color: var(--text);
+}
+
+@media (max-width: 720px) {
+  .search-popover { right: 16px; top: 56px; }
+  #searchInput { width: 70vw; }
+}
+
 /* HERO */
 .hero {
   padding: 80px 0;
