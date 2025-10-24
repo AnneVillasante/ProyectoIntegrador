@@ -31,6 +31,7 @@
 
 html, body {
   height: 100%;
+  min-height: 100vh;
   margin: 0;
   scroll-behavior: smooth;
   font-family: 'Lora', serif;
@@ -40,6 +41,11 @@ html, body {
     var(--bg);
   color: var(--text);
   line-height: 1.6;
+}
+
+.container {
+  width: min(1200px, 90%);
+  margin: 0 auto;
 }
 
 /* NAVBAR */
@@ -252,6 +258,7 @@ html, body {
 
 /* FOOTER */
 .site-footer {
+  margin-top: 80px;
   border-top: 1px solid rgba(255,255,255,0.05);
   padding: 28px 0 38px;
   text-align: center;
