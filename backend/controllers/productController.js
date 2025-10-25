@@ -21,3 +21,37 @@ exports.get = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener producto' });
   }
 };
+
+exports.create = async (req, res) => {
+  try {
+    const product = req.body;
+    const id = await ProductoDao.create(product);
+    res.json({ success: true, id });
+  } catch (err) {
+    console.error('PRODUCT CREATE ERROR:', err);
+    res.status(500).json({ error: 'Error al crear producto' });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = req.body;
+    await ProductoDao.update(id, product);
+    res.json({ success: true, message: 'Producto actualizado' });
+  } catch (err) {
+    console.error('PRODUCT UPDATE ERROR:', err);
+    res.status(500).json({ error: 'Error al actualizar producto' });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await ProductoDao.delete(id);
+    res.json({ success: true, message: 'Producto eliminado' });
+  } catch (err) {
+    console.error('PRODUCT DELETE ERROR:', err);
+    res.status(500).json({ error: 'Error al eliminar producto' });
+  }
+};

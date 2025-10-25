@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
 
+// Rutas CRUD completas
 router.get('/', productController.list);
 router.get('/:id', productController.get);
+router.post('/', productController.create);
+router.put('/:id', productController.update);
+router.delete('/:id', productController.delete);
 
-// Puedes añadir rutas POST/PUT/DELETE que usen autenticación si lo deseas
 module.exports = router;

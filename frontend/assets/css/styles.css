@@ -271,44 +271,15 @@ main {
 /* FOOTER STICKY */
 .site-footer {
   margin-top: auto; /* Empuja el footer al final */
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid rgba(154, 140, 255, 0.2);
   padding: 28px 0 38px;
   text-align: center;
   color: var(--muted);
   font-family: 'Lora', serif;
   font-size: 0.95rem;
-  background: var(--bg); /* Asegurar que tenga fondo */
+  background: var(--surface); /* Cambiar a #F4F4F9 para contraste */
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 30px;
-  }
-}
-
-@media (max-width: 720px) {
-  .nav {
-    flex-direction: column;
-    height: auto;
-    padding: 10px 0;
-  }
-
-  .menu {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .hero-content h1 {
-    font-size: 2.4rem;
-  }
-
-  .hero {
-    padding: 60px 0;
-  }
-}
 /* ---------------------------------------------------------
    FOOTER NUEVO (moderno + coherente con paleta Lunaria)
 ----------------------------------------------------------*/
@@ -357,7 +328,7 @@ main {
 }
 
 .footer-links ul li a:hover {
-  color: var(--text);
+  color: var(--brand); /* Cambiar a color de marca para mejor contraste */
 }
 
 .social-buttons {
@@ -368,7 +339,7 @@ main {
 .footer-bottom {
   margin-top: 26px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(154, 140, 255, 0.2);
   font-size: 0.9rem;
   color: var(--muted);
 }
