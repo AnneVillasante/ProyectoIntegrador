@@ -9,6 +9,7 @@ const cors = require('cors');
 const pool = require('./config/db');
 const authRouter = require('./routes/auth');
 const productsRouter = require('./routes/productRoutes');
+const usuarioRouter = require('./routes/usuarioRoutes'); // ← AGREGAR ESTA LÍNEA
 const ProductService = require('./services/ProductService'); // Nuevo servicio
 
 // ---- API server (puerto 4000) ----
@@ -24,6 +25,10 @@ apiApp.use('/api/auth', authRouter);
 
 // montar API de productos
 apiApp.use('/api/products', productsRouter);
+
+// montar API de usuarios ← AGREGAR ESTAS LÍNEAS
+apiApp.use('/api/usuarios', usuarioRouter);
+
 
 // Iniciar API en el puerto 4000 y verificar conexión a MySQL
 async function startApi() {
