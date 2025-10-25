@@ -78,9 +78,9 @@ main {
 }
 
 .brand-group {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
 }
 
 .logo {
@@ -96,30 +96,12 @@ main {
 
 .logo-mark { font-size: 24px; color: var(--brand-2); }
 
-.menu {
+/* Actions container - corregir alineación */
+.actions {
   display: flex;
-  list-style: none;
-  gap: 18px;
-  margin: 0;
-  padding: 0;
-}
-
-.menu a {
-  color: var(--muted);
-  text-decoration: none;
-  padding: 8px 12px;
-  border-radius: var(--radius);
-  transition: 0.3s ease;
-}
-
-.menu a:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.socials {
-  display: flex;
+  align-items: center;
   gap: 8px;
+  position: relative;
 }
 
 .icon-btn {
@@ -133,6 +115,7 @@ main {
   border: 1px solid rgba(255,255,255,0.1);
   color: var(--text);
   transition: 0.3s;
+  text-decoration: none;
 }
 
 .icon-btn:hover {
@@ -174,16 +157,17 @@ main {
 
 .menu-socials { display: flex; gap: 8px; }
 
-/* Search popover */
+/* Search popover - posicionamiento correcto */
 .search-popover {
   position: absolute;
-  right: 90px; /* room for account and cart */
-  top: 60px;
+  right: 0;
+  top: calc(100% + 10px);
   background: rgba(10, 12, 20, 0.98);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius);
   padding: 10px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  z-index: 1000;
 }
 
 #searchInput {
@@ -193,10 +177,11 @@ main {
   border: 1px solid rgba(255,255,255,0.12);
   background: #0c1020;
   color: var(--text);
+  font-size: 0.9rem;
 }
 
 @media (max-width: 720px) {
-  .search-popover { right: 16px; top: 56px; }
+  .search-popover { right: auto; left: 50%; transform: translateX(-50%); }
   #searchInput { width: 70vw; }
 }
 
@@ -358,5 +343,128 @@ main {
   }
   .social-buttons {
     justify-content: center;
+  }
+}
+
+/* Account dropdown - posicionamiento correcto */
+.account-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.account-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 200px;
+  padding: 10px;
+  background: rgba(10, 12, 20, 0.98);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  display: grid;
+  gap: 6px;
+  z-index: 1000;
+}
+
+.account-info {
+  padding: 8px 0;
+  text-align: center;
+}
+
+.user-name {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.user-role {
+  color: var(--brand-2);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.menu-item:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.06);
+}
+
+.logout-btn:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* Responsive para account panel */
+@media (max-width: 480px) {
+  .account-panel {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 180px;
+  }
+}
+
+/* Responsive para navbar */
+@media (max-width: 720px) {
+  .nav {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 0;
+    gap: 10px;
+  }
+  
+  .brand-group {
+    order: 1;
+    justify-content: center;
+  }
+  
+  .actions {
+    order: 2;
+    justify-content: center;
+  }
+  
+  .search-popover {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  #searchInput {
+    width: 70vw;
+  }
+  
+  .account-panel {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    gap: 6px;
+  }
+  
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .account-panel {
+    min-width: 180px;
   }
 }
