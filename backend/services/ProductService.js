@@ -1,4 +1,4 @@
-const ProductoDao = require('../dao/productoDao');
+const ProductoDao = require('../dao/productoDAO');
 
 class ProductService {
   async getProductsForStaticRender() {

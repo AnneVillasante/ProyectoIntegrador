@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnRegister = document.getElementById('btnRegister');
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
+  const authContainer = document.querySelector('.auth-container');
 
-  if (!loginForm || !registerForm || !btnLogin || !btnRegister) {
+  if (!loginForm || !registerForm || !btnLogin || !btnRegister || !authContainer) {
     console.error('Faltan elementos en login.html');
     return;
   }
@@ -23,12 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
     btnRegister.classList.remove('active');
     loginForm.classList.add('active');
     registerForm.classList.remove('active');
+    
+    // Cambiar a modo login (más compacto)
+    authContainer.classList.remove('register-mode');
+    authContainer.classList.add('login-mode');
   }
+  
   function showRegister() {
     btnRegister.classList.add('active');
     btnLogin.classList.remove('active');
     registerForm.classList.add('active');
     loginForm.classList.remove('active');
+    
+    // Cambiar a modo registro (más espacio)
+    authContainer.classList.remove('login-mode');
+    authContainer.classList.add('register-mode');
   }
 
   btnLogin.addEventListener('click', showLogin);
@@ -48,10 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const identifier = document.getElementById('loginEmail').value.trim(); // correo o nombre
+    const identifier = document.getElementById('loginEmail').value.trim();
     const contraseña = document.getElementById('loginPassword').value;
     const btn = loginForm.querySelector('button[type="submit"]');
+    
     if (!identifier || !contraseña) return alert('Rellena todos los campos');
+    
     btn.disabled = true;
     try {
       const resp = await apiPost('/login', { correo: identifier, contraseña });
@@ -65,30 +77,62 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.error(err);
       alert('Error de conexión');
-    } finally { btn.disabled = false; }
+    } finally { 
+      btn.disabled = false; 
+    }
   });
 
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const nombre = document.getElementById('regName').value.trim();
+    
+    // Obtener valores de los nuevos campos
+    const nombres = document.getElementById('regNombres').value.trim();
+    const apellidos = document.getElementById('regApellidos').value.trim();
     const correo = document.getElementById('regEmail').value.trim();
+    const telefono = document.getElementById('regTelefono').value.trim();
+    const dni = document.getElementById('regDni').value.trim();
     const contraseña = document.getElementById('regPassword').value;
+    const contraseñaConfirm = document.getElementById('regPasswordConfirm').value;
+    
     const btn = registerForm.querySelector('button[type="submit"]');
-    if (!nombre || !correo || !contraseña) return alert('Rellena todos los campos');
+    
+    // Validaciones básicas
+    if (!nombres || !apellidos || !correo || !telefono || !dni || !contraseña || !contraseñaConfirm) {
+      return alert('Rellena todos los campos');
+    }
+    
+    if (contraseña !== contraseñaConfirm) {
+      return alert('Las contraseñas no coinciden');
+    }
+    
     btn.disabled = true;
+    
     try {
-      const resp = await apiPost('/register', { nombre, correo, contraseña });
+      const resp = await apiPost('/register', {
+        nombres,
+        apellidos,
+        correo,
+        telefono,
+        dni,
+        contraseña,
+        rol: 'Cliente'
+      });
+      
       if (resp.success) {
         alert('Registro exitoso. Inicia sesión.');
         showLogin();
+        registerForm.reset();
       } else {
         alert(resp.error || 'Error al registrar');
       }
     } catch (err) {
       console.error(err);
       alert('Error de conexión');
-    } finally { btn.disabled = false; }
+    } finally { 
+      btn.disabled = false; 
+    }
   });
 
+  // Inicializar en modo login
   showLogin();
 });

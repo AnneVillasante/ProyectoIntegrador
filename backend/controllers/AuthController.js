@@ -1,14 +1,14 @@
-const UsuarioDao = require('../dao/usuarioDao');
+const UsuarioDao = require('../dao/usuarioDAO');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const UsuarioDto = require('../dto/usuarioDto');
+const UsuarioDto = require('../dto/usuarioDTO');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'cambiar_esto_en_produccion';
 const JWT_EXPIRES = '7d';
 
 exports.login = async (req, res) => {
   try {
-    const idValue = req.body.correo || req.body.nombre || req.body.identifier || req.body.email || req.body.username;
+    const idValue = req.body.correo || req.body.nombres || req.body.identifier || req.body.email || req.body.username;
     const pwd = req.body.contraseña || req.body.password;
     if (!idValue || !pwd) return res.status(400).json({ error: 'Faltan credenciales' });
 
@@ -29,17 +29,25 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const nombre = req.body.nombre || req.body.username || req.body.regName;
-    const correo = req.body.correo || req.body.email || req.body.regEmail;
-    const contraseña = req.body.contraseña || req.body.password || req.body.regPassword;
-    const rol = req.body.rol || 'cliente';
+    const { nombres, apellidos, correo, telefono, dni, contraseña, rol } = req.body;
 
-    if (!nombre || !correo || !contraseña) return res.status(400).json({ error: 'Faltan campos' });
+    if (!nombres || !apellidos || !correo || !telefono || !dni || !contraseña) {
+      return res.status(400).json({ error: 'Faltan campos requeridos' });
+    }
 
     const existing = await UsuarioDao.findByCorreo(correo);
-    if (existing) return res.status(409).json({ error: 'Usuario ya existe' });
+    if (existing) return res.status(409).json({ error: 'El correo ya está registrado' });
 
-    const id = await UsuarioDao.create({ nombre, correo, contraseña, rol });
+    const id = await UsuarioDao.create({ 
+      nombres, 
+      apellidos, 
+      correo, 
+      telefono, 
+      dni, 
+      contraseña, 
+      rol: rol || 'Cliente' 
+    });
+    
     res.status(201).json({ success: true, id });
   } catch (err) {
     console.error('REGISTER ERROR:', err);

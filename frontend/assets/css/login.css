@@ -2,38 +2,69 @@
    Lunaria Threads – Página de Login / Registro
 ----------------------------------------------------------*/
 
+/* Ajustar el main para que se expanda automáticamente */
+main {
+  flex: 1;
+  min-height: auto; /* Cambiar de min-height fijo a auto */
+  display: flex;
+  flex-direction: column;
+}
+
 .auth-container {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Usar toda la altura disponible */
-  padding: 120px 20px 80px; /* Más espacio arriba y abajo */
-  margin-top: -72px; /* Compensar la altura del navbar */
-  padding-top: 192px; /* 120px + 72px del navbar */
+  min-height: 100vh;
+  padding: 120px 20px 80px;
+  margin-top: -72px;
+  padding-top: 192px;
+  /* Transición suave para cambios de altura */
+  transition: all 0.3s ease;
+  /* Asegurar que el contenedor se expanda con el contenido */
+  height: auto;
+}
+
+/* Clase para formulario de login (más compacto) */
+.auth-container.login-mode {
+  padding: 120px 20px 80px;
+  padding-top: 192px;
+  min-height: calc(100vh - 144px); /* Altura mínima considerando navbar y footer */
+}
+
+/* Clase para formulario de registro (más espacio) */
+.auth-container.register-mode {
+  padding: 100px 20px 100px;
+  padding-top: 172px;
+  min-height: calc(100vh - 144px); /* Altura mínima considerando navbar y footer */
 }
 
 .auth-card {
   background: rgba(27, 38, 59, 0.9);
   border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 16px; /* Bordes más redondeados para efecto flotante */
+  border-radius: 16px;
   box-shadow: 
     0 20px 60px rgba(0,0,0,0.3),
     0 8px 32px rgba(0,0,0,0.2),
-    inset 0 1px 0 rgba(255,255,255,0.1); /* Sombra más pronunciada para flotación */
-  max-width: 420px;
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  max-width: 600px;
   width: 100%;
-  padding: 40px 36px; /* Padding interno generoso */
+  padding: 35px 40px;
   text-align: center;
-  backdrop-filter: blur(20px); /* Más blur para efecto flotante */
+  backdrop-filter: blur(20px);
   position: relative;
   z-index: 10;
+  max-height: 85vh;
+  overflow: hidden;
+  margin: auto 0;
+  /* Transición suave para cambios de tamaño */
+  transition: all 0.3s ease;
 }
 
 .auth-tabs {
   display: flex;
   justify-content: space-around;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   background: rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 4px;
@@ -46,7 +77,7 @@
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  padding: 12px 20px;
+  padding: 10px 18px;
   border-radius: 8px;
   transition: 0.3s;
   flex: 1;
@@ -61,8 +92,12 @@
 .form {
   display: none;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   text-align: left;
+  height: auto;
+  overflow: visible;
+  /* Transición suave para cambios de formulario */
+  transition: all 0.3s ease;
 }
 
 .form.active {
@@ -71,40 +106,51 @@
 
 .form h2 {
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
   color: var(--text);
+  font-size: 1.6rem;
+}
+
+/* Fila de doble columna */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
 }
 
 .form-group {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
   display: block;
   color: var(--muted);
-  font-size: 0.9rem;
-  margin-bottom: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
   font-weight: 500;
 }
 
 .form-group input {
   width: 100%;
-  padding: 14px 16px;
-  border-radius: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.1);
   background: rgba(255,255,255,0.08);
   color: var(--text);
   font-family: 'Lora', serif;
-  font-size: 1rem;
+  font-size: 0.9rem;
   outline: none;
   transition: all 0.3s ease;
 }
 
 .form-group input:focus {
   border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgba(154, 140, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(154, 140, 255, 0.2);
   background: rgba(255,255,255,0.12);
   transform: translateY(-1px);
 }
@@ -113,10 +159,10 @@
   margin-top: 16px;
   width: 100%;
   text-align: center;
-  padding: 14px 20px;
-  font-size: 1rem;
+  padding: 12px 18px;
+  font-size: 0.95rem;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: all 0.3s ease;
 }
 
@@ -125,35 +171,183 @@
   box-shadow: 0 8px 25px rgba(154, 140, 255, 0.4);
 }
 
-/* Responsivo */
+/* Responsive para doble columna */
 @media (max-width: 768px) {
   .auth-container {
     padding: 100px 15px 60px;
-    padding-top: 172px; /* Ajustar para móviles */
+    padding-top: 172px;
+  }
+  
+  .auth-container.login-mode {
+    padding: 100px 15px 60px;
+    padding-top: 172px;
+    min-height: calc(100vh - 132px);
+  }
+  
+  .auth-container.register-mode {
+    padding: 80px 15px 80px;
+    padding-top: 152px;
+    min-height: calc(100vh - 132px);
   }
   
   .auth-card {
     max-width: 100%;
-    padding: 32px 28px;
+    padding: 30px 25px;
+    max-height: 80vh;
+  }
+  
+  .form-row {
+    gap: 12px;
+  }
+  
+  .form {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .auth-container {
+    padding: 80px 10px 40px;
+    padding-top: 152px;
+  }
+  
+  .auth-container.login-mode {
+    padding: 80px 10px 40px;
+    padding-top: 152px;
+    min-height: calc(100vh - 112px);
+  }
+  
+  .auth-container.register-mode {
+    padding: 60px 10px 60px;
+    padding-top: 132px;
+    min-height: calc(100vh - 112px);
+  }
+  
+  .auth-card {
+    padding: 25px 20px;
+    border-radius: 12px;
+    max-height: 75vh;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .form {
+    gap: 12px;
+  }
+  
+  .form h2 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+  
+  .form-group input {
+    padding: 9px 11px;
+    font-size: 0.85rem;
+  }
+  
+  .btn-primary {
+    padding: 11px 16px;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
   .auth-container {
     padding: 80px 10px 40px;
-    padding-top: 152px; /* Ajustar para móviles pequeños */
+    padding-top: 152px;
+  }
+  
+  .auth-container.login-mode {
+    padding: 80px 10px 40px;
+    padding-top: 152px;
+    min-height: calc(100vh - 92px);
+  }
+  
+  .auth-container.register-mode {
+    padding: 50px 10px 50px;
+    padding-top: 122px;
+    min-height: calc(100vh - 92px);
   }
   
   .auth-card {
-    padding: 28px 24px;
-    border-radius: 12px;
+    padding: 20px 15px;
+    max-height: 70vh;
+  }
+  
+  .form {
+    gap: 10px;
+  }
+  
+  .form h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  
+  .form-group label {
+    font-size: 0.8rem;
+    margin-bottom: 3px;
   }
   
   .form-group input {
-    padding: 12px 14px;
+    padding: 8px 10px;
+    font-size: 0.8rem;
   }
   
   .btn-primary {
-    padding: 12px 16px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    margin-top: 12px;
   }
+}
+
+/* Estilos específicos para campos */
+.form-group input[type="tel"],
+.form-group input[type="text"] {
+  text-transform: none;
+}
+
+.form-group input[type="tel"] {
+  letter-spacing: 0.5px;
+}
+
+/* Indicadores de campos requeridos */
+.form-group label::after {
+  content: " *";
+  color: var(--brand-2);
+  font-weight: 600;
+}
+
+/* Animación suave para el cambio de formulario */
+.form {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.form.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Asegurar que el body y html permitan el crecimiento automático */
+html, body {
+  height: auto; /* Cambiar de 100% a auto */
+  min-height: 100vh; /* Mantener altura mínima */
+}
+
+/* Asegurar que el main se expanda correctamente */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
 }
