@@ -3,11 +3,12 @@
 ----------------------------------------------------------*/
 
 .auth-container {
+  flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 80px 20px;
-  min-height: 80vh;
+  justify-content: center;
+  min-height: 60vh; /* Asegurar altura mínima */
+  padding: 40px 0;
 }
 
 .auth-card {
