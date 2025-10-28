@@ -1,34 +1,33 @@
-const pool = require('../config/db'); // Asegúrate de tener un archivo db.js que exporte tu pool de conexión
+const pool = require('../config/db');
+const Producto = require('../models/productoModel');
 
 class ProductoDao {
-    async getAllProducts() {
-        const [rows] = await pool.query('SELECT idProducto, nombre, categoria, precio, stock FROM producto');
-        return rows;
-    }
+  async getAllProducts() {
+    const [rows] = await pool.query(
+      'SELECT idProducto, nombre, imagen, categoria, precio, stock FROM producto'
+    );
+    // Convertir cada fila de la BD en una instancia de Producto
+    return rows.map(r => new Producto(
+      r.idProducto,
+      r.nombre,
+      r.imagen,
+      r.categoria,
+      r.precio,
+      r.stock
+    ));
+  }
 
-    async getById(id) {
-        const [rows] = await pool.query('SELECT idProducto, nombre, categoria, precio, stock FROM producto WHERE idProducto = ?', [id]);
-        return rows[0];
-    }
+  async getById(id) {
+    const [rows] = await pool.query(
+      'SELECT idProducto, nombre, imagen, categoria, precio, stock FROM producto WHERE idProducto = ?',
+      [id]
+    );
+    if (rows.length === 0) return null;
+    const r = rows[0];
+    return new Producto(r.idProducto, r.nombre, r.imagen, r.categoria, r.precio, r.stock);
+  }
 
-    async create(product) {
-        const [result] = await pool.query(
-            'INSERT INTO producto (nombre, categoria, precio, stock) VALUES (?, ?, ?, ?)',
-            [product.nombre, product.categoria, product.precio, product.stock]
-        );
-        return result.insertId;
-    }
-
-    async update(id, product) {
-        await pool.query(
-            'UPDATE producto SET nombre = ?, categoria = ?, precio = ?, stock = ? WHERE idProducto = ?',
-            [product.nombre, product.categoria, product.precio, product.stock, id]
-        );
-    }
-
-    async delete(id) {
-        await pool.query('DELETE FROM producto WHERE idProducto = ?', [id]);
-    }
+  // ... otros métodos (create, update, delete)
 }
 
 module.exports = new ProductoDao();
