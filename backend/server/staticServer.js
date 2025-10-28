@@ -22,16 +22,20 @@ staticApp.get('/login', (req, res) => {
 // Render de productos
 staticApp.get('/productos', async (req, res) => {
   try {
+    // Obtener la categoría de la query string
+    const { categoria } = req.query;
+
     // 1. Obtener datos
-    const products = await ProductService.getProductsForStaticRender();
+    const products = await ProductService.getProductsForStaticRender(categoria);
 
     // 2. Generar HTML usando el método del servicio
     const cardsHtml = ProductService.generateProductCards(products);
 
     // 3. Insertarlo en la página base
     const filePath = path.join(frontendRoot, 'pages', 'productos.html');
-    let html = await fs.readFile(filePath, 'utf8');
-    html = html.replace('<!-- PRODUCTS_PLACEHOLDER -->', cardsHtml);
+    let html = await fs.readFile(filePath, 'utf-8');
+    html = html.replace('<!-- PRODUCTS_PLACEHOLDER -->', cardsHtml)
+               .replace('<h1 class="productos-title">Colección Destacada</h1>', `<h1 class="productos-title">${categoria ? `Categoría: ${categoria}` : 'Colección Destacada'}</h1>`);
 
     // 4. Enviar resultado final al navegador
     res.send(html);

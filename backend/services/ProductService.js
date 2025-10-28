@@ -4,9 +4,14 @@ const Producto = require('../models/productoModel');
 
 class ProductService {
   // 🧩 1. Obtener productos desde MySQL
-  async getProductsForStaticRender() {
+  async getProductsForStaticRender(category = null) {
     try {
-      const products = await ProductoDao.getAllProducts();
+      let products = await ProductoDao.getAllProducts();
+      // Si se proporciona una categoría, filtrar los productos
+      if (category) {
+        products = products.filter(p => p.categoria.toLowerCase() === category.toLowerCase());
+      }
+
       return products.map(p => ({
         id: p.idProducto,
         nombre: p.nombre,

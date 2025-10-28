@@ -1,4 +1,4 @@
-// frontend/assets/js/productos.js
+// frontend/assets/js/productos.js - Lógica para la página de productos
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Mostrar año en el footer
@@ -6,25 +6,42 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (year) year.textContent = new Date().getFullYear();
 
   // Contenedor principal
-  const grid = document.getElementById('productosGrid');
-  if (!grid) {
+  const productosGrid = document.getElementById('productosGrid');
+  const productosTitle = document.querySelector('.productos-title');
+
+  // Si el placeholder no existe, significa que el servidor ya renderizó el contenido.
+  if (!productosGrid || !productosGrid.innerHTML.includes('PRODUCTS_PLACEHOLDER')) {
+    console.log('Productos renderizados por el servidor. El script del cliente no se ejecutará.');
+    return;
+  }
+
+  // Obtener categoría de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoria = urlParams.get('categoria');
+
+  if (productosTitle && categoria) {
+    productosTitle.textContent = `Categoría: ${categoria}`;
+  }
+
+  if (!productosGrid) {
     console.error('No se encontró el contenedor de productos.');
     return;
   }
 
   try {
     // Obtener productos desde el backend
-    const response = await fetch('http://localhost:4000/api/products');
+    const apiUrl = categoria ? `http://localhost:4000/api/products?categoria=${categoria}` : 'http://localhost:4000/api/products';
+    const response = await fetch(apiUrl);
     if (!response.ok) throw new Error('Error al obtener productos');
-    const productos = await response.json();
+    let productos = await response.json();
 
     if (!Array.isArray(productos) || productos.length === 0) {
-      grid.innerHTML = `<p class="sin-productos">No hay productos disponibles.</p>`;
+      productosGrid.innerHTML = `<p class="sin-productos">No hay productos disponibles en esta categoría.</p>`;
       return;
     }
 
     // Crear tarjetas dinámicamente
-    grid.innerHTML = productos.map(prod => `
+    productosGrid.innerHTML = productos.map(prod => `
       <div class="producto-card">
         <img src="${prod.imagen_url || '../assets/img/placeholder.jpg'}" alt="${prod.nombre}" class="producto-img">
         <h3>${prod.nombre}</h3>
@@ -38,13 +55,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
 
     // Eventos de botones
-    grid.querySelectorAll('.ver').forEach(btn => {
+    productosGrid.querySelectorAll('.ver').forEach(btn => {
       btn.addEventListener('click', () => {
         alert('Detalles del producto próximamente disponibles.');
       });
     });
 
-    grid.querySelectorAll('.agregar').forEach(btn => {
+    productosGrid.querySelectorAll('.agregar').forEach(btn => {
       btn.addEventListener('click', () => {
         alert('Producto añadido al carrito.');
       });
@@ -52,7 +69,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   } catch (error) {
     console.error(error);
-    grid.innerHTML = `<p class="error">Error al cargar los productos.</p>`;
+    productosGrid.innerHTML = `<p class="error">Error al cargar los productos.</p>`;
   }
 });
-
