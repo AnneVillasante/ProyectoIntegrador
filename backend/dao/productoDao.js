@@ -27,7 +27,20 @@ class ProductoDao {
     return new Producto(r.idProducto, r.nombre, r.imagen, r.categoria, r.precio, r.stock);
   }
 
-  // ... otros métodos (create, update, delete)
+  async create(product) {
+    const { nombre, categoria, precio, stock, imagen, descripcion, idSubcategoria } = product;
+    const sql = 'INSERT INTO producto (nombre, categoria, precio, stock, imagen, descripcion, idSubcategoria) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const [result] = await pool.query(sql, [nombre, categoria, precio, stock, imagen, descripcion, idSubcategoria]);
+    return result.insertId;
+  }
+
+  async update(id, product) {
+    // Lógica para actualizar...
+  }
+
+  async delete(id) {
+    // Lógica para eliminar...
+  }
 }
 
 module.exports = new ProductoDao();
