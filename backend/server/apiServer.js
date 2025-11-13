@@ -5,6 +5,8 @@ const pool = require('../config/db');
 const authRouter = require('../routes/auth');
 const productsRouter = require('../routes/productRoutes');
 const usuarioRouter = require('../routes/usuarioRoutes');
+const categoriaRoutes = require('../routes/categoriaRoutes');
+const subcategoriaRoutes = require('../routes/subcategoriaRoutes');
 
 const apiApp = express();
 apiApp.use(express.json());
@@ -14,6 +16,8 @@ apiApp.get('/health', (req, res) => res.json({ status: 'ok' }));
 apiApp.use('/api/auth', authRouter);
 apiApp.use('/api/products', productsRouter);
 apiApp.use('/api/usuarios', usuarioRouter);
+apiApp.use('/api/categorias', categoriaRoutes);
+apiApp.use('/api/subcategorias', subcategoriaRoutes);
 
 async function startApi() {
   try {

@@ -34,3 +34,32 @@ INSERT INTO Producto (idProducto, nombre, categoria, precio, stock) VALUES
 (19, 'Mochila urbana', 'Accesorios', 44.99, 18),
 (20, 'Sombrero de paja', 'Accesorios', 14.50, 22);
 
+-- Categoria: Ropa
+INSERT INTO subcategoria (nombre, categoria, genero) VALUES
+('Camiseta básica blanca', 'Ropa', 'Mujer'),
+('Jeans azul clásico', 'Ropa', 'Mujer'),
+('Chaqueta de cuero', 'Ropa', 'Mujer'),
+('Vestido floral', 'Ropa', 'Mujer'),
+('Sudadera con capucha', 'Ropa', 'Mujer'),
+('Pantalón de vestir negro', 'Ropa', 'Mujer'),
+('Falda plisada de puntos', 'Ropa', 'Mujer'),
+('Pantalón Jean', 'Ropa', 'Mujer');
+
+-- Categoria: Calzado
+INSERT INTO subcategoria (nombre, categoria, genero) VALUES
+('Zapatillas deportivas', 'Calzado', 'Mujer'),
+('Botines de cuero', 'Calzado', 'Mujer'),
+('Sandalias planas', 'Calzado', 'Mujer'),
+('Zapatos de vestir', 'Calzado', 'Mujer'),
+('Zapatos casuales', 'Calzado', 'Mujer');
+
+-- Categoria: Accesorios
+INSERT INTO subcategoria (nombre, categoria, genero) VALUES
+('Gorra ajustable', 'Accesorios', 'Mujer'),
+('Cinturón de cuero', 'Accesorios', 'Mujer'),
+('Bolso de mano', 'Accesorios', 'Mujer'),
+('Bufanda de lana', 'Accesorios', 'Mujer'),
+('Reloj analógico', 'Accesorios', 'Mujer'),
+('Anillo plateado', 'Accesorios', 'Mujer'),
+('Mochila urbana', 'Accesorios', 'Mujer'),
+('Sombrero de paja', 'Accesorios', 'Mujer');

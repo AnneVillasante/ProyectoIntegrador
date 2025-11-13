@@ -1,46 +1,50 @@
-const pool = require('../config/db');
-const Producto = require('../models/productoModel');
+const db = require('../config/db');
 
-class ProductoDao {
-  async getAllProducts() {
-    const [rows] = await pool.query(
-      'SELECT idProducto, nombre, imagen, categoria, precio, stock FROM producto'
+const productoDAO = {
+  getAll: async () => {
+    const [rows] = await db.query(`
+      SELECT p.*, c.nombre AS categoria, s.nombre AS subcategoria
+      FROM producto p
+      LEFT JOIN categoria c ON p.idCategoria = c.idCategoria
+      LEFT JOIN subcategoria s ON p.idSubcategoria = s.idSubcategoria
+    `);
+    return rows;
+  },
+
+  getById: async (id) => {
+    const [rows] = await db.query(`
+      SELECT p.*, c.nombre AS categoria, s.nombre AS subcategoria
+      FROM producto p
+      LEFT JOIN categoria c ON p.idCategoria = c.idCategoria
+      LEFT JOIN subcategoria s ON p.idSubcategoria = s.idSubcategoria
+      WHERE p.idProducto = ?`, [id]
     );
-    // Convertir cada fila de la BD en una instancia de Producto
-    return rows.map(r => new Producto(
-      r.idProducto,
-      r.nombre,
-      r.imagen,
-      r.categoria,
-      r.precio,
-      r.stock
-    ));
-  }
+    return rows[0];
+  },
 
-  async getById(id) {
-    const [rows] = await pool.query(
-      'SELECT idProducto, nombre, imagen, categoria, precio, stock FROM producto WHERE idProducto = ?',
-      [id]
+  create: async (producto) => {
+    const { nombre, descripcion, imagen, precio, stock, idCategoria, idSubcategoria } = producto;
+    const [result] = await db.query(`
+      INSERT INTO producto (nombre, descripcion, imagen, precio, stock, idCategoria, idSubcategoria)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [nombre, descripcion, imagen, precio, stock, idCategoria || null, idSubcategoria || null]
     );
-    if (rows.length === 0) return null;
-    const r = rows[0];
-    return new Producto(r.idProducto, r.nombre, r.imagen, r.categoria, r.precio, r.stock);
-  }
-
-  async create(product) {
-    const { nombre, categoria, precio, stock, imagen, descripcion, idSubcategoria } = product;
-    const sql = 'INSERT INTO producto (nombre, categoria, precio, stock, imagen, descripcion, idSubcategoria) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    const [result] = await pool.query(sql, [nombre, categoria, precio, stock, imagen, descripcion, idSubcategoria]);
     return result.insertId;
-  }
+  },
 
-  async update(id, product) {
-    // Lógica para actualizar...
-  }
+  update: async (id, producto) => {
+    const { nombre, descripcion, imagen, precio, stock, idCategoria, idSubcategoria } = producto;
+    await db.query(`
+      UPDATE producto
+      SET nombre=?, descripcion=?, imagen=?, precio=?, stock=?, idCategoria=?, idSubcategoria=?
+      WHERE idProducto=?`,
+      [nombre, descripcion, imagen, precio, stock, idCategoria || null, idSubcategoria || null, id]
+    );
+  },
 
-  async delete(id) {
-    // Lógica para eliminar...
+  delete: async (id) => {
+    await db.query('DELETE FROM producto WHERE idProducto=?', [id]);
   }
-}
+};
 
-module.exports = new ProductoDao();
+module.exports = productoDAO;

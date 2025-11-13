@@ -193,3 +193,11 @@ CREATE TABLE Recomendacion (
     FOREIGN KEY (idProducto) REFERENCES Producto(idProducto)
 );
 select * from Recomendacion;
+
+CREATE TABLE subcategoria (
+  idSubcategoria INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  categoria ENUM('Ropa', 'Calzado', 'Disfraces','Accesorios') NOT NULL,
+  genero ENUM('Hombre', 'Mujer', 'Niño') NOT NULL
+);
+select * from subcategoria;

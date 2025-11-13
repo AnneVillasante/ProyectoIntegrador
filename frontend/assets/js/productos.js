@@ -1,5 +1,33 @@
 // frontend/assets/js/productos.js - Lógica para la página de productos
 
+import { listarCategorias } from './categorias.js';
+import { listarSubcategorias } from './subcategorias.js';
+
+async function cargarListas() {
+  const categorias = await listarCategorias();
+  const subcategorias = await listarSubcategorias();
+
+  const catSel = document.getElementById('idCategoria');
+  const subSel = document.getElementById('idSubcategoria');
+
+  categorias.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.idCategoria;
+    opt.textContent = c.nombre;
+    catSel.appendChild(opt);
+  });
+
+  subcategorias.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.idSubcategoria;
+    opt.textContent = s.nombre;
+    subSel.appendChild(opt);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', cargarListas);
+
+
 document.addEventListener('DOMContentLoaded', async () => {
   // Mostrar año en el footer
   const year = document.getElementById('year');

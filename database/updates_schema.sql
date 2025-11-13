@@ -23,3 +23,23 @@ ADD COLUMN imagen VARCHAR(255) AFTER nombre;  -- o donde quieras colocarla
 
 ALTER TABLE campaña
 ADD COLUMN imagen VARCHAR(255) AFTER nombre;
+
+ALTER TABLE reporte
+MODIFY COLUMN fechaGeneracion DATETIME DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN usuario VARCHAR(100) NULL AFTER parametros,
+ADD COLUMN formato VARCHAR(20) DEFAULT 'PDF' AFTER tipo;    
+
+ALTER TABLE producto
+ADD COLUMN idSubcategoria INT,
+ADD CONSTRAINT fk_producto_subcategoria
+  FOREIGN KEY (idSubcategoria)
+  REFERENCES subcategoria(idSubcategoria)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;
+
+ALTER TABLE producto
+DROP COLUMN categoria;
+
+Alter table subcategoria
+modify categoria ENUM('Ropa', 'Calzado', 'Disfraces','Accesorios') NOT NULL;
+-- Inserción de subcategorías

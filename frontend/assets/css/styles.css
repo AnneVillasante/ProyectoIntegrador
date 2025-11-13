@@ -94,6 +94,18 @@ main {
   text-decoration: none;
 }
 
+.logo-img {
+  width: 120px;   /* ajusta el tamaño según necesites */
+  height: auto;
+  display: block;
+}
+
+.logo-footer-img {
+  width: 255px;   /* ajusta el tamaño según necesites */
+  height: auto;
+  display: block;
+}
+
 .logo-mark { font-size: 24px; color: var(--brand-2); }
 
 /* Actions container - corregir alineación */

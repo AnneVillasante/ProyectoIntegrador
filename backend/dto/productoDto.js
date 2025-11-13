@@ -1,10 +1,13 @@
 class ProductoDto {
-  constructor({ idProducto = null, nombre = '', categoria = '', precio = 0.00, stock = 0 } = {}) {
+  constructor({ idProducto, nombre, descripcion, idCategoria, imagen, precio, stock, idSubcategoria }) {
     this.idProducto = idProducto;
     this.nombre = nombre;
-    this.categoria = categoria;
-    this.precio = Number(precio);
-    this.stock = Number(stock);
+    this.descripcion = descripcion;
+    this.idCategoria = idCategoria;
+    this.imagen = imagen;
+    this.precio = precio;
+    this.stock = stock;
+    this.idSubcategoria = idSubcategoria;
   }
 }
 
