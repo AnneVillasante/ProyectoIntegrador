@@ -46,3 +46,13 @@ exports.getById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getByCategoria = async (req, res) => {
+  try {
+    const { idCategoria } = req.params;
+    const subcategorias = await subcategoriaDAO.getByCategoria(idCategoria);
+    res.json(subcategorias);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

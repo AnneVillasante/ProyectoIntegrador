@@ -139,12 +139,42 @@
 /* Controles */
 .users-controls,
 .products-controls,
-.stocks-controls {
+.stocks-controls,
+.classification-controls {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
   flex-shrink: 0;
+}
+
+/* Clasificación */
+.classification-section {
+  margin-top: 30px;
+}
+
+.classification-section h3 {
+  color: var(--text);
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(154, 140, 255, 0.3);
+}
+
+.categories-table-container,
+.subcategories-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 30px;
+}
+
+.classification-section img {
+  max-width: 60px;
+  max-height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
 /* Botones */
@@ -255,12 +285,39 @@
 /* Contenedores de tabla - altura flexible */
 .users-table-container,
 .products-table-container,
-.stocks-table-container {
+.stocks-table-container,
+.categories-table-container,
+.subcategories-table-container {
   max-height: 500px; /* Altura máxima para evitar desbordamiento */
   overflow-y: auto;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.1);
   flex: 1;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(154, 140, 255, 0.2);
+}
+
+.form-group small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85rem;
 }
 
 /* Reportes - layout flexible */

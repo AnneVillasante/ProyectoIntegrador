@@ -15,6 +15,11 @@ const subcategoriaDAO = {
     return rows[0];
   },
 
+  getByCategoria: async (idCategoria) => {
+    const [rows] = await db.query('SELECT * FROM subcategoria WHERE idCategoria = ?', [idCategoria]);
+    return rows;
+  },
+
   create: async (subcategoria) => {
     const { nombre, descripcion, imagen, idCategoria, genero } = subcategoria;
     const [result] = await db.query(

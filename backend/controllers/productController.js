@@ -3,7 +3,7 @@ const ProductoDto = require('../dto/productoDTO');
 
 exports.list = async (req, res) => {
   try {
-    const products = await ProductoDao.getAllProducts();
+    const products = await ProductoDao.getAll();
     res.json(products.map(p => new ProductoDto(p)));
   } catch (err) {
     console.error('PRODUCT LIST ERROR:', err);

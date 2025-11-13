@@ -21,6 +21,7 @@
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="users">👥 Usuarios</button>
       <button class="tab-btn" data-tab="products">📦 Productos</button>
+      <button class="tab-btn" data-tab="classification">🏷️ Clasificación Productos</button>
       <button class="tab-btn" data-tab="stocks">📊 Stocks</button>
       <button class="tab-btn" data-tab="reports">📈 Reportes</button>
     </div>
@@ -93,6 +94,67 @@
         </div>
       </div>
 
+      <!-- Pestaña: Clasificación de Productos -->
+      <div class="tab-content" id="classification-tab">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🏷️ Clasificación de Productos</h2>
+            <p>Gestiona categorías y subcategorías de productos</p>
+          </div>
+          <div class="card-content">
+            <div class="classification-controls">
+              <button class="btn-primary" id="newCategoryBtn">Nueva Categoría</button>
+              <button class="btn-primary" id="newSubcategoryBtn">Nueva Subcategoría</button>
+              <button class="btn-secondary" id="loadClassificationsBtn">Cargar sub/categorías</button>
+            </div>
+            
+            <!-- Tabla de Categorías -->
+            <div class="classification-section">
+              <h3>Categorías</h3>
+              <div class="categories-table-container">
+                <table class="admin-table" id="categoriesTable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Descripción</th>
+                      <th>Imagen</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="categoriesTableBody">
+                    <!-- Se llenará dinámicamente -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tabla de Subcategorías -->
+            <div class="classification-section">
+              <h3>Subcategorías</h3>
+              <div class="subcategories-table-container">
+                <table class="admin-table" id="subcategoriesTable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Descripción</th>
+                      <th>Categoría</th>
+                      <th>Género</th>
+                      <th>Imagen</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="subcategoriesTableBody">
+                    <!-- Se llenará dinámicamente -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Pestaña: Administración de Stocks -->
       <div class="tab-content" id="stocks-tab">
         <div class="admin-card">
@@ -135,19 +197,19 @@
           <div class="card-content">
             <div class="reports-options">
               <div class="report-item">
-                <h3>Reporte de Usuarios</h3>
-                <p>Lista completa de usuarios registrados</p>
-                <button class="btn-primary" id="generateUsersReport">Generar PDF</button>
+                <h3>Reporte de Ventas</h3>
+                <p>Lista completa de pedidos y ventas realizadas</p>
+                <button class="btn-primary" id="generateVentasReport">Generar CSV</button>
               </div>
               <div class="report-item">
                 <h3>Reporte de Productos</h3>
                 <p>Inventario completo de productos</p>
-                <button class="btn-primary" id="generateProductsReport">Generar PDF</button>
+                <button class="btn-primary" id="generateProductsReport">Generar CSV</button>
               </div>
               <div class="report-item">
-                <h3>Reporte de Stocks</h3>
-                <p>Estado actual de inventarios</p>
-                <button class="btn-primary" id="generateStocksReport">Generar PDF</button>
+                <h3>Reporte de Usuarios</h3>
+                <p>Lista completa de usuarios registrados</p>
+                <button class="btn-primary" id="generateUsersReport">Generar CSV</button>
               </div>
             </div>
           </div>
@@ -195,29 +257,137 @@
         <form id="productForm">
           <input type="hidden" id="idProducto">
 
-          <label>Nombre:</label>
-          <input type="text" id="nombre" required>
+          <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+          </div>
 
-          <label>Precio:</label>
-          <input type="number" id="precio" step="0.01" required>
+          <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" rows="3"></textarea>
+          </div>
 
-          <label>Stock:</label>
-          <input type="number" id="stock" required>
+          <div class="form-group">
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" step="0.01" required>
+          </div>
 
-          <label>Categoría:</label>
-          <select id="idCategoria">
-            <option value="">-- Sin categoría --</option>
-          </select>
+          <div class="form-group">
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" required>
+          </div>
 
-          <label>Subcategoría:</label>
-          <select id="idSubcategoria">
-            <option value="">-- Sin subcategoría --</option>
-          </select>
+          <div class="form-group">
+            <label for="idCategoria">Categoría:</label>
+            <select id="idCategoria">
+              <option value="">-- Sin categoría --</option>
+            </select>
+          </div>
 
-          <label>Imagen:</label>
-          <input type="file" id="imagen" accept="image/*">
+          <div class="form-group">
+            <label for="idSubcategoria">Subcategoría:</label>
+            <select id="idSubcategoria">
+              <option value="">-- Sin subcategoría --</option>
+            </select>
+          </div>
 
-          <button type="submit">Guardar</button>
+          <div class="form-group">
+            <label for="imagen">Imagen:</label>
+            <input type="file" id="imagen" accept="image/*">
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelProduct">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar/editar categoría -->
+  <div id="categoryModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="categoryModalTitle">Nueva Categoría</h3>
+        <button class="modal-close" id="closeCategoryModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="categoryForm">
+          <input type="hidden" id="idCategoriaModal">
+
+          <div class="form-group">
+            <label for="categoriaNombre">Nombre:</label>
+            <input type="text" id="categoriaNombre" required>
+          </div>
+
+          <div class="form-group">
+            <label for="categoriaDescripcion">Descripción:</label>
+            <textarea id="categoriaDescripcion" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="categoriaImagen">Imagen:</label>
+            <input type="file" id="categoriaImagen" accept="image/*">
+            <small style="color: var(--muted);">Por ahora se guarda como texto (URL o nombre de archivo)</small>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelCategory">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar/editar subcategoría -->
+  <div id="subcategoryModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="subcategoryModalTitle">Nueva Subcategoría</h3>
+        <button class="modal-close" id="closeSubcategoryModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="subcategoryForm">
+          <input type="hidden" id="idSubcategoriaModal">
+
+          <div class="form-group">
+            <label for="subcategoriaNombre">Nombre:</label>
+            <input type="text" id="subcategoriaNombre" required>
+          </div>
+
+          <div class="form-group">
+            <label for="subcategoriaDescripcion">Descripción:</label>
+            <textarea id="subcategoriaDescripcion" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="subcategoriaCategoria">Categoría:</label>
+            <select id="subcategoriaCategoria" required>
+              <option value="">-- Seleccione una categoría --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="subcategoriaGenero">Género:</label>
+            <select id="subcategoriaGenero" required>
+              <option value="Unisex">Unisex</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="subcategoriaImagen">Imagen:</label>
+            <input type="file" id="subcategoriaImagen" accept="image/*">
+            <small style="color: var(--muted);">Por ahora se guarda como texto (URL o nombre de archivo)</small>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelSubcategory">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
         </form>
       </div>
     </div>

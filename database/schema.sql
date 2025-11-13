@@ -1,6 +1,6 @@
-USE LunariaThreadsDB;CREATE DATABASE LunariaThreadsDB;
-
 USE LunariaThreadsDB;
+CREATE DATABASE LunariaThreadsDB;
+
 -- Tabla: Usuario
 -- ============================================
 CREATE TABLE Usuario (
@@ -194,10 +194,19 @@ CREATE TABLE Recomendacion (
 );
 select * from Recomendacion;
 
-CREATE TABLE subcategoria (
-  idSubcategoria INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(100) NOT NULL,
-  categoria ENUM('Ropa', 'Calzado', 'Disfraces','Accesorios') NOT NULL,
-  genero ENUM('Hombre', 'Mujer', 'Niño') NOT NULL
+CREATE TABLE Categoria (
+    idCategoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    imagen VARCHAR(255) NULL
 );
-select * from subcategoria;
+CREATE TABLE Subcategoria (
+    idSubcategoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    imagen VARCHAR(255) NULL,
+    idCategoria INT NOT NULL,
+    FOREIGN KEY (idCategoria) REFERENCES Categoria(idCategoria)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);

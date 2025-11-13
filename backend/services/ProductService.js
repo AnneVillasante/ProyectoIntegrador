@@ -6,16 +6,16 @@ class ProductService {
   // 🧩 1. Obtener productos desde MySQL
   async getProductsForStaticRender(category = null) {
     try {
-      let products = await ProductoDao.getAllProducts();
+      let products = await ProductoDao.getAll();
       // Si se proporciona una categoría, filtrar los productos
       if (category) {
-        products = products.filter(p => p.categoria.toLowerCase() === category.toLowerCase());
+        products = products.filter(p => p.categoria && p.categoria.toLowerCase() === category.toLowerCase());
       }
 
       return products.map(p => ({
         id: p.idProducto,
         nombre: p.nombre,
-        categoria: p.categoria,
+        categoria: p.categoria || 'Sin categoría',
         precio: p.precio,
         stock: p.stock,
         imagen: p.imagen || 'placeholder.png' // evita errores si no hay imagen

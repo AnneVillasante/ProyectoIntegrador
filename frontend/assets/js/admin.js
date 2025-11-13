@@ -47,6 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 'products':
         if (products.length === 0) loadProducts();
+        if (categorias.length === 0) loadCategories();
+        break;
+      case 'classification':
+        if (categorias.length === 0 || subcategorias.length === 0) loadClassifications();
         break;
       case 'stocks':
         if (stocks.length === 0) loadStocks();
@@ -60,16 +64,52 @@ document.addEventListener('DOMContentLoaded', () => {
   // Funciones de utilidad
   async function apiCall(endpoint, options = {}) {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers
+    try {
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          ...options.headers
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
       }
-    });
-    return response.json();
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Call Error:', error);
+      throw error;
+    }
   }
+
+  async function apiDownload(endpoint, options = {}) {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          ...options.headers
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}. La ruta en el servidor podría no existir.`);
+      }
+
+      return response; // Devolvemos la respuesta completa para manejar el blob
+    } catch (error) {
+      console.error('API Download Error:', error);
+      throw error;
+    }
+  }
+
 
   // ===== USUARIOS =====
   async function loadUsers() {
@@ -121,9 +161,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== PRODUCTOS =====
+  let categorias = [];
+  let subcategorias = [];
+
+  async function loadCategories() {
+    try {
+      categorias = await apiCall('/categorias');
+      renderCategorySelect();
+    } catch (error) {
+      console.error('Error cargando categorías:', error);
+    }
+  }
+
+  async function loadSubcategories(idCategoria) {
+    try {
+      if (!idCategoria || idCategoria === '') {
+        document.getElementById('idSubcategoria').innerHTML = '<option value="">-- Sin subcategoría --</option>';
+        return;
+      }
+      subcategorias = await apiCall(`/subcategorias/categoria/${idCategoria}`);
+      renderSubcategorySelect();
+    } catch (error) {
+      console.error('Error cargando subcategorías:', error);
+      document.getElementById('idSubcategoria').innerHTML = '<option value="">-- Sin subcategoría --</option>';
+    }
+  }
+
+  function renderCategorySelect() {
+    const select = document.getElementById('idCategoria');
+    const currentValue = select.value;
+    select.innerHTML = '<option value="">-- Sin categoría --</option>';
+    categorias.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat.idCategoria;
+      option.textContent = cat.nombre;
+      select.appendChild(option);
+    });
+    if (currentValue) {
+      select.value = currentValue;
+    }
+  }
+
+  function renderSubcategorySelect() {
+    const select = document.getElementById('idSubcategoria');
+    const currentValue = select.value;
+    select.innerHTML = '<option value="">-- Sin subcategoría --</option>';
+    subcategorias.forEach(sub => {
+      const option = document.createElement('option');
+      option.value = sub.idSubcategoria;
+      option.textContent = sub.nombre;
+      select.appendChild(option);
+    });
+    if (currentValue) {
+      select.value = currentValue;
+    }
+  }
+
   async function loadProducts() {
     try {
-      products = await apiCall('/products');
+      const response = await apiCall('/productos');
+      products = Array.isArray(response) ? response : [];
       renderProductsTable();
     } catch (error) {
       console.error('Error cargando productos:', error);
@@ -133,12 +230,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderProductsTable() {
     const tbody = document.getElementById('productsTableBody');
+    if (products.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay productos disponibles</td></tr>';
+      return;
+    }
     tbody.innerHTML = products.map(product => `
       <tr>
         <td>${product.idProducto}</td>
         <td>${product.nombre}</td>
-        <td>${product.categoria}</td>
-        <td>S/ ${product.precio.toFixed(2)}</td>
+        <td>${product.categoria || 'Sin categoría'}</td>
+        <td>S/ ${parseFloat(product.precio).toFixed(2)}</td>
         <td>${product.stock}</td>
         <td>
           <button class="btn-secondary" onclick="editProduct(${product.idProducto})">Editar</button>
@@ -148,31 +249,61 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  function addProduct() {
+  async function addProduct() {
     document.getElementById('productModalTitle').textContent = 'Nuevo Producto';
     document.getElementById('productForm').reset();
-    document.getElementById('productId').value = '';
+    document.getElementById('idProducto').value = '';
+    document.getElementById('idSubcategoria').innerHTML = '<option value="">-- Sin subcategoría --</option>';
+    
+    await loadCategories();
     document.getElementById('productModal').hidden = false;
+    
+    // Configurar el listener de categoría después de que el modal esté visible
+    const categoriaSelect = document.getElementById('idCategoria');
+    categoriaSelect.onchange = async (e) => {
+      const idCategoria = e.target.value;
+      await loadSubcategories(idCategoria);
+    };
   }
 
-  function editProduct(id) {
+  async function editProduct(id) {
     const product = products.find(p => p.idProducto === id);
     if (!product) return;
 
     document.getElementById('productModalTitle').textContent = 'Editar Producto';
-    document.getElementById('productId').value = id;
-    document.getElementById('productName').value = product.nombre;
-    document.getElementById('productCategory').value = product.categoria;
-    document.getElementById('productPrice').value = product.precio;
-    document.getElementById('productStock').value = product.stock;
+    document.getElementById('idProducto').value = id;
+    document.getElementById('nombre').value = product.nombre || '';
+    document.getElementById('descripcion').value = product.descripcion || '';
+    document.getElementById('precio').value = product.precio || '';
+    document.getElementById('stock').value = product.stock || '';
+    
+    await loadCategories();
+    if (product.idCategoria) {
+      document.getElementById('idCategoria').value = product.idCategoria;
+      await loadSubcategories(product.idCategoria);
+      if (product.idSubcategoria) {
+        document.getElementById('idSubcategoria').value = product.idSubcategoria;
+      }
+    } else {
+      document.getElementById('idCategoria').value = '';
+      document.getElementById('idSubcategoria').innerHTML = '<option value="">-- Sin subcategoría --</option>';
+    }
+    
     document.getElementById('productModal').hidden = false;
+    
+    // Configurar el listener de categoría después de que el modal esté visible
+    const categoriaSelect = document.getElementById('idCategoria');
+    categoriaSelect.onchange = async (e) => {
+      const idCategoria = e.target.value;
+      await loadSubcategories(idCategoria);
+    };
   }
 
   async function deleteProduct(id) {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return;
 
     try {
-      await apiCall(`/products/${id}`, { method: 'DELETE' });
+      await apiCall(`/productos/${id}`, { method: 'DELETE' });
       await loadProducts();
       alert('Producto eliminado correctamente');
     } catch (error) {
@@ -184,7 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== STOCKS =====
   async function loadStocks() {
     try {
-      stocks = await apiCall('/products');
+      const response = await apiCall('/productos');
+      stocks = Array.isArray(response) ? response : [];
       renderStocksTable();
     } catch (error) {
       console.error('Error cargando stocks:', error);
@@ -194,11 +326,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderStocksTable() {
     const tbody = document.getElementById('stocksTableBody');
+    if (stocks.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay productos disponibles</td></tr>';
+      return;
+    }
     tbody.innerHTML = stocks.map(product => `
       <tr>
         <td>${product.idProducto}</td>
         <td>${product.nombre}</td>
-        <td>${product.categoria}</td>
+        <td>${product.categoria || 'Sin categoría'}</td>
         <td>${product.stock}</td>
         <td>
           <input type="number" class="stock-input" 
@@ -219,9 +355,20 @@ document.addEventListener('DOMContentLoaded', () => {
   async function saveStocks() {
     try {
       for (const [id, stock] of Object.entries(stockChanges)) {
-        await apiCall(`/products/${id}`, {
+        const product = stocks.find(p => p.idProducto === parseInt(id));
+        if (!product) continue;
+        
+        await apiCall(`/productos/${id}`, {
           method: 'PUT',
-          body: JSON.stringify({ stock: stock })
+          body: JSON.stringify({
+            nombre: product.nombre,
+            descripcion: product.descripcion || '',
+            precio: product.precio,
+            stock: parseInt(stock),
+            idCategoria: product.idCategoria || null,
+            idSubcategoria: product.idSubcategoria || null,
+            imagen: product.imagen || ''
+          })
         });
       }
       stockChanges = {};
@@ -234,57 +381,227 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ===== REPORTES =====
-  function generateUsersReport() {
-    const reportData = users.map(user => ({
-      ID: user.idUsuario,
-      Nombre: `${user.nombres} ${user.apellidos}`,
-      Correo: user.correo,
-      Rol: user.rol
-    }));
-    downloadReport(reportData, 'reporte_usuarios');
+  // ===== CLASIFICACIÓN PRODUCTOS =====
+  async function loadClassifications() {
+    try {
+      await loadCategories();
+      await loadSubcategoriesAll();
+      renderCategoriesTable();
+      renderSubcategoriesTable();
+    } catch (error) {
+      console.error('Error cargando clasificaciones:', error);
+      alert('Error al cargar clasificaciones');
+    }
   }
 
-  function generateProductsReport() {
-    const reportData = products.map(product => ({
-      ID: product.idProducto,
-      Nombre: product.nombre,
-      Categoría: product.categoria,
-      Precio: `S/ ${product.precio.toFixed(2)}`,
-      Stock: product.stock
-    }));
-    downloadReport(reportData, 'reporte_productos');
+  async function loadSubcategoriesAll() {
+    try {
+      subcategorias = await apiCall('/subcategorias');
+      return subcategorias;
+    } catch (error) {
+      console.error('Error cargando todas las subcategorías:', error);
+      return [];
+    }
   }
 
-  function generateStocksReport() {
-    const reportData = stocks.map(product => ({
-      ID: product.idProducto,
-      Producto: product.nombre,
-      Categoría: product.categoria,
-      'Stock Actual': product.stock
-    }));
-    downloadReport(reportData, 'reporte_stocks');
+  function renderCategoriesTable() {
+    const tbody = document.getElementById('categoriesTableBody');
+    if (!tbody) return;
+    
+    if (!categorias || categorias.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay categorías disponibles</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = categorias.map(cat => {
+      const imagenUrl = cat.imagen 
+        ? (cat.imagen.startsWith('http') ? cat.imagen : (cat.imagen.startsWith('/') ? cat.imagen : `../assets/img/${cat.imagen}`))
+        : null;
+      return `
+      <tr>
+        <td>${cat.idCategoria}</td>
+        <td>${cat.nombre || 'Sin nombre'}</td>
+        <td>${cat.descripcion || 'Sin descripción'}</td>
+        <td>
+          ${imagenUrl ? `<img src="${imagenUrl}" alt="${cat.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
+        </td>
+        <td>
+          <button class="btn-secondary" onclick="editCategory(${cat.idCategoria})">Editar</button>
+          <button class="btn-danger" onclick="deleteCategory(${cat.idCategoria})">Eliminar</button>
+        </td>
+      </tr>
+    `;
+    }).join('');
   }
 
-  function downloadReport(data, filename) {
-    const csv = convertToCSV(data);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+  function renderSubcategoriesTable() {
+    const tbody = document.getElementById('subcategoriesTableBody');
+    if (!tbody) return;
+    
+    if (!subcategorias || subcategorias.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay subcategorías disponibles</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = subcategorias.map(sub => {
+      const categoria = categorias.find(c => c.idCategoria === sub.idCategoria);
+      const imagenUrl = sub.imagen 
+        ? (sub.imagen.startsWith('http') ? sub.imagen : (sub.imagen.startsWith('/') ? sub.imagen : `../assets/img/${sub.imagen}`))
+        : null;
+      return `
+      <tr>
+        <td>${sub.idSubcategoria}</td>
+        <td>${sub.nombre || 'Sin nombre'}</td>
+        <td>${sub.descripcion || 'Sin descripción'}</td>
+        <td>${categoria ? categoria.nombre : 'Sin categoría'}</td>
+        <td>${sub.genero || 'Unisex'}</td>
+        <td>
+          ${imagenUrl ? `<img src="${imagenUrl}" alt="${sub.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
+        </td>
+        <td>
+          <button class="btn-secondary" onclick="editSubcategory(${sub.idSubcategoria})">Editar</button>
+          <button class="btn-danger" onclick="deleteSubcategory(${sub.idSubcategoria})">Eliminar</button>
+        </td>
+      </tr>
+    `;
+    }).join('');
   }
 
-  function convertToCSV(data) {
-    if (data.length === 0) return '';
-    const headers = Object.keys(data[0]);
-    const csvContent = [
-      headers.join(','),
-      ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
-    ].join('\n');
-    return csvContent;
+  function addCategory() {
+    document.getElementById('categoryModalTitle').textContent = 'Nueva Categoría';
+    document.getElementById('categoryForm').reset();
+    document.getElementById('idCategoriaModal').value = '';
+    document.getElementById('categoryModal').hidden = false;
+  }
+
+  async function editCategory(id) {
+    const category = categorias.find(c => c.idCategoria === id);
+    if (!category) return;
+
+    document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
+    document.getElementById('idCategoriaModal').value = id;
+    document.getElementById('categoriaNombre').value = category.nombre || '';
+    document.getElementById('categoriaDescripcion').value = category.descripcion || '';
+    document.getElementById('categoryModal').hidden = false;
+  }
+
+  async function deleteCategory(id) {
+    if (!confirm('¿Estás seguro de eliminar esta categoría? Esto también eliminará todas las subcategorías asociadas.')) return;
+
+    try {
+      await apiCall(`/categorias/${id}`, { method: 'DELETE' });
+      await loadClassifications();
+      alert('Categoría eliminada correctamente');
+    } catch (error) {
+      console.error('Error eliminando categoría:', error);
+      alert('Error al eliminar categoría');
+    }
+  }
+
+  async function addSubcategory() {
+    await loadCategories();
+    const select = document.getElementById('subcategoriaCategoria');
+    select.innerHTML = '<option value="">-- Seleccione una categoría --</option>';
+    categorias.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat.idCategoria;
+      option.textContent = cat.nombre;
+      select.appendChild(option);
+    });
+    
+    document.getElementById('subcategoryModalTitle').textContent = 'Nueva Subcategoría';
+    document.getElementById('subcategoryForm').reset();
+    document.getElementById('idSubcategoriaModal').value = '';
+    document.getElementById('subcategoriaGenero').value = 'Unisex';
+    document.getElementById('subcategoryModal').hidden = false;
+  }
+
+  async function editSubcategory(id) {
+    const subcategory = subcategorias.find(s => s.idSubcategoria === id);
+    if (!subcategory) return;
+
+    await loadCategories();
+    const select = document.getElementById('subcategoriaCategoria');
+    select.innerHTML = '<option value="">-- Seleccione una categoría --</option>';
+    categorias.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat.idCategoria;
+      option.textContent = cat.nombre;
+      if (cat.idCategoria === subcategory.idCategoria) {
+        option.selected = true;
+      }
+      select.appendChild(option);
+    });
+
+    document.getElementById('subcategoryModalTitle').textContent = 'Editar Subcategoría';
+    document.getElementById('idSubcategoriaModal').value = id;
+    document.getElementById('subcategoriaNombre').value = subcategory.nombre || '';
+    document.getElementById('subcategoriaDescripcion').value = subcategory.descripcion || '';
+    document.getElementById('subcategoriaGenero').value = subcategory.genero || 'Unisex';
+    document.getElementById('subcategoryModal').hidden = false;
+  }
+
+  async function deleteSubcategory(id) {
+    if (!confirm('¿Estás seguro de eliminar esta subcategoría?')) return;
+
+    try {
+      await apiCall(`/subcategorias/${id}`, { method: 'DELETE' });
+      await loadClassifications();
+      alert('Subcategoría eliminada correctamente');
+    } catch (error) {
+      console.error('Error eliminando subcategoría:', error);
+      alert('Error al eliminar subcategoría');
+    }
+  }
+
+  async function generateReport(reportType) {
+    const reportNameMap = {
+      usuarios: 'usuarios',
+      productos: 'productos',
+      ventas: 'ventas'
+    };
+
+    const reportName = reportNameMap[reportType];
+    if (!reportName) {
+      alert('Tipo de reporte no válido');
+      return;
+    }
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const usuario = user.correo || 'Sistema';
+
+      const response = await apiDownload(`/reportes/${reportName}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          formato: 'CSV',
+          usuario: usuario
+        })
+      });
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('text/csv')) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_${reportName}_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        alert(`Reporte de ${reportName} generado correctamente.`);
+      } else {
+        // Si el backend no devuelve un CSV, sino un JSON (ej. con un ID de reporte)
+        const data = await response.json().catch(() => null);
+        if (data && data.idReporte) {
+          alert(`Reporte de ${reportName} generado. ID: ${data.idReporte}`);
+        } else {
+          alert('El servidor no devolvió un archivo CSV válido.');
+        }
+      }
+    } catch (error) {
+      console.error(`Error generando reporte de ${reportName}:`, error);
+      alert(`Error al generar reporte de ${reportName}: ` + (error.message || 'Error desconocido'));
+    }
   }
 
   // ===== EVENT LISTENERS =====
@@ -299,14 +616,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('addProductBtn').addEventListener('click', addProduct);
   document.getElementById('loadProductsBtn').addEventListener('click', loadProducts);
 
+  // Clasificación
+  document.getElementById('newCategoryBtn').addEventListener('click', addCategory);
+  document.getElementById('newSubcategoryBtn').addEventListener('click', addSubcategory);
+  document.getElementById('loadClassificationsBtn').addEventListener('click', loadClassifications);
+
   // Stocks
   document.getElementById('loadStocksBtn').addEventListener('click', loadStocks);
   document.getElementById('saveStocksBtn').addEventListener('click', saveStocks);
 
   // Reportes
-  document.getElementById('generateUsersReport').addEventListener('click', generateUsersReport);
-  document.getElementById('generateProductsReport').addEventListener('click', generateProductsReport);
-  document.getElementById('generateStocksReport').addEventListener('click', generateStocksReport);
+  document.getElementById('generateUsersReport').addEventListener('click', () => generateReport('usuarios'));
+  document.getElementById('generateProductsReport').addEventListener('click', () => generateReport('productos'));
+  document.getElementById('generateVentasReport').addEventListener('click', () => generateReport('ventas'));
 
   // Modales
   document.getElementById('closeEditUserModal').addEventListener('click', () => {
@@ -317,13 +639,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('productModal').hidden = true;
   });
 
+  document.getElementById('closeCategoryModal').addEventListener('click', () => {
+    document.getElementById('categoryModal').hidden = true;
+  });
+
+  document.getElementById('closeSubcategoryModal').addEventListener('click', () => {
+    document.getElementById('subcategoryModal').hidden = true;
+  });
+
   document.getElementById('cancelEditUser').addEventListener('click', () => {
     document.getElementById('editUserModal').hidden = true;
   });
 
-  document.getElementById('cancelProduct').addEventListener('click', () => {
-    document.getElementById('productModal').hidden = true;
-  });
+  // El botón cancelProduct ya está definido en el HTML
+  const cancelProductBtn = document.getElementById('cancelProduct');
+  if (cancelProductBtn) {
+    cancelProductBtn.addEventListener('click', () => {
+      document.getElementById('productModal').hidden = true;
+    });
+  }
+
+  const cancelCategoryBtn = document.getElementById('cancelCategory');
+  if (cancelCategoryBtn) {
+    cancelCategoryBtn.addEventListener('click', () => {
+      document.getElementById('categoryModal').hidden = true;
+    });
+  }
+
+  const cancelSubcategoryBtn = document.getElementById('cancelSubcategory');
+  if (cancelSubcategoryBtn) {
+    cancelSubcategoryBtn.addEventListener('click', () => {
+      document.getElementById('subcategoryModal').hidden = true;
+    });
+  }
 
   // Formularios
   document.getElementById('editUserForm').addEventListener('submit', async (e) => {
@@ -345,25 +693,123 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('productForm').addEventListener('submit', async (e) => {
+  // Cargar categorías cuando se abre el modal (el listener de categoría se configura dentro de addProduct y editProduct)
+
+  // Formulario de categoría
+  document.getElementById('categoryForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const id = document.getElementById('productId').value;
-    const productData = {
-      nombre: document.getElementById('productName').value,
-      categoria: document.getElementById('productCategory').value,
-      precio: parseFloat(document.getElementById('productPrice').value),
-      stock: parseInt(document.getElementById('productStock').value)
+    const id = document.getElementById('idCategoriaModal').value;
+    const nombre = document.getElementById('categoriaNombre').value;
+    const descripcion = document.getElementById('categoriaDescripcion').value;
+    const imagenFile = document.getElementById('categoriaImagen').files[0];
+
+    const categoryData = {
+      nombre,
+      descripcion: descripcion || '',
+      imagen: '' // Por ahora, el backend manejará la imagen como string
     };
 
     try {
       if (id) {
-        await apiCall(`/products/${id}`, {
+        await apiCall(`/categorias/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(categoryData)
+        });
+        alert('Categoría actualizada correctamente');
+      } else {
+        await apiCall('/categorias', {
+          method: 'POST',
+          body: JSON.stringify(categoryData)
+        });
+        alert('Categoría creada correctamente');
+      }
+      document.getElementById('categoryModal').hidden = true;
+      await loadClassifications();
+    } catch (error) {
+      console.error('Error guardando categoría:', error);
+      alert('Error al guardar categoría: ' + (error.message || 'Error desconocido'));
+    }
+  });
+
+  // Formulario de subcategoría
+  document.getElementById('subcategoryForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('idSubcategoriaModal').value;
+    const nombre = document.getElementById('subcategoriaNombre').value;
+    const descripcion = document.getElementById('subcategoriaDescripcion').value;
+    const idCategoria = document.getElementById('subcategoriaCategoria').value;
+    const genero = document.getElementById('subcategoriaGenero').value;
+    const imagenFile = document.getElementById('subcategoriaImagen').files[0];
+
+    if (!idCategoria) {
+      alert('Por favor, seleccione una categoría');
+      return;
+    }
+
+    const subcategoryData = {
+      nombre,
+      descripcion: descripcion || '',
+      idCategoria: parseInt(idCategoria),
+      genero: genero || 'Unisex',
+      imagen: '' // Por ahora, el backend manejará la imagen como string
+    };
+
+    try {
+      if (id) {
+        await apiCall(`/subcategorias/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(subcategoryData)
+        });
+        alert('Subcategoría actualizada correctamente');
+      } else {
+        await apiCall('/subcategorias', {
+          method: 'POST',
+          body: JSON.stringify(subcategoryData)
+        });
+        alert('Subcategoría creada correctamente');
+      }
+      document.getElementById('subcategoryModal').hidden = true;
+      await loadClassifications();
+    } catch (error) {
+      console.error('Error guardando subcategoría:', error);
+      alert('Error al guardar subcategoría: ' + (error.message || 'Error desconocido'));
+    }
+  });
+
+  document.getElementById('productForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('idProducto').value;
+    const nombre = document.getElementById('nombre').value;
+    const descripcion = document.getElementById('descripcion').value;
+    const precio = parseFloat(document.getElementById('precio').value);
+    const stock = parseInt(document.getElementById('stock').value);
+    const idCategoria = document.getElementById('idCategoria').value || null;
+    const idSubcategoria = document.getElementById('idSubcategoria').value || null;
+    const imagenFile = document.getElementById('imagen').files[0];
+
+    const productData = {
+      nombre,
+      descripcion: descripcion || '',
+      precio,
+      stock,
+      idCategoria: idCategoria ? parseInt(idCategoria) : null,
+      idSubcategoria: idSubcategoria ? parseInt(idSubcategoria) : null,
+      imagen: '' // Por ahora, el backend manejará la imagen
+    };
+
+    // Si hay una imagen, aquí se podría manejar la subida
+    // Por ahora, dejamos que el backend maneje la imagen como string
+    // TODO: Implementar subida de archivos si es necesario
+
+    try {
+      if (id) {
+        await apiCall(`/productos/${id}`, {
           method: 'PUT',
           body: JSON.stringify(productData)
         });
         alert('Producto actualizado correctamente');
       } else {
-        await apiCall('/products', {
+        await apiCall('/productos', {
           method: 'POST',
           body: JSON.stringify(productData)
         });
@@ -371,9 +817,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       document.getElementById('productModal').hidden = true;
       await loadProducts();
+      // Recargar stocks también si estamos en esa pestaña
+      if (stocks.length > 0) {
+        await loadStocks();
+      }
     } catch (error) {
       console.error('Error guardando producto:', error);
-      alert('Error al guardar producto');
+      alert('Error al guardar producto: ' + (error.message || 'Error desconocido'));
     }
   });
 
@@ -383,6 +833,10 @@ document.addEventListener('DOMContentLoaded', () => {
   window.editProduct = editProduct;
   window.deleteProduct = deleteProduct;
   window.updateStockChange = updateStockChange;
+  window.editCategory = editCategory;
+  window.deleteCategory = deleteCategory;
+  window.editSubcategory = editSubcategory;
+  window.deleteSubcategory = deleteSubcategory;
 
   // Cargar datos iniciales (solo usuarios por defecto)
   loadUsers();

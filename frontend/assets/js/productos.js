@@ -1,33 +1,5 @@
 // frontend/assets/js/productos.js - Lógica para la página de productos
 
-import { listarCategorias } from './categorias.js';
-import { listarSubcategorias } from './subcategorias.js';
-
-async function cargarListas() {
-  const categorias = await listarCategorias();
-  const subcategorias = await listarSubcategorias();
-
-  const catSel = document.getElementById('idCategoria');
-  const subSel = document.getElementById('idSubcategoria');
-
-  categorias.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.idCategoria;
-    opt.textContent = c.nombre;
-    catSel.appendChild(opt);
-  });
-
-  subcategorias.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.idSubcategoria;
-    opt.textContent = s.nombre;
-    subSel.appendChild(opt);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', cargarListas);
-
-
 document.addEventListener('DOMContentLoaded', async () => {
   // Mostrar año en el footer
   const year = document.getElementById('year');
@@ -36,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Contenedor principal
   const productosGrid = document.getElementById('productosGrid');
   const productosTitle = document.querySelector('.productos-title');
+  const productosSubtitle = document.querySelector('.productos-subtitle');
 
   // Si el placeholder no existe, significa que el servidor ya renderizó el contenido.
   if (!productosGrid || !productosGrid.innerHTML.includes('PRODUCTS_PLACEHOLDER')) {
@@ -49,6 +22,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (productosTitle && categoria) {
     productosTitle.textContent = `Categoría: ${categoria}`;
+    if (productosSubtitle) {
+      productosSubtitle.textContent = `Explora nuestra colección de ${categoria}`;
+    }
   }
 
   if (!productosGrid) {
@@ -57,46 +33,79 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    // Obtener productos desde el backend
-    const apiUrl = categoria ? `http://localhost:4000/api/products?categoria=${categoria}` : 'http://localhost:4000/api/products';
+    // Obtener productos desde el backend usando la ruta correcta
+    const API_BASE = 'http://localhost:4000/api';
+    const apiUrl = `${API_BASE}/productos`;
     const response = await fetch(apiUrl);
-    if (!response.ok) throw new Error('Error al obtener productos');
+    
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+    
     let productos = await response.json();
 
+    // Filtrar por categoría si se especifica en la URL
+    if (categoria && Array.isArray(productos)) {
+      productos = productos.filter(prod => 
+        prod.categoria && prod.categoria.toLowerCase() === categoria.toLowerCase()
+      );
+    }
+
     if (!Array.isArray(productos) || productos.length === 0) {
-      productosGrid.innerHTML = `<p class="sin-productos">No hay productos disponibles en esta categoría.</p>`;
+      productosGrid.innerHTML = `<p class="sin-productos">No hay productos disponibles${categoria ? ` en la categoría ${categoria}` : ''}.</p>`;
       return;
     }
 
     // Crear tarjetas dinámicamente
-    productosGrid.innerHTML = productos.map(prod => `
+    productosGrid.innerHTML = productos.map(prod => {
+      // Manejar la URL de la imagen
+      let imagenUrl = '../assets/img/placeholder.jpg';
+      if (prod.imagen) {
+        if (prod.imagen.startsWith('http')) {
+          imagenUrl = prod.imagen;
+        } else if (prod.imagen.startsWith('/')) {
+          imagenUrl = prod.imagen;
+        } else {
+          imagenUrl = `../assets/img/${prod.imagen}`;
+        }
+      }
+
+      return `
       <div class="producto-card">
-        <img src="${prod.imagen_url || '../assets/img/placeholder.jpg'}" alt="${prod.nombre}" class="producto-img">
-        <h3>${prod.nombre}</h3>
-        <p class="descripcion">${prod.descripcion || 'Sin descripción'}</p>
-        <p class="precio">S/ ${prod.precio?.toFixed(2) || '0.00'}</p>
-        <div class="acciones">
-          <button class="btn-outline ver">Ver</button>
-          <button class="btn-outline btn-primary agregar">Agregar</button>
+        <img src="${imagenUrl}" alt="${prod.nombre}" class="producto-img" onerror="this.src='../assets/img/placeholder.jpg'">
+        <div class="producto-info">
+          <h3>${prod.nombre || 'Sin nombre'}</h3>
+          ${prod.descripcion ? `<p class="descripcion">${prod.descripcion}</p>` : ''}
+          ${prod.categoria ? `<p class="categoria-badge">${prod.categoria}</p>` : ''}
+          <p class="precio">S/ ${parseFloat(prod.precio || 0).toFixed(2)}</p>
+          ${prod.stock !== undefined ? `<p class="stock">Stock: ${prod.stock}</p>` : ''}
+          <div class="acciones">
+            <button class="btn-outline ver" data-id="${prod.idProducto}">Ver</button>
+            <button class="btn-primary agregar" data-id="${prod.idProducto}">Agregar</button>
+          </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     // Eventos de botones
     productosGrid.querySelectorAll('.ver').forEach(btn => {
-      btn.addEventListener('click', () => {
-        alert('Detalles del producto próximamente disponibles.');
+      btn.addEventListener('click', (e) => {
+        const productId = e.target.getAttribute('data-id');
+        alert(`Detalles del producto ${productId} próximamente disponibles.`);
       });
     });
 
     productosGrid.querySelectorAll('.agregar').forEach(btn => {
-      btn.addEventListener('click', () => {
-        alert('Producto añadido al carrito.');
+      btn.addEventListener('click', (e) => {
+        const productId = e.target.getAttribute('data-id');
+        // Aquí se podría implementar la lógica del carrito
+        alert(`Producto ${productId} añadido al carrito.`);
       });
     });
 
   } catch (error) {
-    console.error(error);
-    productosGrid.innerHTML = `<p class="error">Error al cargar los productos.</p>`;
+    console.error('Error cargando productos:', error);
+    productosGrid.innerHTML = `<p class="error">Error al cargar los productos. Por favor, intenta más tarde.</p>`;
   }
 });
