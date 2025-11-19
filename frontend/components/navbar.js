@@ -61,6 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="menu-divider"></div>
         `;
 
+        // Enlace a "Mi Perfil" para todos los usuarios logueados
+        content += `
+          <a class="menu-item" href="/perfil">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Mi perfil
+          </a>`;
+
         // Solo mostrar "Panel administrativo" si es administrador
         if (isAdmin) {
           content += `

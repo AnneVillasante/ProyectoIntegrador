@@ -2,8 +2,8 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('../config/db');
-const authRouter = require('../routes/auth');
-const productsRouter = require('../routes/productRoutes');
+const authRouter = require('../routes/authRoutes');
+const productosRouter = require('../routes/productoRoutes');
 const usuarioRouter = require('../routes/usuarioRoutes');
 const categoriaRoutes = require('../routes/categoriaRoutes');
 const subcategoriaRoutes = require('../routes/subcategoriaRoutes');
@@ -19,7 +19,7 @@ apiApp.use(cors({
 
 apiApp.get('/health', (req, res) => res.json({ status: 'ok' }));
 apiApp.use('/api/auth', authRouter);
-apiApp.use('/api/productos', productsRouter);
+apiApp.use('/api/productos', productosRouter);
 apiApp.use('/api/usuarios', usuarioRouter);
 apiApp.use('/api/categorias', categoriaRoutes);
 apiApp.use('/api/subcategorias', subcategoriaRoutes);

@@ -2,7 +2,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
-const ProductService = require('../services/ProductService');
+const ProductService = require('../services/ProductoService');
 
 const staticApp = express();
 const frontendRoot = path.join(__dirname, '../../frontend');
@@ -10,6 +10,7 @@ const frontendRoot = path.join(__dirname, '../../frontend');
 staticApp.use('/assets', express.static(path.join(frontendRoot, 'assets')));
 staticApp.use('/pages', express.static(path.join(frontendRoot, 'pages')));
 staticApp.use('/components', express.static(path.join(frontendRoot, 'components')));
+staticApp.use('/js', express.static(path.join(frontendRoot, 'js')));
 staticApp.use('/frontend', express.static(frontendRoot));
 
 staticApp.get('/', (req, res) => {
@@ -17,6 +18,9 @@ staticApp.get('/', (req, res) => {
 });
 staticApp.get('/login', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'login.html'));
+});
+staticApp.get('/perfil', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'components', 'perfil.html'));
 });
 
 // Render de productos

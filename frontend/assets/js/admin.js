@@ -571,32 +571,28 @@ document.addEventListener('DOMContentLoaded', () => {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const usuario = user.correo || 'Sistema';
 
-      const response = await apiDownload(`/reportes/${reportName}`, {
+      // El backend ahora genera PDF, así que usamos apiDownload que está preparada para blobs.
+      const response = await apiDownload(`/reportes/${reportType}`, {
         method: 'POST',
-        body: JSON.stringify({
-          formato: 'CSV',
-          usuario: usuario
-        })
+        // El body puede estar vacío si no necesitas pasar filtros
+        body: JSON.stringify({ usuario })
       });
 
       const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('text/csv')) {
+      if (contentType && contentType.includes('application/pdf')) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `reporte_${reportName}_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.download = `reporte_${reportType}_${new Date().toISOString().slice(0, 10)}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
-        alert(`Reporte de ${reportName} generado correctamente.`);
+        alert(`Reporte de ${reportType} generado correctamente.`);
       } else {
-        // Si el backend no devuelve un CSV, sino un JSON (ej. con un ID de reporte)
-        const data = await response.json().catch(() => null);
-        if (data && data.idReporte) {
-          alert(`Reporte de ${reportName} generado. ID: ${data.idReporte}`);
-        } else {
-          alert('El servidor no devolvió un archivo CSV válido.');
-        }
+        // Si la respuesta no es un PDF, es probable que sea un error en formato JSON.
+        const errorData = await response.json().catch(() => ({ error: 'Respuesta inesperada del servidor.' }));
+        console.error('Respuesta no válida del servidor:', errorData);
+        alert(`Error al generar el reporte: ${errorData.error || 'El servidor no devolvió un archivo PDF válido.'}`);
       }
     } catch (error) {
       console.error(`Error generando reporte de ${reportName}:`, error);
