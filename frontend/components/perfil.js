@@ -7,6 +7,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const profileForm = document.getElementById('profileForm');
   const passwordForm = document.getElementById('passwordForm');
+  const profileImageUpload = document.getElementById('profileImageUpload');
+  const profileImagePreview = document.getElementById('profileImagePreview');
+
+
+  // --- Lógica para el sistema de pestañas ---
+  const tabButtons = document.querySelectorAll('.tab');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetTab = button.getAttribute('data-tab');
+
+      // Ocultar todos los contenidos y quitar la clase 'active' de los botones
+      tabContents.forEach(content => content.classList.remove('active'));
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+
+      // Mostrar el contenido de la pestaña seleccionada y marcar el botón como activo
+      document.getElementById(targetTab).classList.add('active');
+      button.classList.add('active');
+    });
+  });
+  // --- Fin de la lógica de pestañas ---
 
   // Cargar datos del perfil del usuario
   async function loadProfile() {
@@ -27,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('correo').value = user.correo || '';
       document.getElementById('dni').value = user.dni || '';
       document.getElementById('telefono').value = user.telefono || '';
+      if (user.foto_perfil) {
+        profileImagePreview.src = `/uploads/${user.foto_perfil}`;
+      }
 
     } catch (error) {
       console.error('Error al cargar el perfil:', error);
@@ -106,6 +131,40 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) throw new Error(result.error || 'Error al cambiar la contraseña.');
       alert('Contraseña cambiada con éxito.');
       passwordForm.reset();
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  // Manejar la selección de la imagen de perfil
+  profileImageUpload.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Previsualizar imagen
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      profileImagePreview.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // Subir imagen al servidor
+    const formData = new FormData();
+    formData.append('profileImage', file);
+
+    try {
+      const response = await fetch('/api/usuarios/perfil/foto', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Error al subir la imagen.');
+      
+      alert('Foto de perfil actualizada con éxito.');
     } catch (error) {
       alert(error.message);
     }

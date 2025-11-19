@@ -35,3 +35,44 @@
   color: var(--muted);
   margin-top: 4px;
 }
+
+/* Estilos para la foto de perfil */
+.profile-picture-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.profile-picture-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-border);
+}
+
+.profile-picture-upload-label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.profile-picture-upload-input {
+  display: none;
+}
