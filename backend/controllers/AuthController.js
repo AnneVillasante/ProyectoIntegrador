@@ -8,11 +8,11 @@ const JWT_EXPIRES = '7d';
 
 exports.login = async (req, res) => {
   try {
-    const idValue = req.body.correo || req.body.nombres || req.body.identifier || req.body.email || req.body.username;
-    const pwd = req.body.contraseña || req.body.password;
+    const idValue = req.body.correo || req.body.identifier; // Simplificado para usar correo o un identificador genérico
+    const pwd = req.body.contraseña || req.body.password; // Acepta 'contraseña' o 'password'
     if (!idValue || !pwd) return res.status(400).json({ error: 'Faltan credenciales' });
 
-    const user = await UsuarioDao.findByIdentifier(idValue);
+    const user = await UsuarioDao.findByCorreo(idValue);
     if (!user) return res.status(401).json({ error: 'Usuario o contraseña inválidos' });
 
     const match = await bcrypt.compare(pwd, user.contraseña);
@@ -38,13 +38,16 @@ exports.register = async (req, res) => {
     const existing = await UsuarioDao.findByCorreo(correo);
     if (existing) return res.status(409).json({ error: 'El correo ya está registrado' });
 
+    // Hashear la contraseña antes de guardarla
+    const hashedContraseña = await bcrypt.hash(contraseña, 10);
+
     const id = await UsuarioDao.create({ 
       nombres, 
       apellidos, 
       correo, 
       telefono, 
       dni, 
-      contraseña, 
+      contraseña: hashedContraseña, // Usar la contraseña hasheada
       rol: rol || 'Cliente' 
     });
     
