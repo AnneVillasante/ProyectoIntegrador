@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Lunaria Threads</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/carrito.css">
+    <!-- Iconos de Font Awesome para los botones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../components/layout.js" defer></script>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main class="container">
+        <div class="cart-page-title">
+            <h2>Mi Carrito de Compras</h2>
+        </div>
+
+        <div class="cart-container">
+            <!-- Sección de productos en el carrito -->
+            <div class="cart-items-list">
+                <!-- Los productos se cargarán aquí dinámicamente con JS -->
+                <div id="cart-items-container"></div>
+
+                <!-- Mensaje para carrito vacío -->
+                <div id="empty-cart-message" class="empty-cart" style="display: none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <p>Tu carrito está vacío.</p>
+                    <a href="productos.html" class="btn-primary">Ver productos</a>
+                </div>
+            </div>
+
+            <!-- Resumen de la compra -->
+            <div class="cart-summary">
+                <h3>Resumen de la Compra</h3>
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span id="summary-subtotal">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Descuentos</span>
+                    <span id="summary-discounts" class="discount-text">-$0.00</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="summary-total">$0.00</span>
+                </div>
+                <button id="checkout-button" class="btn-checkout" disabled>Continuar Compra</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <!-- El script debe ir al final para asegurar que el DOM esté cargado -->
+    <script src="../components/navbar.js" defer></script>
+    <script src="../assets/js/carrito.js"></script>
+</body>
+</html>

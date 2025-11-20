@@ -15,89 +15,75 @@
   <div id="navbar"></div>
 
   <main class="auth-container">
-    <div class="auth-card">
-
-      <!-- Navegación de Pestañas -->
-      <div class="auth-tabs">
-        <button class="tab active" data-tab="datos-personales-tab">Datos Personales</button>
-        <button class="tab" data-tab="contraseña-tab">Cambiar Contraseña</button>
-      </div>
-
-      <!-- Contenido de la Pestaña: Datos Personales -->
-      <div id="datos-personales-tab" class="form active">
-        <!-- Sección de Foto de Perfil -->
-        <div class="profile-picture-section">
+    <div class="profile-card">
+      <div class="profile-picture-section">
           <div class="profile-picture-container">
-            <img id="profileImagePreview" src="../assets/img/default-avatar.png" alt="Foto de perfil" class="profile-picture">
-            <label for="profileImageUpload" class="profile-picture-upload-label">
-              <span>Cambiar foto</span>
-            </label>
-            <input type="file" id="profileImageUpload" name="profileImage" accept="image/*" class="profile-picture-upload-input">
+              <img id="profileImagePreview" src="../assets/img/default-avatar.png" alt="Foto de perfil" class="profile-picture">
+              <label for="profileImageUpload" class="profile-picture-upload-label">Cambiar foto</label>
+              <input type="file" id="profileImageUpload" class="profile-picture-upload-input" accept="image/*" disabled>
           </div>
-        </div>
+      </div>
 
-        <form id="profileForm" novalidate>
-          <div class="form-grid">
-            <!-- Nombres -->
-            <div class="form-group">
-              <label for="nombres">Nombres</label>
-              <input type="text" id="nombres" name="nombres" required readonly>
-            </div>
+      <div class="tab-nav">
+          <button class="tab-btn active" data-tab="profileForm">Mi Perfil</button>
+          <button class="tab-btn" data-tab="passwordForm">Cambiar Contraseña</button>
+      </div>
 
-            <!-- Apellidos -->
-            <div class="form-group">
-              <label for="apellidos">Apellidos</label>
-              <input type="text" id="apellidos" name="apellidos" required readonly>
-            </div>
-
-            <!-- Correo -->
-            <div class="form-group full-width">
+      <!-- Formulario de Perfil -->
+      <form id="profileForm" class="form active">
+          <div class="form-row">
+              <div class="form-group">
+                  <label for="nombres">Nombres</label>
+                  <input type="text" id="nombres" name="nombres" readonly>
+              </div>
+              <div class="form-group">
+                  <label for="apellidos">Apellidos</label>
+                  <input type="text" id="apellidos" name="apellidos" readonly>
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group">
+                  <label for="dni">DNI</label>
+                  <input type="text" id="dni" name="dni" readonly>
+              </div>
+              <div class="form-group">
+                  <label for="telefono">Teléfono</label>
+                  <input type="tel" id="telefono" name="telefono" readonly>
+              </div>
+          </div>
+          <div class="form-group">
               <label for="correo">Correo Electrónico</label>
-              <input type="email" id="correo" name="correo" required readonly>
-            </div>
-
-            <!-- DNI -->
-            <div class="form-group">
-              <label for="dni">DNI</label>
-              <input type="text" id="dni" name="dni" required pattern="[0-9]{8}" readonly>
-            </div>
-
-            <!-- Teléfono -->
-            <div class="form-group">
-              <label for="telefono">Teléfono</label>
-              <input type="tel" id="telefono" name="telefono" required pattern="9[0-9]{8}" readonly>
-            </div>
+              <input type="email" id="correo" name="correo" readonly>
+              <small>El correo electrónico no se puede modificar.</small>
           </div>
-
+          
           <div class="form-actions">
-            <button type="button" id="editProfileBtn" class="btn-primary">Editar Perfil</button>
-            <button type="submit" id="saveProfileBtn" class="btn-primary" hidden>Guardar Cambios</button>
-            <button type="button" id="cancelEditBtn" class="btn-secondary" hidden>Cancelar</button>
+              <button type="button" id="editProfileBtn" class="btn btn-block btn-primary">Editar Perfil</button>
+              <div id="edit-actions" hidden>
+                  <button type="submit" id="saveProfileBtn" class="btn btn-primary">Guardar Cambios</button>
+                  <button type="button" id="cancelEditBtn" class="btn btn-secondary">Cancelar</button>
+              </div>
           </div>
-        </form>
-      </div>
+      </form>
 
-      <!-- Contenido de la Pestaña: Cambiar Contraseña -->
-      <div id="contraseña-tab" class="form">
-        <form id="passwordForm" novalidate>
+      <!-- Formulario de Contraseña -->
+      <form id="passwordForm" class="form">
           <div class="form-group">
-            <label for="contraseñaActual">Contraseña Actual</label>
-            <input type="password" id="contraseñaActual" name="contraseñaActual" required>
-            <small>Ingresa tu contraseña actual para poder cambiarla.</small>
+              <label for="contraseñaActual">Contraseña Actual</label>
+              <input type="password" id="contraseñaActual" name="contraseñaActual">
           </div>
           <div class="form-group">
-            <label for="contraseñaNueva">Nueva Contraseña</label>
-            <input type="password" id="contraseñaNueva" name="contraseñaNueva" minlength="6">
+              <label for="contraseñaNueva">Nueva Contraseña</label>
+              <input type="password" id="contraseñaNueva" name="contraseñaNueva">
           </div>
           <div class="form-group">
-            <label for="confirmarContraseña">Confirmar Nueva Contraseña</label>
-            <input type="password" id="confirmarContraseña" name="confirmarContraseña" minlength="6">
+              <label for="confirmarContraseña">Confirmar Nueva Contraseña</label>
+              <input type="password" id="confirmarContraseña" name="confirmarContraseña">
           </div>
-          <div class="form-group">
-            <button type="submit" class="btn">Cambiar Contraseña</button>
+          <div class="form-actions">
+              <button type="submit" class="btn-primary">Cambiar Contraseña</button>
           </div>
-        </form>
-      </div>
+      </form>
     </div>
   </main>
 

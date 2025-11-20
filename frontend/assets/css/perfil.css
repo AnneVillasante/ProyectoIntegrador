@@ -36,6 +36,13 @@
   margin-top: 4px;
 }
 
+/* NUEVO: Estilo para las filas de dos columnas */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
 /* Estilos para la foto de perfil */
 .profile-picture-section {
   display: flex;
@@ -45,13 +52,15 @@
 
 .profile-picture-container {
   position: relative;
-  width: 120px;
-  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; /* Espacio entre la foto y el botón */
 }
 
 .profile-picture {
-  width: 100%;
-  height: 100%;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--color-border);
@@ -59,20 +68,85 @@
 
 .profile-picture-upload-label {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  background-color: var(--color-primary);
-  color: white;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: static; /* Quitamos el posicionamiento absoluto */
+  background-color: transparent;
+  color: var(--brand); /* Usamos un color de la marca */
+  border: 1px solid var(--brand);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: none; /* Oculto por defecto, controlado por JS */
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .profile-picture-upload-input {
   display: none;
+}
+
+/* Estilos para los botones de acción del formulario */
+.form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  gap: 1rem;
+}
+
+/* NUEVO: Contenedor para los botones de edición */
+#edit-actions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* --- REFACTORIZACIÓN DE BOTONES --- */
+
+/* 1. Estilo base para TODOS los botones */
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: var(--radius, 10px);
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 0 14px rgba(255,255,255,0.1);
+  text-align: center;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-3px);
+}
+
+/* 2. Modificador de color para acciones primarias (Guardar) */
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #06070a; /* Texto oscuro para contraste */
+}
+
+/* 3. Modificador de color para acciones secundarias (Cancelar) */
+.btn-secondary {
+  background: linear-gradient(135deg, #868e96, #495057);
+  color: var(--text); /* Texto claro para contraste */
+}
+
+/* 4. Modificador de tamaño para botones de ancho completo (Editar Perfil) */
+.btn-block {
+  width: 100%;
+}
+
+/* 5. Modificador para los botones que comparten espacio (Guardar y Cancelar) */
+#edit-actions .btn {
+  flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+}
+
+/* Ajustes responsivos para las filas del formulario */
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr; /* Apila los campos en pantallas pequeñas */
+    gap: 1rem;
+  }
 }

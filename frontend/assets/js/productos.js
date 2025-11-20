@@ -59,20 +59,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Crear tarjetas dinámicamente
     productosGrid.innerHTML = productos.map(prod => {
       // Manejar la URL de la imagen
-      let imagenUrl = '../assets/img/placeholder.jpg';
+      let imagenUrl = '../assets/img/placeholder.png';
       if (prod.imagen) {
         if (prod.imagen.startsWith('http')) {
           imagenUrl = prod.imagen;
-        } else if (prod.imagen.startsWith('/')) {
-          imagenUrl = prod.imagen;
+        } else if (prod.imagen.includes('/')) { // Asume que la ruta es como 'uploads/productos/...'
+          imagenUrl = `http://localhost:4000/${prod.imagen}`;
         } else {
-          imagenUrl = `../assets/img/${prod.imagen}`;
+          imagenUrl = `http://localhost:4000/uploads/productos/${prod.imagen}`;
         }
       }
 
       return `
       <div class="producto-card">
-        <img src="${imagenUrl}" alt="${prod.nombre}" class="producto-img" onerror="this.src='../assets/img/placeholder.jpg'">
+        <img src="${imagenUrl}" alt="${prod.nombre}" class="producto-img" onerror="this.src='../assets/img/placeholder.png'">
         <div class="producto-info">
           <h3>${prod.nombre || 'Sin nombre'}</h3>
           ${prod.descripcion ? `<p class="descripcion">${prod.descripcion}</p>` : ''}
@@ -96,11 +96,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
-    productosGrid.querySelectorAll('.agregar').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    productosGrid.querySelectorAll('.agregar').forEach(button => {
+      button.addEventListener('click', async (e) => {
         const productId = e.target.getAttribute('data-id');
-        // Aquí se podría implementar la lógica del carrito
-        alert(`Producto ${productId} añadido al carrito.`);
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          alert('Debes iniciar sesión para agregar productos al carrito.');
+          window.location.href = '/pages/login.html';
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE}/carrito`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              idProducto: parseInt(productId),
+              cantidad: 1
+            })
+          });
+
+          if (response.ok) {
+            alert(`Producto añadido al carrito.`);
+          } else {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'No se pudo añadir el producto al carrito.');
+          }
+        } catch (error) {
+          console.error('Error al añadir al carrito:', error);
+          alert(`Error: ${error.message}`);
+        }
       });
     });
 

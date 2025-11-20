@@ -64,14 +64,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Funciones de utilidad
   async function apiCall(endpoint, options = {}) {
     const token = localStorage.getItem('token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
+    };
+
+    // Si el cuerpo es FormData, el navegador establece el Content-Type automáticamente.
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {
         ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          ...options.headers
-        }
+        headers: headers
       });
       
       if (!response.ok) {
@@ -79,7 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
       }
       
-      return await response.json();
+      // Si la respuesta es 204 (No Content), no hay cuerpo que leer.
+      if (response.status === 204) {
+        return null; // O un objeto vacío: {}
+      }
+      return await response.json(); // Para otras respuestas exitosas (200, 201)
     } catch (error) {
       console.error('API Call Error:', error);
       throw error;
@@ -415,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     tbody.innerHTML = categorias.map(cat => {
       const imagenUrl = cat.imagen 
-        ? (cat.imagen.startsWith('http') ? cat.imagen : (cat.imagen.startsWith('/') ? cat.imagen : `../assets/img/${cat.imagen}`))
+        ? (cat.imagen.startsWith('http') ? cat.imagen : `http://localhost:4000/${cat.imagen}`)
         : null;
       return `
       <tr>
@@ -446,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = subcategorias.map(sub => {
       const categoria = categorias.find(c => c.idCategoria === sub.idCategoria);
       const imagenUrl = sub.imagen 
-        ? (sub.imagen.startsWith('http') ? sub.imagen : (sub.imagen.startsWith('/') ? sub.imagen : `../assets/img/${sub.imagen}`))
+        ? (sub.imagen.startsWith('http') ? sub.imagen : `http://localhost:4000/${sub.imagen}`)
         : null;
       return `
       <tr>
@@ -699,23 +709,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const descripcion = document.getElementById('categoriaDescripcion').value;
     const imagenFile = document.getElementById('categoriaImagen').files[0];
 
-    const categoryData = {
-      nombre,
-      descripcion: descripcion || '',
-      imagen: '' // Por ahora, el backend manejará la imagen como string
-    };
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('descripcion', descripcion || '');
+    if (imagenFile) {
+      formData.append('imagen', imagenFile);
+    }
 
     try {
       if (id) {
-        await apiCall(`/categorias/${id}`, {
+        await apiCall(`categorias/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(categoryData)
+          body: formData
         });
         alert('Categoría actualizada correctamente');
       } else {
         await apiCall('/categorias', {
           method: 'POST',
-          body: JSON.stringify(categoryData)
+          body: formData
         });
         alert('Categoría creada correctamente');
       }
@@ -742,25 +753,26 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const subcategoryData = {
-      nombre,
-      descripcion: descripcion || '',
-      idCategoria: parseInt(idCategoria),
-      genero: genero || 'Unisex',
-      imagen: '' // Por ahora, el backend manejará la imagen como string
-    };
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('descripcion', descripcion || '');
+    formData.append('idCategoria', idCategoria);
+    formData.append('genero', genero || 'Unisex');
+    if (imagenFile) {
+      formData.append('imagen', imagenFile);
+    }
 
     try {
       if (id) {
         await apiCall(`/subcategorias/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(subcategoryData)
+          body: formData
         });
         alert('Subcategoría actualizada correctamente');
       } else {
         await apiCall('/subcategorias', {
           method: 'POST',
-          body: JSON.stringify(subcategoryData)
+          body: formData
         });
         alert('Subcategoría creada correctamente');
       }
@@ -783,15 +795,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const idSubcategoria = document.getElementById('idSubcategoria').value || null;
     const imagenFile = document.getElementById('imagen').files[0];
 
-    const productData = {
-      nombre,
-      descripcion: descripcion || '',
-      precio,
-      stock,
-      idCategoria: idCategoria ? parseInt(idCategoria) : null,
-      idSubcategoria: idSubcategoria ? parseInt(idSubcategoria) : null,
-      imagen: '' // Por ahora, el backend manejará la imagen
-    };
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('descripcion', descripcion || '');
+    formData.append('precio', precio);
+    formData.append('stock', stock);
+    if (idCategoria) {
+      formData.append('idCategoria', idCategoria);
+    }
+    if (idSubcategoria) {
+      formData.append('idSubcategoria', idSubcategoria);
+    }
+    if (imagenFile) {
+      formData.append('imagen', imagenFile);
+    }
 
     // Si hay una imagen, aquí se podría manejar la subida
     // Por ahora, dejamos que el backend maneje la imagen como string
@@ -801,13 +818,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (id) {
         await apiCall(`/productos/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(productData)
+          body: formData
         });
         alert('Producto actualizado correctamente');
       } else {
         await apiCall('/productos', {
           method: 'POST',
-          body: JSON.stringify(productData)
+          body: formData
         });
         alert('Producto creado correctamente');
       }
