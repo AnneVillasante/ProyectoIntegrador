@@ -34,7 +34,7 @@ class ProductoService {
 
     return products.map(p => `
       <div class="producto-card">
-        <img src="../assets/img/${p.imagen}" alt="${p.nombre}">
+        <img src="http://localhost:4000/${p.imagen}" alt="${p.nombre}" class="producto-img" onerror="this.src='http://localhost:4000/uploads/default_product.png'">
         <h3>${p.nombre}</h3>
         <p class="categoria">${p.categoria || ''}</p>
         <p class="precio">S/ ${Number(p.precio).toFixed(2)}</p>
