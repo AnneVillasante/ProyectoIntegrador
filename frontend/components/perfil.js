@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (user.foto_perfil) {
-        profileImagePreview.src = `/uploads/${user.foto_perfil}`;
+        profileImagePreview.src = `http://localhost:4000/uploads/${user.foto_perfil}`;
       }
 
 
