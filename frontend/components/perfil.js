@@ -9,11 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordForm = document.getElementById('passwordForm');
   const profileImageUpload = document.getElementById('profileImageUpload');
   const profileImagePreview = document.getElementById('profileImagePreview');
+  const editProfileBtn = document.getElementById('editProfileBtn');
+  const saveProfileBtn = document.getElementById('saveProfileBtn');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const profileFields = profileForm.querySelectorAll('input');
+  let originalProfileData = {};
 
 
   // --- Lógica para el sistema de pestañas ---
   const tabButtons = document.querySelectorAll('.tab');
-  const tabContents = document.querySelectorAll('.tab-content');
+  const tabContents = document.querySelectorAll('.form'); // Apuntamos a la clase .form
 
   tabButtons.forEach(button => {
     button.addEventListener('click', () => {
@@ -27,12 +32,35 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById(targetTab).classList.add('active');
       button.classList.add('active');
     });
-  });
+    });
   // --- Fin de la lógica de pestañas ---
+
+  // --- Lógica para edición de perfil ---
+  function toggleEditMode(isEditing) {
+    profileFields.forEach(field => {
+      // El campo de correo no debe ser editable
+      if (field.name !== 'correo') {
+        field.readOnly = !isEditing;
+      }
+    });
+
+    // El input para subir foto también se controla aquí
+    profileImageUpload.disabled = !isEditing;
+
+    editProfileBtn.hidden = isEditing;
+    saveProfileBtn.hidden = !isEditing;
+    cancelEditBtn.hidden = !isEditing;
+
+    if (isEditing) {
+      // Enfocar el primer campo editable
+      document.getElementById('nombres').focus();
+    }
+  }
 
   // Cargar datos del perfil del usuario
   async function loadProfile() {
     try {
+
       const response = await fetch('/api/usuarios/perfil', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -41,23 +69,46 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error('No se pudo obtener la información del perfil.');
       }
 
+      
       const user = await response.json();
 
+      originalProfileData = {
+        nombres: user.nombres || '',
+        apellidos: user.apellidos || '',
+        correo: user.correo || '',
+        dni: user.dni || '',
+        telefono: user.telefono || ''
+      };
+
       // Llenar el formulario con los datos del usuario
-      document.getElementById('nombres').value = user.nombres || '';
-      document.getElementById('apellidos').value = user.apellidos || '';
-      document.getElementById('correo').value = user.correo || '';
-      document.getElementById('dni').value = user.dni || '';
-      document.getElementById('telefono').value = user.telefono || '';
+      for (const key in originalProfileData) {
+        document.getElementById(key).value = originalProfileData[key];
+      }
+
       if (user.foto_perfil) {
         profileImagePreview.src = `/uploads/${user.foto_perfil}`;
       }
 
+
     } catch (error) {
       console.error('Error al cargar el perfil:', error);
-      alert(error.message);
+            alert(error.message);
     }
   }
+
+  editProfileBtn.addEventListener('click', () => {
+    toggleEditMode(true);
+  });
+
+  cancelEditBtn.addEventListener('click', () => {
+    // Restaurar valores originales
+    for (const key in originalProfileData) {
+      document.getElementById(key).value = originalProfileData[key];
+    }
+    toggleEditMode(false);
+  });
+
+  // --- Fin lógica de edición ---
 
   // Manejar el envío del formulario de perfil
   profileForm.addEventListener('submit', async (e) => {
@@ -85,14 +136,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!response.ok) {
         throw new Error(result.error || 'Error al actualizar el perfil.');
-      }
+            }
 
       alert('Perfil actualizado con éxito.');
+      toggleEditMode(false); // Volver al modo de solo lectura
+
       // Opcional: actualizar datos del usuario en localStorage si es necesario
-      const localUser = JSON.parse(localStorage.getItem('user'));
-      const updatedUser = { ...localUser, ...formData };
+      const userFromStorage = JSON.parse(localStorage.getItem('user')) || {};
+      const updatedUser = { ...userFromStorage, ...result.user }; // Usar datos del servidor
       localStorage.setItem('user', JSON.stringify(updatedUser));
-      window.location.reload(); // Recarga para que el navbar muestre el nombre actualizado
+
+      // Notificar a otros componentes (como el navbar) que el perfil ha cambiado
+      window.dispatchEvent(new CustomEvent('profile:updated'));
 
     } catch (error) {
       console.error('Error en la actualización:', error);
@@ -170,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  
   // Cargar los datos al iniciar la página
   loadProfile();
+
+  // Asegurarse de que el formulario esté en modo no editable al cargar
+  toggleEditMode(false);
 });

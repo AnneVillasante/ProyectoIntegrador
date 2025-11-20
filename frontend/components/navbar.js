@@ -199,6 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Renderizar contenido inicial
     renderAccountContent();
+
+    // Escuchar cambios en el perfil para volver a renderizar
+    window.addEventListener('profile:updated', renderAccountContent);
   }
 
   // Bind now and when navbar component is injected

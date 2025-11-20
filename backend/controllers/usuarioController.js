@@ -74,6 +74,7 @@ exports.obtenerMiPerfil = async (req, res) => {
       dni: usuario.dni,
       rol: usuario.rol,
       fotoPerfil: usuario.fotoPerfil,
+      foto_perfil: usuario.foto_perfil, // Corregido para consistencia
     };
 
     res.json(usuarioDto);
@@ -94,7 +95,6 @@ exports.actualizarMiPerfil = async (req, res) => {
     delete data.password;
     delete data.rol;
 
-    await usuarioModel.update(id, data);
     res.json({ success: true, message: 'Perfil actualizado correctamente' });
   } catch (err) {
     console.error('USER PROFILE UPDATE ERROR:', err);
