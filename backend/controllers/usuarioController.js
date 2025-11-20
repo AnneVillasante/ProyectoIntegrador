@@ -95,7 +95,15 @@ exports.actualizarMiPerfil = async (req, res) => {
     delete data.password;
     delete data.rol;
 
-    res.json({ success: true, message: 'Perfil actualizado correctamente' });
+    // ¡Añadido! Llamar al modelo para que guarde los datos en la BD.
+    await usuarioModel.update(id, data);
+
+    // Devolver el usuario actualizado para refrescar el frontend
+    const usuarioActualizado = await usuarioModel.getById(id);
+    // Usamos el DTO para asegurarnos de no enviar datos sensibles como la contraseña.
+    const usuarioDto = new UsuarioDto(usuarioActualizado);
+
+    res.json({ success: true, message: 'Perfil actualizado correctamente', user: usuarioDto });
   } catch (err) {
     console.error('USER PROFILE UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar el perfil' });
@@ -117,5 +125,28 @@ exports.actualizarMiPassword = async (req, res) => {
   } catch (err) {
     console.error('USER PASSWORD UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar la contraseña' });
+  }
+};
+
+// Subir/actualizar la foto de perfil del usuario autenticado
+exports.subirFotoPerfil = async (req, res) => {
+  try {
+    const { id } = req.user; // ID del usuario autenticado
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se ha subido ningún archivo.' });
+    }
+
+    // El nombre del archivo guardado por Multer
+    const nombreArchivo = req.file.filename;
+    const rutaArchivo = `perfiles/${nombreArchivo}`; // Guardamos la ruta relativa
+
+    // Actualizar la base de datos con la nueva ruta de la foto
+    await usuarioModel.update(id, { foto_perfil: rutaArchivo });
+
+    res.json({ success: true, message: 'Foto de perfil actualizada correctamente', filePath: rutaArchivo });
+  } catch (err) {
+    console.error('USER PHOTO UPLOAD ERROR:', err);
+    res.status(500).json({ error: 'Error al subir la foto de perfil' });
   }
 };

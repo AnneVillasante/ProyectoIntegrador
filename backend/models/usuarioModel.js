@@ -26,11 +26,19 @@ module.exports = {
   },
 
   update: async (id, data) => {
-    const { nombres, apellidos, correo, telefono, dni, fotoPerfil } = data;
-    await pool.query(
-      'UPDATE usuario SET nombres = ?, apellidos = ?, correo = ?, telefono = ?, dni = ?, fotoPerfil = ? WHERE idUsuario = ?',
-      [nombres, apellidos, correo, telefono, dni, fotoPerfil, id]
-    );
+    // Construcción dinámica de la consulta para actualizar solo los campos que llegan
+    const fields = Object.keys(data);
+    const values = Object.values(data);
+
+    if (fields.length === 0) {
+      return; // No hay nada que actualizar
+    }
+
+    const setClause = fields.map(field => `${field} = ?`).join(', ');
+    const sql = `UPDATE usuario SET ${setClause} WHERE idUsuario = ?`;
+
+    values.push(id); // Añadir el id al final para el WHERE
+    await pool.query(sql, values);
   },
 
   delete: async (id) => {

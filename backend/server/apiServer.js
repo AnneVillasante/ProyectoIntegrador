@@ -17,6 +17,8 @@ apiApp.use(cors({
   credentials: true
 }));
 
+// Servir archivos estáticos desde la carpeta 'uploads'
+apiApp.use('/uploads', express.static('uploads'));
 apiApp.get('/health', (req, res) => res.json({ status: 'ok' }));
 apiApp.use('/api/auth', authRouter);
 apiApp.use('/api/productos', productosRouter);
