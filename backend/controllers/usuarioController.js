@@ -73,8 +73,7 @@ exports.obtenerMiPerfil = async (req, res) => {
       telefono: usuario.telefono,
       dni: usuario.dni,
       rol: usuario.rol,
-      fotoPerfil: usuario.fotoPerfil,
-      foto_perfil: usuario.foto_perfil, // Corregido para consistencia
+      foto_perfil: usuario.foto_perfil
     };
 
     res.json(usuarioDto);
