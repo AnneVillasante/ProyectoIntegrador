@@ -10,7 +10,12 @@ class Producto {
     this.idCategoria = idCategoria;
     this.idSubcategoria = idSubcategoria;
 
-    this.imagen = imagen || 'uploads/default_product.png';
+    if (imagen) {
+      if (imagen.startsWith('http')) this.imagen = imagen;
+      else this.imagen = path.join('/uploads/', imagen);
+    } else {
+      this.imagen = '/uploads/default_product.png';
+    }
   }
 }
 
