@@ -9,6 +9,7 @@ const categoriaRoutes = require('../routes/categoriaRoutes');
 const subcategoriaRoutes = require('../routes/subcategoriaRoutes');
 const reporteRoutes = require('../routes/reporteRoutes');
 const carritoRoutes = require('../routes/carritoRoutes');
+const clienteRoutes = require('../routes/clienteRoutes');
 
 const apiApp = express();
 apiApp.use(express.json());
@@ -28,6 +29,7 @@ apiApp.use('/api/categorias', categoriaRoutes);
 apiApp.use('/api/subcategorias', subcategoriaRoutes);
 apiApp.use('/api/reportes', reporteRoutes);
 apiApp.use('/api/carrito', carritoRoutes);
+apiApp.use('/api/clientes', clienteRoutes);
 
 async function startApi() {
   try {
