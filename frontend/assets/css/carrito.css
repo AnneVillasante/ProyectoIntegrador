@@ -1,0 +1,220 @@
+/* Paleta de colores sugerida para Lunaria Threads */
+:root {
+    --color-primary: #4a4e69; /* Morado oscuro/grisáceo */
+    --color-secondary: #9a8c98; /* Malva suave */
+    --color-accent: #c9ada7; /* Rosa pálido */
+    --color-background: #f2e9e4; /* Crema muy claro */
+    --color-text: #22223b; /* Azul muy oscuro casi negro */
+    --color-white: #ffffff;
+    --color-success: #4CAF50;
+    --color-danger: #F44336;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos Generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header y Footer (básicos para contexto) */
+.header, .footer {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.header .container, .footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header nav a {
+    color: var(--color-white);
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+.header nav a.active {
+    color: var(--color-accent);
+}
+
+/* Título de la página */
+.cart-page-title {
+    text-align: center;
+    margin: 40px 0;
+    font-size: 1.8rem;
+    color: var(--color-primary);
+}
+
+/* Contenedor principal del carrito */
+.cart-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+/* Lista de items en el carrito */
+.cart-items-list {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto auto auto;
+    gap: 20px;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+}
+
+.cart-item-details h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.cart-item-details p {
+    margin: 0;
+    color: #777;
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    color: var(--color-text);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+}
+
+.quantity-input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    height: 28px;
+    margin: 0 5px;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cart-item-remove .remove-btn {
+    background: none;
+    border: none;
+    color: var(--color-danger);
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+/* Resumen de la compra */
+.cart-summary {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    height: fit-content; /* Para que no se estire innecesariamente */
+}
+
+.cart-summary h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.summary-item, .summary-total {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.summary-total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.discount-text {
+    color: var(--color-success);
+}
+
+.btn-checkout {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-checkout:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+}
+
+.btn-checkout:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Carrito Vacío */
+.empty-cart {
+    text-align: center;
+    padding: 50px 20px;
+    color: #888;
+}
+
+.empty-cart i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.empty-cart .btn-primary {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+}
