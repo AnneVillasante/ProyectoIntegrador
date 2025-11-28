@@ -1,15 +1,40 @@
+// backend/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'cambiar_esto_en_produccion';
+const pool = require('../config/db');
 
-module.exports = (req, res, next) => {
-  const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'No autorizado' });
-  const token = auth.split(' ')[1];
-  try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: 'Token inválido' });
+const protect = async (req, res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Adjuntar el usuario a la solicitud
+      const [rows] = await pool.query('SELECT idUsuario, email, rol FROM usuarios WHERE idUsuario = ?', [decoded.id]);
+      req.user = rows[0];
+
+      if (!req.user) {
+        return res.status(401).json({ message: 'Usuario no encontrado.' });
+      }
+
+      next();
+    } catch (error) {
+      console.error(error);
+      return res.status(401).json({ message: 'No autorizado, token inválido.' });
+    }
+  }
+
+  if (!token) {
+    return res.status(401).json({ message: 'No autorizado, no hay token.' });
   }
 };
+
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.rol === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Acceso denegado. Se requiere rol de administrador.' });
+  }
+};
+
+module.exports = { protect, isAdmin };

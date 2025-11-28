@@ -23,8 +23,9 @@ staticApp.get('/perfil', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'components', 'perfil.html'));
 });
 staticApp.get('/carrito', (req, res) => {
-  res.sendFile(path.join(frontendRoot, 'pages', 'cart.html'));
+  res.sendFile(path.join(frontendRoot, 'pages', 'carrito.html'));
 });
+
 
 // Render de productos
 staticApp.get('/productos', async (req, res) => {
