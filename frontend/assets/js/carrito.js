@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // AJUSTA ESTA URL: Apunta a tu endpoint real del backend.
             // Por ejemplo, si necesitas el ID del cliente: /api/carrito/cliente/1
-            const response = await fetch('/api/carrito/1'); // Usando 1 como ID de carrito de ejemplo
+            const response = await fetch(`${window.CONFIG.API_URL}/carrito/1`); // Usando 1 como ID de carrito de ejemplo
             if (!response.ok) {
                 throw new Error(`Error del servidor: ${response.status}`);
             }
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             cartItemElement.innerHTML = `
                 <div class="cart-item-image">
-                    <img src="${item.imagenProducto || 'https://via.placeholder.com/100'}" alt="${item.nombreProducto}">
+                    <img src="${window.CONFIG.IMG_URL}${item.imagenProducto}" alt="${item.nombreProducto}" onerror="this.onerror=null;this.src='https://via.placeholder.com/100';">
                 </div>
                 <div class="cart-item-details">
                     <h4>${item.nombreProducto}</h4>
@@ -119,17 +119,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Aquí harías una llamada PUT/POST a tu backend para actualizar la cantidad
         console.log(`Actualizando producto ${productId} a cantidad ${newQuantity}`);
-        // Ejemplo: await fetch(`/api/carrito/item/${productId}`, { method: 'PUT', body: JSON.stringify({ cantidad: newQuantity }), headers: {'Content-Type': 'application/json'} });
+        // Ejemplo: await fetch(`${window.CONFIG.API_URL}/carrito/item/${productId}`, { method: 'PUT', body: JSON.stringify({ cantidad: newQuantity }), headers: {'Content-Type': 'application/json'} });
         
         // Después de la llamada exitosa, volver a cargar los datos
         fetchCartData();
     }
 
     async function removeItem(productId) {
-        if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
+        if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
             console.log(`Eliminando producto ${productId}`);
             // Aquí harías una llamada DELETE a tu backend
-            // Ejemplo: await fetch(`/api/carrito/item/${productId}`, { method: 'DELETE' });
+            // Ejemplo: await fetch(`${window.CONFIG.API_URL}/carrito/item/${productId}`, { method: 'DELETE' });
 
             // Después de la llamada exitosa, volver a cargar los datos
             fetchCartData();

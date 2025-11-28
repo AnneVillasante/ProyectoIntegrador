@@ -31,8 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   try {
     // Obtener productos desde el backend usando la ruta correcta
-    const API_BASE = 'http://localhost:4000/api';
-    const apiUrl = `${API_BASE}/productos`;
+    const apiUrl = `${window.CONFIG.API_URL}/productos`;
     const response = await fetch(apiUrl);
     
     if (!response.ok) {
@@ -181,10 +180,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (prod.imagen) {
         if (prod.imagen.startsWith('http')) {
           imagenUrl = prod.imagen;
-        } else if (prod.imagen.includes('/')) { // Asume que la ruta es como 'uploads/productos/...'
-          imagenUrl = `http://localhost:4000/${prod.imagen}`;
+        } else if (prod.imagen.startsWith('/')) { // Ruta absoluta desde la raíz del servidor
+          imagenUrl = `${window.CONFIG.IMG_URL}${prod.imagen}`;
         } else {
-          imagenUrl = `http://localhost:4000/uploads/productos/${prod.imagen}`;
+          // Asume una ruta relativa que necesita la base de la imagen
+          imagenUrl = `${window.CONFIG.IMG_URL}/uploads/productos/${prod.imagen}`;
         }
       }
 
@@ -205,7 +205,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     productosGrid.querySelectorAll('.agregar').forEach(button => {
       button.addEventListener('click', async (e) => {
         const productId = e.target.getAttribute('data-id');
-        const API_BASE = 'http://localhost:4000/api';
         const token = localStorage.getItem('token');
 
         if (!token) {
@@ -215,7 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-          const response = await fetch(`${API_BASE}/carrito`, {
+          const response = await fetch(`${window.CONFIG.API_URL}/carrito`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
