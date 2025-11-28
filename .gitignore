@@ -1,0 +1,6 @@
+# --- Dependencias (¡Esto es lo más importante!) ---
+node_modules/
+# --- Seguridad y Variables de Entorno ---
+config/env.js 
+# --- IDEs y Editores (El posible culpable "Jellyfish/IntelliJ") ---
+.vscode/
