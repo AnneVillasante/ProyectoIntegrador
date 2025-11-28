@@ -10,14 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const profileImageUpload = document.getElementById('profileImageUpload');
   const profileImagePreview = document.getElementById('profileImagePreview');
   const editProfileBtn = document.getElementById('editProfileBtn');
-  const saveProfileBtn = document.getElementById('saveProfileBtn');
-  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const editActions = document.getElementById('edit-actions'); // Nuevo contenedor
   const profileFields = profileForm.querySelectorAll('input');
   let originalProfileData = {};
+  const profilePictureLabel = document.querySelector('.profile-picture-upload-label');
 
 
   // --- Lógica para el sistema de pestañas ---
-  const tabButtons = document.querySelectorAll('.tab');
+  const tabButtons = document.querySelectorAll('.tab-btn'); // Corregido: ahora selecciona los botones con la clase 'tab-btn'
   const tabContents = document.querySelectorAll('.form'); // Apuntamos a la clase .form
 
   tabButtons.forEach(button => {
@@ -45,12 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // El input para subir foto también se controla aquí
-    profileImageUpload.disabled = !isEditing;
+    profileImageUpload.disabled = !isEditing; // El input de archivo se activa solo en modo edición
+
+    // Controlar visibilidad de la etiqueta para cambiar foto
+    profilePictureLabel.style.display = isEditing ? 'block' : 'none';
 
     editProfileBtn.hidden = isEditing;
-    saveProfileBtn.hidden = !isEditing;
-    cancelEditBtn.hidden = !isEditing;
-
+    editActions.hidden = !isEditing; // Mostrar/ocultar el grupo de botones
+    
     if (isEditing) {
       // Enfocar el primer campo editable
       document.getElementById('nombres').focus();
@@ -107,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     toggleEditMode(false);
   });
-
+  
   // --- Fin lógica de edición ---
 
   // Manejar el envío del formulario de perfil
