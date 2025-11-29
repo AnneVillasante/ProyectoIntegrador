@@ -49,8 +49,92 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (productosSubtitle) productosSubtitle.textContent = `Explora nuestra colección de ${categoriaUrl}`;
     }
 
+<<<<<<< HEAD
     populateFilters(allProductos);
     renderProductos();
+=======
+    if (!Array.isArray(productos) || productos.length === 0) {
+      productosGrid.innerHTML = `<p class="sin-productos">No hay productos disponibles${categoria ? ` en la categoría ${categoria}` : ''}.</p>`;
+      return;
+    }
+
+    // Crear tarjetas dinámicamente
+    productosGrid.innerHTML = productos.map(prod => {
+      // Manejar la URL de la imagen
+      let imagenUrl = '../assets/img/placeholder.png';
+      if (prod.imagen) {
+        if (prod.imagen.startsWith('http')) {
+          imagenUrl = prod.imagen;
+        } else if (prod.imagen.includes('/')) { // Asume que la ruta es como 'uploads/productos/...'
+          imagenUrl = `http://localhost:4000/${prod.imagen}`;
+        } else {
+          imagenUrl = `http://localhost:4000/uploads/productos/${prod.imagen}`;
+        }
+      }
+
+      return `
+      <div class="producto-card">
+        <img src="${imagenUrl}" alt="${prod.nombre}" class="producto-img" onerror="this.src='../assets/img/placeholder.png'">
+        <div class="producto-info">
+          <h3>${prod.nombre || 'Sin nombre'}</h3>
+          ${prod.descripcion ? `<p class="descripcion">${prod.descripcion}</p>` : ''}
+          ${prod.categoria ? `<p class="categoria-badge">${prod.categoria}</p>` : ''}
+          <p class="precio">S/ ${parseFloat(prod.precio || 0).toFixed(2)}</p>
+          ${prod.stock !== undefined ? `<p class="stock">Stock: ${prod.stock}</p>` : ''}
+          <div class="acciones">
+            <button class="btn-outline ver" data-id="${prod.idProducto}">Ver</button>
+            <button class="btn-primary agregar" data-id="${prod.idProducto}">Agregar</button>
+          </div>
+        </div>
+      </div>
+    `;
+    }).join('');
+
+    // Eventos de botones
+    productosGrid.querySelectorAll('.ver').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const productId = e.target.getAttribute('data-id');
+        alert(`Detalles del producto ${productId} próximamente disponibles.`);
+      });
+    });
+
+    productosGrid.querySelectorAll('.agregar').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const productId = e.target.getAttribute('data-id');
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          alert('Debes iniciar sesión para agregar productos al carrito.');
+          window.location.href = '/pages/login.html';
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE}/carrito`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              idProducto: parseInt(productId),
+              cantidad: 1
+            })
+          });
+
+          if (response.ok) {
+            alert(`Producto añadido al carrito.`);
+          } else {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'No se pudo añadir el producto al carrito.');
+          }
+        } catch (error) {
+          console.error('Error al añadir al carrito:', error);
+          alert(`Error: ${error.message}`);
+        }
+      });
+    });
+>>>>>>> progreso
 
   } catch (error) {
     console.error('Error cargando productos:', error);
