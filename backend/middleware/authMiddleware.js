@@ -19,8 +19,12 @@ const protect = async (req, res, next) => {
 
       next();
     } catch (error) {
-      console.error(error);
-      return res.status(401).json({ message: 'No autorizado, token inválido.' });
+      // Ser más específico con el error puede ayudar en la depuración
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'No autorizado, el token es inválido.' });
+      }
+      console.error('Error en middleware de protección:', error);
+      return res.status(401).json({ message: 'No autorizado, problema con el token.' });
     }
   }
 
