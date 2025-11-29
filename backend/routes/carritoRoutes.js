@@ -4,7 +4,7 @@ const carritoController = require('../controllers/carritoController');
 const authMiddleware = require('../middleware/authMiddleware'); // Asumiendo que authMiddleware existe
 
 // Todas las rutas de carrito requieren autenticación
-router.use(authMiddleware);
+router.use(authMiddleware.protect);
 
 // Obtener el carrito del usuario autenticado
 router.get('/', carritoController.getCart);
