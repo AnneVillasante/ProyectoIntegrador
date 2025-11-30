@@ -10,6 +10,8 @@ CREATE TABLE `campaña` (
 CREATE TABLE `carrito` (
   `idCarrito` int NOT NULL AUTO_INCREMENT,
   `idCliente` int NOT NULL,
+  `fechaCreacion` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fechaActualizacion` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`idCarrito`),
   KEY `idCliente` (`idCliente`),
   CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`)
@@ -19,6 +21,7 @@ CREATE TABLE `carritodetalle` (
   `idCarrito` int NOT NULL,
   `idProducto` int NOT NULL,
   `cantidad` int NOT NULL,
+  `precioUnitario` decimal(10,2) NOT NULL,
   `subtotal` decimal(10,2) NOT NULL,
   PRIMARY KEY (`idDetalleCarrito`),
   KEY `idCarrito` (`idCarrito`),
@@ -36,12 +39,19 @@ CREATE TABLE `categoria` (
 );
 CREATE TABLE `cliente` (
   `idCliente` int NOT NULL AUTO_INCREMENT,
-  `direccion` varchar(255) DEFAULT NULL,
+  `nombres` varchar(100) NOT NULL,
+  `apellidos` varchar(100) NOT NULL,
+  `dni` varchar(20) DEFAULT NULL,
+  `correo` varchar(100) DEFAULT NULL,
   `telefono` varchar(20) DEFAULT NULL,
-  `idUsuario` int DEFAULT NULL,
+  `direccion_predeterminada` varchar(255) DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL,
+  `fk_idUsuario` int DEFAULT NULL,
   PRIMARY KEY (`idCliente`),
-  UNIQUE KEY `idUsuario` (`idUsuario`),
-  CONSTRAINT `cliente_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`)
+  UNIQUE KEY `dni` (`dni`),
+  UNIQUE KEY `correo` (`correo`),
+  UNIQUE KEY `fk_idUsuario` (`fk_idUsuario`),
+  CONSTRAINT `cliente_ibfk_1` FOREIGN KEY (`fk_idUsuario`) REFERENCES `usuario` (`idUsuario`) ON DELETE SET NULL
 );
 CREATE TABLE `detallepedido` (
   `idDetallePedido` int NOT NULL AUTO_INCREMENT,
@@ -146,7 +156,7 @@ CREATE TABLE `recomendacion` (
   KEY `idProducto` (`idProducto`),
   CONSTRAINT `recomendacion_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`),
   CONSTRAINT `recomendacion_ibfk_2` FOREIGN KEY (`idProducto`) REFERENCES `producto` (`idProducto`)
-) ;
+);
 CREATE TABLE `reporte` (
   `idReporte` int NOT NULL AUTO_INCREMENT,
   `tipo` varchar(50) DEFAULT NULL,
@@ -175,7 +185,7 @@ CREATE TABLE `usuario` (
   `correo` varchar(100) NOT NULL,
   `dni` varchar(8) NOT NULL,
   `telefono` varchar(9) NOT NULL,
-  `fotoPerfil` varchar(255) DEFAULT NULL,
+  `foto_perfil` varchar(255) DEFAULT NULL,
   `contraseña` varchar(255) NOT NULL,
   `rol` enum('Administrador','Cliente') NOT NULL,
   PRIMARY KEY (`idUsuario`),
