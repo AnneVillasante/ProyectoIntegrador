@@ -1,16 +1,17 @@
 // backend/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
+const { JWT_SECRET } = require('../config/config');
 
 const protect = async (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
 
       // Adjuntar el usuario a la solicitud
-      const [rows] = await pool.query('SELECT idUsuario, email, rol FROM usuarios WHERE idUsuario = ?', [decoded.id]);
+      const [rows] = await pool.query('SELECT idUsuario, correo, rol FROM usuarios WHERE idUsuario = ?', [decoded.id]);
       req.user = rows[0];
 
       if (!req.user) {
@@ -34,7 +35,7 @@ const protect = async (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  if (req.user && req.user.rol === 'admin') {
+  if (req.user && req.user.rol === 'Administrador') {
     next();
   } else {
     res.status(403).json({ message: 'Acceso denegado. Se requiere rol de administrador.' });

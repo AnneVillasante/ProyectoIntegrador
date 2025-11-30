@@ -18,7 +18,19 @@ const createClient = async (clientData, connection = pool) => {
   return result;
 };
 
+/**
+ * Busca un cliente por el ID de usuario asociado.
+ * @param {number} userId - El fk_idUsuario del cliente a buscar.
+ * @returns {Promise<object|null>} El objeto del cliente o null si no se encuentra.
+ */
+const getClientByUserId = async (userId) => {
+  const sql = 'SELECT * FROM clientes WHERE fk_idUsuario = ?';
+  const [rows] = await pool.query(sql, [userId]);
+  return rows[0] || null;
+};
+
 
 module.exports = {
   createClient,
+  getClientByUserId,
 };

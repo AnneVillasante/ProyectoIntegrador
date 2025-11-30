@@ -2,8 +2,8 @@ const UsuarioDao = require('../dao/usuarioDAO');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UsuarioDto = require('../dto/usuarioDTO');
+const { JWT_SECRET } = require('../config/config');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'cambiar_esto_en_produccion';
 const JWT_EXPIRES = '7d';
 
 exports.login = async (req, res) => {
