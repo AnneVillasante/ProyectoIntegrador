@@ -8,9 +8,13 @@ services:
 
 # Variables de entorno para las pruebas (GitLab las inyecta en el contenedor)
 variables:
+  # Variables para el servicio MySQL
   MYSQL_DATABASE: lunaria_test_db
   MYSQL_ROOT_PASSWORD: root_password
-  DB_HOST: mysql  # Esto conecta con el servicio de arriba
+  # Variables para la aplicación Node.js
+  MYSQL_HOST: mysql # El nombre del servicio definido arriba
+  MYSQL_USER: root
+  MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD # Usamos la variable definida para el servicio
 
 # 1. DEFINICIÓN DE ETAPAS (Cubre tu Plan de Pruebas y Despliegue)
 stages:
