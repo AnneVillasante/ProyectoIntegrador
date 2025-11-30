@@ -5,8 +5,8 @@ const ProductoDao = require('../dao/productoDao');
 // const VentaDao = require('../dao/ventaDao'); // Comentado temporalmente para evitar el error
 
 module.exports = (jsreport) => {
-  // POST /api/reportes/usuarios
-  router.post('/usuarios', async (req, res) => {
+  // POST /api/reportes/usuario
+  router.post('/usuario', async (req, res) => {
     try {
       const usuarios = await UsuarioDao.findAll();
       const report = await jsreport.render({

@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== USUARIOS =====
   async function loadUsers() {
     try {
-      users = await apiCall('/usuarios');
+      users = await apiCall('/usuario');
       renderUsersTable();
     } catch (error) {
       console.error('Error cargando usuarios:', error);
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
 
     try {
-      await apiCall(`/usuarios/${id}`, { method: 'DELETE' });
+      await apiCall(`/usuario/${id}`, { method: 'DELETE' });
       await loadUsers();
       alert('Usuario eliminado correctamente');
     } catch (error) {
@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rol = document.getElementById('editUserRole').value;
     
     try {
-      await apiCall(`/usuarios/${id}`, {
+      await apiCall(`/usuario/${id}`, {
         method: 'PUT',
         body: JSON.stringify({ rol })
       });

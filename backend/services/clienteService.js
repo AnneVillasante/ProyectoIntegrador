@@ -11,7 +11,7 @@ const pool = require('../config/db');
 const createClient = async (clientData, connection = pool) => {
   const { nombres, apellidos, dni, correo, telefono, direccion_predeterminada, fk_idUsuario } = clientData;
   const sql = `
-    INSERT INTO clientes (nombres, apellidos, dni, correo, telefono, direccion_predeterminada, fecha_registro, fk_idUsuario)
+    INSERT INTO cliente (nombres, apellidos, dni, correo, telefono, direccion_predeterminada, fecha_registro, fk_idUsuario)
     VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
   `;
   const [result] = await connection.query(sql, [nombres, apellidos, dni, correo, telefono, direccion_predeterminada, fk_idUsuario]);
@@ -24,7 +24,7 @@ const createClient = async (clientData, connection = pool) => {
  * @returns {Promise<object|null>} El objeto del cliente o null si no se encuentra.
  */
 const getClientByUserId = async (userId) => {
-  const sql = 'SELECT * FROM clientes WHERE fk_idUsuario = ?';
+  const sql = 'SELECT * FROM cliente WHERE fk_idUsuario = ?';
   const [rows] = await pool.query(sql, [userId]);
   return rows[0] || null;
 };
