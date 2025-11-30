@@ -7,13 +7,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const productosGrid = document.getElementById('productosGrid');
   const productosTitle = document.querySelector('.productos-title');
   const productosSubtitle = document.querySelector('.productos-subtitle');
-  const filtroCategoriasContainer = document.getElementById('filtroCategorias');
+  const categoriasContainer = document.getElementById('categorias-container');
   const filtroSubcategoriasContainer = document.getElementById('filtroSubcategorias');
   const ordenarSelect = document.getElementById('ordenarProductos');
-  const minPriceInput = document.getElementById('minPrice');
-  const maxPriceInput = document.getElementById('maxPrice');
-  const applyPriceFilterBtn = document.getElementById('applyPriceFilter');
   const paginacionContainer = document.getElementById('paginacion');
+  const priceRange = document.getElementById('priceRange');
+  const activeFiltersContainer = document.getElementById('activeFiltersContainer');
+  const limpiarFiltrosBtn = document.getElementById('limpiarFiltrosBtn');
+  const priceValue = document.getElementById('priceValue');
 
   // --- ESTADO DE LA APLICACIÓN ---
   let allProductos = [];
@@ -22,12 +23,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let estadoFiltros = {
     categoria: null,
-    subcategoria: null,
-    precioMin: null,
-    precioMax: null,
+    subcategorias: new Set(), // Usar un Set para múltiples subcategorías
+    busqueda: null, // Nuevo estado para el término de búsqueda
+    precioMax: 500, // Valor inicial del slider
     orden: 'recomendado',
     paginaActual: 1,
-    productosPorPagina: 20,
+    productosPorPagina: 12,
   };
 
   // --- FUNCIONES DE OBTENCIÓN DE DATOS ---
@@ -47,25 +48,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   const renderizarProductos = () => {
     let productosFiltrados = [...allProductos];
 
-    // 1. Filtrar por categoría
+    // 1. Filtrar por término de búsqueda (si existe)
+    if (estadoFiltros.busqueda) {
+      productosFiltrados = productosFiltrados.filter(p => 
+        p.nombre.toLowerCase().includes(estadoFiltros.busqueda.toLowerCase())
+      );
+    }
+
+    // 2. Filtrar por categoría
     if (estadoFiltros.categoria) {
       productosFiltrados = productosFiltrados.filter(p => p.categoria === estadoFiltros.categoria);
     }
 
-    // 2. Filtrar por subcategoría
-    if (estadoFiltros.subcategoria) {
-      productosFiltrados = productosFiltrados.filter(p => p.subcategoria === estadoFiltros.subcategoria);
+    // 3. Filtrar por subcategoría
+    if (estadoFiltros.subcategorias.size > 0) {
+      productosFiltrados = productosFiltrados.filter(p => 
+        estadoFiltros.subcategorias.has(p.subcategoria)
+      );
     }
 
-    // 3. Filtrar por precio
-    if (estadoFiltros.precioMin !== null) {
-      productosFiltrados = productosFiltrados.filter(p => p.precio >= estadoFiltros.precioMin);
-    }
-    if (estadoFiltros.precioMax !== null) {
+    // 4. Filtrar por precio
+    if (estadoFiltros.precioMax < 500) { // Solo filtra si el precio no es el máximo
       productosFiltrados = productosFiltrados.filter(p => p.precio <= estadoFiltros.precioMax);
     }
 
-    // 4. Ordenar
+    // 5. Ordenar
     switch (estadoFiltros.orden) {
       case 'precio-asc':
         productosFiltrados.sort((a, b) => a.precio - b.precio);
@@ -81,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         break;
     }
 
-    // 5. Paginación
+    // 6. Paginación
     const inicio = (estadoFiltros.paginaActual - 1) * estadoFiltros.productosPorPagina;
     const fin = inicio + estadoFiltros.productosPorPagina;
     const productosPaginados = productosFiltrados.slice(inicio, fin);
@@ -94,6 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     renderizarPaginacion(productosFiltrados.length);
+    renderizarFiltrosActivos();
     agregarEventListenersTarjetas();
   };
 
@@ -116,17 +124,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const renderizarFiltros = () => {
     // Categorías
-    const categoriasHtml = allCategorias.map(cat => `<li><button data-categoria="${cat.nombre}">${cat.nombre}</button></li>`).join('');
-    filtroCategoriasContainer.innerHTML = `<h4>Categoría</h4><ul><li><button data-categoria="all" class="active">Todas</button></li>${categoriasHtml}</ul>`;
+    const categoriasHtml = allCategorias.map(cat => {
+      // Si hay una categoría en el estado (desde la URL), la marcamos como activa
+      const isActive = estadoFiltros.categoria && estadoFiltros.categoria.toLowerCase() === cat.nombre.toLowerCase();
+      return `<button class="btn-filtro ${isActive ? 'active' : ''}" data-categoria="${cat.nombre}">${cat.nombre}</button>`;
+    }).join('');
+
+    // Si no hay categoría en el estado (ni por filtro ni por URL), el botón "Todas" es el activo
+    const todasActivo = !estadoFiltros.categoria ? 'active' : '';
+    categoriasContainer.innerHTML = `<button class="btn-filtro ${todasActivo}" data-categoria="all">Todas</button>${categoriasHtml}`;
 
     // Subcategorías
     const subcategoriasHtml = allSubcategorias.map(sub => `<li><label><input type="checkbox" data-subcategoria="${sub.nombre}"> ${sub.nombre}</label></li>`).join('');
     filtroSubcategoriasContainer.innerHTML = `<h4>Subcategoría</h4><ul>${subcategoriasHtml}</ul>`;
 
-    // Event Listeners para filtros
-    filtroCategoriasContainer.querySelectorAll('button').forEach(btn => {
+    // Event Listeners para filtros de categoría
+    categoriasContainer.querySelectorAll('button').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        filtroCategoriasContainer.querySelector('.active').classList.remove('active');
+        categoriasContainer.querySelector('.btn-filtro.active')?.classList.remove('active'); // Quita la clase activa del botón anterior
         e.target.classList.add('active');
         const categoria = e.target.dataset.categoria;
         estadoFiltros.categoria = categoria === 'all' ? null : categoria;
@@ -137,12 +152,53 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     filtroSubcategoriasContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', (e) => {
-        // Lógica para múltiples subcategorías (simplificado a una por ahora)
-        estadoFiltros.subcategoria = e.target.checked ? e.target.dataset.subcategoria : null;
+        const subcategoria = e.target.dataset.subcategoria;
+        if (e.target.checked) {
+          estadoFiltros.subcategorias.add(subcategoria);
+        } else {
+          estadoFiltros.subcategorias.delete(subcategoria);
+        }
         estadoFiltros.paginaActual = 1;
         renderizarProductos();
       });
     });
+  };
+
+  const renderizarFiltrosActivos = () => {
+    activeFiltersContainer.innerHTML = '';
+    let hayFiltros = false;
+
+    // Etiquetas para subcategorías
+    estadoFiltros.subcategorias.forEach(sub => {
+      const tag = document.createElement('div');
+      tag.className = 'filter-tag';
+      tag.innerHTML = `${sub} <button class="remove-tag" data-subcategoria="${sub}">&times;</button>`;
+      tag.querySelector('.remove-tag').addEventListener('click', () => {
+        estadoFiltros.subcategorias.delete(sub);
+        // Desmarcar el checkbox correspondiente
+        const checkbox = filtroSubcategoriasContainer.querySelector(`input[data-subcategoria="${sub}"]`);
+        if (checkbox) checkbox.checked = false;
+        renderizarProductos();
+      });
+      activeFiltersContainer.appendChild(tag);
+      hayFiltros = true;
+    });
+
+    // Etiqueta para precio (si se ha modificado)
+    if (estadoFiltros.precioMax < 500) {
+      const tag = document.createElement('div');
+      tag.className = 'filter-tag';
+      tag.innerHTML = `Precio < S/ ${estadoFiltros.precioMax.toFixed(2)} <button class="remove-tag" data-tipo="precio">&times;</button>`;
+      tag.querySelector('.remove-tag').addEventListener('click', () => {
+        estadoFiltros.precioMax = 500;
+        priceRange.value = 500;
+        priceValue.textContent = `S/ 500.00`;
+        renderizarProductos();
+      });
+      activeFiltersContainer.appendChild(tag);
+      hayFiltros = true;
+    }
+    limpiarFiltrosBtn.hidden = !hayFiltros;
   };
 
   const renderizarPaginacion = (totalProductos) => {
@@ -178,11 +234,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Obtener categoría de la URL y aplicarla si existe
     const urlParams = new URLSearchParams(window.location.search);
+    const busquedaUrl = urlParams.get('q');
     const categoriaUrl = urlParams.get('categoria');
+
+    if (busquedaUrl) {
+      estadoFiltros.busqueda = busquedaUrl;
+      productosTitle.textContent = `Resultados para: "${busquedaUrl}"`;
+      productosSubtitle.textContent = `Explora los productos que coinciden con tu búsqueda`;
+    }
+
     if (categoriaUrl && allCategorias.some(c => c.nombre.toLowerCase() === categoriaUrl.toLowerCase())) {
       estadoFiltros.categoria = categoriaUrl;
-      productosTitle.textContent = `Categoría: ${categoriaUrl}`;
-      productosSubtitle.textContent = `Explora nuestra colección de ${categoriaUrl}`;
+      // Solo cambia el título si no hay una búsqueda (la búsqueda tiene prioridad)
+      if (!busquedaUrl) {
+        productosTitle.textContent = `Categoría: ${categoriaUrl}`;
+        productosSubtitle.textContent = `Explora nuestra colección de ${categoriaUrl}`;
+      }
     }
 
     renderizarFiltros();
@@ -195,17 +262,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderizarProductos();
   });
 
-  applyPriceFilterBtn.addEventListener('click', () => {
-    estadoFiltros.precioMin = minPriceInput.value ? parseFloat(minPriceInput.value) : null;
-    estadoFiltros.precioMax = maxPriceInput.value ? parseFloat(maxPriceInput.value) : null;
+  priceRange.addEventListener('input', (e) => {
+    const maxPrice = parseFloat(e.target.value);
+    priceValue.textContent = `S/ ${maxPrice.toFixed(2)}`;
+    estadoFiltros.precioMax = maxPrice;
     estadoFiltros.paginaActual = 1;
+    renderizarProductos();
+  });
+
+  limpiarFiltrosBtn.addEventListener('click', () => {
+    // Limpiar subcategorías
+    estadoFiltros.subcategorias.clear();
+    filtroSubcategoriasContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+    // Resetear precio
+    estadoFiltros.precioMax = 500;
+    priceRange.value = 500;
+    priceValue.textContent = `S/ 500.00`;
     renderizarProductos();
   });
 
   const agregarEventListenersTarjetas = () => {
     productosGrid.querySelectorAll('.agregar').forEach(button => {
       button.addEventListener('click', async (e) => {
-        // ... (la lógica para agregar al carrito se mantiene igual)
+        const idProducto = e.target.dataset.id;
+        console.log(`Agregando producto con ID: ${idProducto}`);
+        // Aquí iría la lógica para agregar al carrito, por ejemplo:
+        // await agregarAlCarrito(idProducto);
+        alert(`Producto ${idProducto} agregado al carrito (simulación).`);
       });
     });
   };

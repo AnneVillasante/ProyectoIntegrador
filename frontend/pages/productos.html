@@ -16,32 +16,34 @@
     <div class="productos-section">
       <h1 class="productos-title">Colección Destacada</h1>
       <p class="productos-subtitle">Descubre nuestras prendas y accesorios más populares</p>
+      <div id="categorias-container" class="categorias-filtros">
+        <!-- Los filtros de categoría se cargarán aquí -->
+      </div>
     </div>
 
     <div class="productos-container">
       <!-- Barra lateral de filtros -->
       <aside class="filtros-sidebar">
         <h3>Filtros</h3>
-        <div id="filtroCategorias" class="filtro-grupo">
-          <!-- Las categorías se cargarán aquí -->
-        </div>
+        <button id="limpiarFiltrosBtn" class="btn-limpiar-filtros" hidden>Limpiar Filtros</button>
         <div id="filtroSubcategorias" class="filtro-grupo">
           <!-- Las subcategorías se cargarán aquí -->
         </div>
         <div class="filtro-grupo">
           <h4>Precio</h4>
           <div class="precio-filtro">
-            <input type="number" id="minPrice" placeholder="Min">
-            <span>-</span>
-            <input type="number" id="maxPrice" placeholder="Max">
+            <input type="range" id="priceRange" min="0" max="500" value="500">
+            <div class="precio-valores">
+              <span>S/ 0</span> - <span id="priceValue">S/ 500</span>
+            </div>
           </div>
-          <button id="applyPriceFilter" class="btn-primary" style="width: 100%;">Aplicar</button>
         </div>
       </aside>
 
       <!-- Contenido principal de productos -->
       <div class="productos-content">
         <div class="productos-header">
+          <span class="ordenar-label">Ordenar por:</span>
           <div class="ordenar-container">
             <select id="ordenarProductos">
               <option value="recomendado">Recomendado</option>
@@ -51,6 +53,9 @@
               <option value="nombre-desc">Nombre: Z-A</option>
             </select>
           </div>
+        </div>
+        <div id="activeFiltersContainer" class="active-filters-container">
+          <!-- Las etiquetas de filtros activos se mostrarán aquí -->
         </div>
         <div class="productos-grid" id="productosGrid">
           <!-- Los productos se cargarán aquí -->
