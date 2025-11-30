@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cartItemsContainer = document.getElementById('cart-items-container');
+    const API_BASE = 'http://localhost:4000/api';
     const emptyCartMessage = document.getElementById('empty-cart-message');
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryDiscounts = document.getElementById('summary-discounts'); // Asumiendo que podrías tener descuentos
@@ -18,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // La ruta GET /api/carrito obtiene el carrito del usuario autenticado por su token.
-            const response = await fetch('/api/carrito', {
+            const response = await fetch(`${API_BASE}/carrito`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`/api/carrito/${productId}`, {
+                const response = await fetch(`${API_BASE}/carrito/${productId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -157,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function updateItemQuantity(productId, quantity) {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`/api/carrito/${productId}`, {
+            const response = await fetch(`${API_BASE}/carrito/${productId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

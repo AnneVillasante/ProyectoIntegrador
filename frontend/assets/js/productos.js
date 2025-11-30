@@ -282,15 +282,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderizarProductos();
   });
 
+  const agregarAlCarrito = async (idProducto) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Debes iniciar sesión para agregar productos al carrito.');
+      window.location.href = 'login.html'; // O la ruta a tu página de login
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/carrito`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          idProducto: idProducto,
+          cantidad: 1 // Por defecto, agregamos 1 unidad
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'No se pudo agregar el producto al carrito.');
+      }
+
+      // Opcional: Mostrar una confirmación más elegante que un alert
+      alert('¡Producto agregado al carrito!');
+
+    } catch (error) {
+      console.error('Error al agregar al carrito:', error);
+      alert(`Error: ${error.message}`);
+    }
+  };
+
   const agregarEventListenersTarjetas = () => {
     productosGrid.querySelectorAll('.agregar').forEach(button => {
-      button.addEventListener('click', async (e) => {
-        const idProducto = e.target.dataset.id;
-        console.log(`Agregando producto con ID: ${idProducto}`);
-        // Aquí iría la lógica para agregar al carrito, por ejemplo:
-        // await agregarAlCarrito(idProducto);
-        alert(`Producto ${idProducto} agregado al carrito (simulación).`);
-      });
+      button.addEventListener('click', (e) => agregarAlCarrito(e.target.dataset.id));
     });
   };
 
