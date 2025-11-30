@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchCartData() {
         try {
             // AJUSTA ESTA URL: Apunta a tu endpoint real del backend.
-            // Por ejemplo, si necesitas el ID del cliente: /api/carrito/cliente/1
+            // Por ejemplo, si necesitas el ID del cliente: /api/carrito/clientes/1
             const response = await fetch('/api/carrito/1'); // Usando 1 como ID de carrito de ejemplo
             if (!response.ok) {
                 throw new Error(`Error del servidor: ${response.status}`);

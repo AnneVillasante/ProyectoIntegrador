@@ -29,7 +29,7 @@ apiApp.use('/api/categorias', categoriaRoutes);
 apiApp.use('/api/subcategorias', subcategoriaRoutes);
 apiApp.use('/api/reportes', reporteRoutes);
 apiApp.use('/api/carrito', carritoRoutes);
-apiApp.use('/api/clientes', clienteRoutes);
+apiApp.use('/api/cliente', clienteRoutes);
 
 async function startApi() {
   try {
