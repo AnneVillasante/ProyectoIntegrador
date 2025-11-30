@@ -25,6 +25,9 @@ staticApp.get('/perfil', (req, res) => {
 staticApp.get('/carrito', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'carrito.html'));
 });
+staticApp.get('/compra', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'compra.html'));
+});
 
 
 // Render de productos

@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Rutas de perfil de usuario (protegidas)
-router.use(authMiddleware); // Aplica el middleware a las rutas de abajo
+router.use(authMiddleware.protect); // Aplica el middleware a las rutas de abajo
 router.get('/perfil', usuarioController.obtenerMiPerfil);
 router.put('/perfil', usuarioController.actualizarMiPerfil);
 router.put('/perfil/password', usuarioController.actualizarMiPassword);

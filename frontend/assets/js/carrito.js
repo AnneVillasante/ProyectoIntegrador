@@ -1,19 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cartItemsContainer = document.getElementById('cart-items-container');
+    const API_BASE = 'http://localhost:4000/api';
     const emptyCartMessage = document.getElementById('empty-cart-message');
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryDiscounts = document.getElementById('summary-discounts'); // Asumiendo que podrías tener descuentos
     const summaryTotal = document.getElementById('summary-total');
     const checkoutButton = document.getElementById('checkout-button');
 
-    // --- Simulación de datos del backend ---
-    // En un caso real, harías un fetch a tu API.
-    // Reemplaza esta función con tu llamada fetch real.
     async function fetchCartData() {
         try {
-            // AJUSTA ESTA URL: Apunta a tu endpoint real del backend.
-            // Por ejemplo, si necesitas el ID del cliente: /api/carrito/cliente/1
-            const response = await fetch('/api/carrito/1'); // Usando 1 como ID de carrito de ejemplo
+            const token = localStorage.getItem('token'); // Obtener el token del usuario logueado
+            if (!token) {
+                // Si no hay token, el usuario no ha iniciado sesión.
+                // Podemos mostrar el carrito vacío y redirigir o mostrar un mensaje.
+                alert('Debes iniciar sesión para ver tu carrito.');
+                window.location.href = 'login.html'; // Redirigir al login
+                return;
+            }
+
+            // La ruta GET /api/carrito obtiene el carrito del usuario autenticado por su token.
+            const response = await fetch(`${API_BASE}/carrito`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
             if (!response.ok) {
                 throw new Error(`Error del servidor: ${response.status}`);
             }
@@ -48,12 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>Precio: $${parseFloat(item.precioUnitario).toFixed(2)}</p>
                 </div>
                 <div class="cart-item-quantity">
-                    <button class="quantity-btn decrease-btn" data-id="${item.idProducto}">-</button>
+                    <button class="quantity-btn decrease-btn" data-id="${item.idProducto}" aria-label="Disminuir cantidad">-</button>
                     <input type="number" class="quantity-input" value="${item.cantidad}" min="1" data-id="${item.idProducto}">
-                    <button class="quantity-btn increase-btn" data-id="${item.idProducto}">+</button>
+                    <button class="quantity-btn increase-btn" data-id="${item.idProducto}" aria-label="Aumentar cantidad">+</button>
                 </div>
                 <div class="cart-item-subtotal">
-                    <strong>$${parseFloat(item.subtotal).toFixed(2)}</strong>
+                    <strong>S/ ${parseFloat(item.subtotal).toFixed(2)}</strong>
                 </div>
                 <div class="cart-item-remove">
                     <button class="remove-btn" data-id="${item.idProducto}" title="Eliminar producto">
@@ -73,12 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const discounts = 0; // Lógica de descuentos a implementar en el futuro
         const total = subtotal - discounts;
 
-        summarySubtotal.textContent = `$${subtotal.toFixed(2)}`;
-        summaryDiscounts.textContent = `-$${discounts.toFixed(2)}`;
-        summaryTotal.textContent = `$${total.toFixed(2)}`;
+        summarySubtotal.textContent = `S/ ${subtotal.toFixed(2)}`;
+        summaryDiscounts.textContent = `-S/ ${discounts.toFixed(2)}`;
+        summaryTotal.textContent = `S/ ${total.toFixed(2)}`;
 
-        // Habilitar o deshabilitar el botón de compra
-        checkoutButton.disabled = cart.items.length === 0;
+        // Habilitar o deshabilitar el botón de compra usando clases CSS
+        if (cart.items.length === 0) {
+            checkoutButton.classList.add('disabled');
+        } else {
+            checkoutButton.classList.remove('disabled');
+        }
     }
 
     function showEmptyCart() {
@@ -117,31 +132,56 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Aquí harías una llamada PUT/POST a tu backend para actualizar la cantidad
-        console.log(`Actualizando producto ${productId} a cantidad ${newQuantity}`);
-        // Ejemplo: await fetch(`/api/carrito/item/${productId}`, { method: 'PUT', body: JSON.stringify({ cantidad: newQuantity }), headers: {'Content-Type': 'application/json'} });
-        
-        // Después de la llamada exitosa, volver a cargar los datos
-        fetchCartData();
+        await updateItemQuantity(productId, newQuantity);
     }
 
     async function removeItem(productId) {
         if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
-            console.log(`Eliminando producto ${productId}`);
-            // Aquí harías una llamada DELETE a tu backend
-            // Ejemplo: await fetch(`/api/carrito/item/${productId}`, { method: 'DELETE' });
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE}/carrito/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-            // Después de la llamada exitosa, volver a cargar los datos
-            fetchCartData();
+                if (!response.ok) {
+                    throw new Error('No se pudo eliminar el producto.');
+                }
+                
+                // Recargar los datos del carrito para reflejar el cambio
+                fetchCartData();
+            } catch (error) {
+                console.error('Error al eliminar el producto:', error);
+                alert('Hubo un error al eliminar el producto del carrito.');
+            }
         }
     }
 
-    // Event listener para el botón de continuar compra
-    checkoutButton.addEventListener('click', () => {
-        if (!checkoutButton.disabled) {
-            window.location.href = 'compra.html'; // Redirigir a la página de compra
+    async function updateItemQuantity(productId, quantity) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_BASE}/carrito/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ cantidad: quantity })
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudo actualizar la cantidad.');
+            }
+
+            // Recargar los datos del carrito para reflejar el cambio
+            fetchCartData();
+        } catch (error) {
+            console.error('Error al actualizar la cantidad:', error);
+            alert('Hubo un error al actualizar la cantidad del producto.');
         }
-    });
+    }
 
     // Carga inicial de los datos del carrito
     fetchCartData();

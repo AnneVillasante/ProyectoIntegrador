@@ -164,7 +164,7 @@ exports.generateProductosReport = async (req, res) => {
 };
 
 // Generar reporte de usuarios
-exports.generateUsuariosReport = async (req, res) => {
+exports.generateUsuarioReport = async (req, res) => {
   try {
     const { formato = 'CSV', usuario } = req.body;
     
@@ -205,7 +205,7 @@ exports.generateUsuariosReport = async (req, res) => {
     };
 
     const reporteId = await reporteDAO.create({
-      tipo: 'usuarios',
+      tipo: 'usuario',
       formato,
       parametros,
       usuario: usuario || 'Sistema',
@@ -216,13 +216,13 @@ exports.generateUsuariosReport = async (req, res) => {
     if (formato === 'CSV') {
       const csv = convertToCSV(reportData);
       res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', `attachment; filename=reporte_usuarios_${new Date().toISOString().split('T')[0]}.csv`);
+      res.setHeader('Content-Disposition', `attachment; filename=reporte_usuario_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
     } else {
       res.json({
         success: true,
         idReporte: reporteId,
-        tipo: 'usuarios',
+        tipo: 'usuario',
         formato,
         datos: reportData,
         totalUsuarios: usuarios.length,
@@ -285,4 +285,3 @@ exports.delete = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar reporte' });
   }
 };
-

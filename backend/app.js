@@ -1,5 +1,6 @@
 // backend/app.js
-require('dotenv').config({ path: require('path').resolve(__dirname, 'config/env.js'), debug: true });
+require('./config/config'); // Esto carga y configura dotenv
+
 const pool = require('./config/db');
 const { startApi } = require('./server/apiServer');
 const { startStatic } = require('./server/staticServer');

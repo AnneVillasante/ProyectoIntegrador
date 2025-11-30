@@ -19,7 +19,7 @@ class CarritoModel {
     }
 
     async clearCart(idCarrito) {
-        await pool.query('DELETE FROM carrito_item WHERE idCarrito = ?', [idCarrito]);
+        await pool.query('DELETE FROM carritodetalle WHERE idCarrito = ?', [idCarrito]);
     }
 
     // --- Operaciones de Ítems del Carrito ---
@@ -32,7 +32,8 @@ class CarritoModel {
                 p.nombre AS nombreProducto,
                 p.imagen AS imagenProducto, -- Asumiendo que tienes una columna 'imagen' en tu tabla 'producto'
                 ci.cantidad,
-                ci.precioUnitario
+                ci.precioUnitario,
+                ci.subtotal
             FROM carritodetalle ci
             JOIN producto p ON ci.idProducto = p.idProducto
             WHERE ci.idCarrito = ?
@@ -48,14 +49,20 @@ class CarritoModel {
     async addOrUpdateItem(idCarrito, idProducto, cantidad, precioUnitario) {
         const existingItem = await this.getCartItemByProduct(idCarrito, idProducto);
 
+        const subtotal = parseFloat(cantidad) * parseFloat(precioUnitario);
+
         if (existingItem) {
             // Actualizar cantidad y precio unitario (por si ha cambiado)
             const newQuantity = existingItem.cantidad + cantidad;
-            await pool.query('UPDATE carritodetalle SET cantidad = ?, precioUnitario = ? WHERE idDetalleCarrito = ?', [newQuantity, precioUnitario, existingItem.idDetalleCarrito]);
+            const newSubtotal = newQuantity * parseFloat(precioUnitario);
+            await pool.query('UPDATE carritodetalle SET cantidad = ?, precioUnitario = ?, subtotal = ? WHERE idDetalleCarrito = ?', [newQuantity, precioUnitario, newSubtotal, existingItem.idDetalleCarrito]);
             return { idDetalleCarrito: existingItem.idDetalleCarrito, idProducto, cantidad: newQuantity, precioUnitario };
         } else {
             // Añadir nuevo ítem
-            const [result] = await pool.query('INSERT INTO carritodetalle (idCarrito, idProducto, cantidad, precioUnitario) VALUES (?, ?, ?, ?)', [idCarrito, idProducto, cantidad, precioUnitario]);
+            const [result] = await pool.query(
+                'INSERT INTO carritodetalle (idCarrito, idProducto, cantidad, precioUnitario, subtotal) VALUES (?, ?, ?, ?, ?)', 
+                [idCarrito, idProducto, cantidad, precioUnitario, subtotal]
+            );
             return { idDetalleCarrito: result.insertId, idProducto, cantidad, precioUnitario };
         }
     }
@@ -65,7 +72,9 @@ class CarritoModel {
             // Si la cantidad es 0 o menos, eliminar el ítem
             return this.removeItem(idCarrito, idProducto);
         }
-        const [result] = await pool.query('UPDATE carritodetalle SET cantidad = ? WHERE idCarrito = ? AND idProducto = ?', [cantidad, idCarrito, idProducto]);
+        // También actualizamos el subtotal al cambiar la cantidad
+        const [item] = await pool.query('SELECT precioUnitario FROM carritodetalle WHERE idCarrito = ? AND idProducto = ?', [idCarrito, idProducto]);
+        const [result] = await pool.query('UPDATE carritodetalle SET cantidad = ?, subtotal = ? WHERE idCarrito = ? AND idProducto = ?', [cantidad, cantidad * item[0].precioUnitario, idCarrito, idProducto]);
         return result.affectedRows > 0;
     }
 

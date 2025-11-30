@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proceso de Compra - Lunaria Threads</title>
+    <link rel="stylesheet" href="../assets/css/styles.css"> <!-- Estilos base -->
+    <link rel="stylesheet" href="../assets/css/compra.css"> <!-- Necesitarás crear este archivo CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../components/layout.js" defer></script>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main class="container">
+        <div class="checkout-container">
+            <!-- Indicador de Progreso -->
+            <div class="checkout-progress">
+                <div class="step active" id="progress-step-1">
+                    <span>1</span>
+                    <p>Resumen</p>
+                </div>
+                <div class="step" id="progress-step-2">
+                    <span>2</span>
+                    <p>Datos y Entrega</p>
+                </div>
+                <div class="step" id="progress-step-3">
+                    <span>3</span>
+                    <p>Pago</p>
+                </div>
+            </div>
+
+            <!-- Paso 1: Resumen de la Compra -->
+            <section id="step-summary" class="checkout-step active">
+                <h2>Paso 1: Resumen de tu Compra</h2>
+                <div class="summary-list" id="summary-product-list">
+                    <!-- Los productos del carrito se cargarán aquí dinámicamente -->
+                    <p>Cargando resumen del carrito...</p>
+                </div>
+                <div class="summary-total-final">
+                    <h3>Total a Pagar: <span id="summary-total-amount">S/ 0.00</span></h3>
+                </div>
+                <div class="step-navigation">
+                    <button id="btn-to-customer-data" class="btn-primary">Continuar con tus Datos</button>
+                </div>
+            </section>
+
+            <!-- Paso 2: Datos del Cliente y Método de Entrega -->
+            <section id="step-customer-data" class="checkout-step">
+                <h2>Paso 2: Datos y Método de Entrega</h2>
+                
+                <!-- Datos del Cliente -->
+                <div class="form-section">
+                    <h3>Tus Datos</h3>
+                    <form id="customer-data-form">
+                        <div class="form-group">
+                            <label for="customer-email">Correo Electrónico</label>
+                            <input type="email" id="customer-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-phone">Teléfono</label>
+                            <input type="tel" id="customer-phone" required>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Método de Entrega -->
+                <div class="form-section">
+                    <h3>Método de Entrega</h3>
+                    <div class="delivery-options">
+                        <label>
+                            <input type="radio" name="deliveryMethod" value="pickup" checked> Recojo en Tienda
+                        </label>
+                        <label>
+                            <input type="radio" name="deliveryMethod" value="delivery"> Delivery
+                        </label>
+                    </div>
+                    <div id="delivery-address-section" class="hidden">
+                        <div class="form-group">
+                            <label for="delivery-address">Dirección de Envío</label>
+                            <input type="text" id="delivery-address" placeholder="Ej: Av. Principal 123, Miraflores">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-navigation">
+                    <button id="btn-back-to-summary" class="btn-secondary">Volver al Resumen</button>
+                    <button id="btn-to-payment" class="btn-primary">Continuar al Pago</button>
+                </div>
+            </section>
+
+            <!-- Paso 3: Método de Pago -->
+            <section id="step-payment" class="checkout-step">
+                <h2>Paso 3: Elige tu Método de Pago</h2>
+                <div class="payment-options">
+                    <div class="payment-method" data-method="yape">
+                        <img src="../assets/img/yape-logo.png" alt="Yape"> <!-- Deberás agregar este logo -->
+                        <span>Pagar con Yape</span>
+                    </div>
+                    <div class="payment-method" data-method="card">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Tarjeta de Crédito/Débito</span>
+                    </div>
+                </div>
+                <div class="step-navigation">
+                    <button id="btn-back-to-customer-data" class="btn-secondary">Volver</button>
+                    <button id="btn-finalize-purchase" class="btn-checkout">Finalizar Compra</button>
+                </div>
+            </section>
+
+            <!-- Paso 4: Confirmación de Compra -->
+            <section id="step-confirmation" class="checkout-step">
+                <div class="confirmation-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>¡Gracias por tu compra!</h2>
+                    <p>Hemos procesado tu pedido <strong id="order-id-placeholder"></strong> correctamente. Recibirás un correo electrónico con el recibo y los detalles de tu compra.</p>
+                    <a href="/index.html" class="btn-primary">Volver a la página principal</a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="../components/navbar.js" defer></script>
+    <!-- Necesitarás crear este archivo JS para manejar la lógica de los pasos -->
+    <script src="../assets/js/compra.js"></script> 
+</body>
+</html>

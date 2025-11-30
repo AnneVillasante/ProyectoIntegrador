@@ -23,6 +23,16 @@ document.addEventListener('DOMContentLoaded', () => {
       searchPopover.toggleAttribute('hidden', !willExpand);
       searchBtn.setAttribute('aria-expanded', String(willExpand));
       if (willExpand && searchInput) setTimeout(() => searchInput.focus(), 0);
+
+      // Añadir listener para la búsqueda al expandir
+      if (willExpand && searchInput && !searchInput.__bound) {
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && searchInput.value.trim() !== '') {
+            window.location.href = `/pages/productos.html?q=${encodeURIComponent(searchInput.value.trim())}`;
+          }
+        });
+        searchInput.__bound = true;
+      }
     }
 
     function toggleAccount(expand) {

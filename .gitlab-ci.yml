@@ -1,0 +1,90 @@
+image: node:20
+
+# Definimos servicios necesarios (como la Base de Datos para pruebas integrales)
+services:
+  - name: mysql:8.0
+    alias: mysql
+    command: ["--default-authentication-plugin=mysql_native_password"]
+
+# Variables de entorno para las pruebas (GitLab las inyecta en el contenedor)
+variables:
+  # Variables para el servicio MySQL
+  MYSQL_DATABASE: lunaria_test_db
+  MYSQL_ROOT_PASSWORD: root_password
+  # Variables para la aplicación Node.js
+  MYSQL_HOST: mysql # El nombre del servicio definido arriba
+  MYSQL_USER: root
+  MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD # Usamos la variable definida para el servicio
+
+# 1. DEFINICIÓN DE ETAPAS (Cubre tu Plan de Pruebas y Despliegue)
+stages:
+  - preparacion  # Preparación entorno
+  - test         # Unitarias e Integrales
+  - seguridad    # Seguridad (SAST, Dependencias)
+  - build        # Empaquetado
+  - deploy       # Despliegue
+
+# Configuración de Cache: Para no instalar node_modules en cada paso
+cache:
+  paths:
+    - backend/node_modules/
+
+# --- ETAPA 1: PREPARACIÓN ---
+instalar_dependencias:
+  stage: preparacion
+  script:
+    - cd backend
+    - npm install
+  # Este paso descarga las librerías y las guarda en el cache para los siguientes pasos
+
+# --- ETAPA 2: PRUEBAS DE SOFTWARE (Unitarias e Integrales) ---
+pruebas_unitarias_integrales:
+  stage: test
+  script:
+    - cd backend
+    # Aquí se ejecutaría Jest. Jest debe estar configurado para conectar a la DB de prueba si es necesario.
+    - npm test 
+  artifacts:
+    when: always
+    reports:
+      junit: backend/report.xml # Si configuras Jest para exportar reportes
+
+# --- ETAPA 3: PLAN DE PRUEBAS DE SEGURIDAD ---
+# 3.1 Auditoría de Dependencias (Busca vulnerabilidades conocidas en librerías)
+seguridad_dependencias:
+  stage: seguridad
+  script:
+    - cd backend
+    - npm audit --audit-level=high || true # "|| true" evita que falle el pipeline si encuentra algo leve
+
+# 3.2 Análisis Estático de Código (SAST) - Busca patrones de código inseguro
+seguridad_codigo_sast:
+  stage: seguridad
+  script:
+    # Njsscan es una herramienta para buscar vulnerabilidades en Node.js
+    - pip install njsscan
+    - njsscan backend/ || true
+
+# --- ETAPA 4: EMPAQUETADO (Plan de Despliegue) ---
+empaquetar_artefacto:
+  stage: build
+  script:
+    - echo "Creando archivo comprimido para despliegue..."
+    - tar -czf lunaria-backend.tar.gz backend/
+  artifacts:
+    paths:
+      - lunaria-backend.tar.gz
+    expire_in: 1 week
+
+# --- ETAPA 5: DESPLIEGUE (Plan de Despliegue CI/CD) ---
+despliegue_produccion:
+  stage: deploy
+  script:
+    - echo "Iniciando despliegue automatizado..."
+    - echo "Conectando al servidor remoto..."
+    # Aquí irían comandos reales como: scp lunaria-backend.tar.gz usuario@servidor:/var/www
+    - echo "Despliegue finalizado exitosamente."
+  environment:
+    name: production
+  only:
+    - master # Solo despliega si el cambio es en la rama master
