@@ -1,5 +1,6 @@
 const usuarioModel = require('../models/usuarioModel');
 const UsuarioDto = require('../dto/usuarioDTO');
+const bcrypt = require('bcryptjs');
 
 exports.obtenerUsuarios = async (req, res) => {
   try {
@@ -13,9 +14,21 @@ exports.obtenerUsuarios = async (req, res) => {
 
 exports.crearUsuario = async (req, res) => {
   try {
-    const data = req.body;
-    const resultado = await usuarioModel.create(data);
-    res.json({ success: true, data: resultado });
+    const { nombres, apellidos, correo, contraseña, telefono, dni } = req.body;
+
+    // 1. Validación de entradas
+    if (!nombres || !correo || !contraseña) {
+      return res.status(400).json({ error: 'Nombre, correo y contraseña son requeridos.' });
+    }
+
+    // 2. Hashear la contraseña
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(contraseña, salt);
+
+    const nuevoUsuario = { nombres, apellidos, correo, contraseña: hashedPassword, telefono, dni };
+
+    const resultado = await usuarioModel.create(nuevoUsuario);
+    res.status(201).json({ success: true, message: 'Usuario creado correctamente', id: resultado.insertId });
   } catch (err) {
     console.error('USUARIO CREATE ERROR:', err);
     res.status(500).json({ error: 'Error al crear usuario' });
@@ -116,11 +129,15 @@ exports.actualizarMiPassword = async (req, res) => {
     const { contraseña } = req.body;
 
     if (!contraseña) {
-      return res.status(400).json({ error: 'La nueva contraseña es requerida' });
+      return res.status(400).json({ error: 'La nueva contraseña es requerida.' });
     }
-    // NOTA: Aquí deberías "hashear" la contraseña antes de guardarla. Ej: const hash = await bcrypt.hash(contraseña, 10);
-    await usuarioModel.update(id, { contraseña: contraseña /* Debería ser el hash */ });
-    res.json({ success: true, message: 'Contraseña actualizada correctamente' });
+
+    // Hashear la nueva contraseña
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(contraseña, salt);
+
+    await usuarioModel.update(id, { contraseña: hashedPassword });
+    res.json({ success: true, message: 'Contraseña actualizada correctamente.' });
   } catch (err) {
     console.error('USER PASSWORD UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar la contraseña' });

@@ -11,7 +11,7 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, JWT_SECRET);
 
       // Adjuntar el usuario a la solicitud
-      const [rows] = await pool.query('SELECT idUsuario, correo, rol FROM usuario WHERE idUsuario = ?', [decoded.id]);
+      const [rows] = await pool.query('SELECT idUsuario as id, correo, rol FROM usuario WHERE idUsuario = ?', [decoded.id]);
       req.user = rows[0];
 
       if (!req.user) {

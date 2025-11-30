@@ -12,12 +12,53 @@
   <div id="navbar"></div>
 
   <!-- SECCIÓN DE PRODUCTOS -->
-  <main class="productos-section container">
-    <h1 class="productos-title">Colección Destacada</h1>
-    <p class="productos-subtitle">Descubre nuestras prendas y accesorios más populares</p>
+  <main class="container">
+    <div class="productos-section">
+      <h1 class="productos-title">Colección Destacada</h1>
+      <p class="productos-subtitle">Descubre nuestras prendas y accesorios más populares</p>
+    </div>
 
-    <div class="productos-grid" id="productosGrid">
-      <!-- PRODUCTS_PLACEHOLDER -->
+    <div class="productos-container">
+      <!-- Barra lateral de filtros -->
+      <aside class="filtros-sidebar">
+        <h3>Filtros</h3>
+        <div id="filtroCategorias" class="filtro-grupo">
+          <!-- Las categorías se cargarán aquí -->
+        </div>
+        <div id="filtroSubcategorias" class="filtro-grupo">
+          <!-- Las subcategorías se cargarán aquí -->
+        </div>
+        <div class="filtro-grupo">
+          <h4>Precio</h4>
+          <div class="precio-filtro">
+            <input type="number" id="minPrice" placeholder="Min">
+            <span>-</span>
+            <input type="number" id="maxPrice" placeholder="Max">
+          </div>
+          <button id="applyPriceFilter" class="btn-primary" style="width: 100%;">Aplicar</button>
+        </div>
+      </aside>
+
+      <!-- Contenido principal de productos -->
+      <div class="productos-content">
+        <div class="productos-header">
+          <div class="ordenar-container">
+            <select id="ordenarProductos">
+              <option value="recomendado">Recomendado</option>
+              <option value="precio-asc">Precio: Menor a Mayor</option>
+              <option value="precio-desc">Precio: Mayor a Menor</option>
+              <option value="nombre-asc">Nombre: A-Z</option>
+              <option value="nombre-desc">Nombre: Z-A</option>
+            </select>
+          </div>
+        </div>
+        <div class="productos-grid" id="productosGrid">
+          <!-- Los productos se cargarán aquí -->
+        </div>
+        <div class="paginacion" id="paginacion">
+          <!-- La paginación se cargará aquí -->
+        </div>
+      </div>
     </div>
   </main>
 
