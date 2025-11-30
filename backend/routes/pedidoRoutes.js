@@ -2,8 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const pedidoController = require('../controllers/pedidoController');
-const authMiddleware = require('../middlewares/authMiddleware');
+const { protect } = require('../middleware/authMiddleware'); // Importamos solo la función 'protect'
 
-router.post('/', authMiddleware, pedidoController.createOrder);
+router.post('/', protect, pedidoController.createOrder); // Usamos 'protect' como middleware
 
 module.exports = router;

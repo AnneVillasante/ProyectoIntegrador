@@ -59,12 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>Precio: $${parseFloat(item.precioUnitario).toFixed(2)}</p>
                 </div>
                 <div class="cart-item-quantity">
-                    <button class="quantity-btn decrease-btn" data-id="${item.idProducto}">-</button>
+                    <button class="quantity-btn decrease-btn" data-id="${item.idProducto}" aria-label="Disminuir cantidad">-</button>
                     <input type="number" class="quantity-input" value="${item.cantidad}" min="1" data-id="${item.idProducto}">
-                    <button class="quantity-btn increase-btn" data-id="${item.idProducto}">+</button>
+                    <button class="quantity-btn increase-btn" data-id="${item.idProducto}" aria-label="Aumentar cantidad">+</button>
                 </div>
                 <div class="cart-item-subtotal">
-                    <strong>$${parseFloat(item.subtotal).toFixed(2)}</strong>
+                    <strong>S/ ${parseFloat(item.subtotal).toFixed(2)}</strong>
                 </div>
                 <div class="cart-item-remove">
                     <button class="remove-btn" data-id="${item.idProducto}" title="Eliminar producto">
@@ -84,12 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const discounts = 0; // Lógica de descuentos a implementar en el futuro
         const total = subtotal - discounts;
 
-        summarySubtotal.textContent = `$${subtotal.toFixed(2)}`;
-        summaryDiscounts.textContent = `-$${discounts.toFixed(2)}`;
-        summaryTotal.textContent = `$${total.toFixed(2)}`;
+        summarySubtotal.textContent = `S/ ${subtotal.toFixed(2)}`;
+        summaryDiscounts.textContent = `-S/ ${discounts.toFixed(2)}`;
+        summaryTotal.textContent = `S/ ${total.toFixed(2)}`;
 
-        // Habilitar o deshabilitar el botón de compra
-        checkoutButton.disabled = cart.items.length === 0;
+        // Habilitar o deshabilitar el botón de compra usando clases CSS
+        if (cart.items.length === 0) {
+            checkoutButton.classList.add('disabled');
+        } else {
+            checkoutButton.classList.remove('disabled');
+        }
     }
 
     function showEmptyCart() {
@@ -178,13 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Hubo un error al actualizar la cantidad del producto.');
         }
     }
-
-    // Event listener para el botón de continuar compra
-    checkoutButton.addEventListener('click', () => {
-        if (!checkoutButton.disabled) {
-            window.location.href = 'compra.html'; // Redirigir a la página de compra
-        }
-    });
 
     // Carga inicial de los datos del carrito
     fetchCartData();
