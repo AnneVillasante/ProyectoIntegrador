@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src="https://js.stripe.com/v3/"></script> </head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - Lunaria Threads</title>
@@ -55,6 +56,13 @@
                             <option value="yape">Yape</option>
                             <option value="plin">Plin</option>
                         </select>
+                    </div>
+
+                    <!-- Contenedor para Stripe Card Element -->
+                    <div class="form-group" id="card-element-container" style="display: none;">
+                        <label for="card-element">Tarjeta de Crédito o Débito</label>
+                        <div id="card-element"></div>
+                        <div id="card-errors" role="alert"></div>
                     </div>
 
                     <button type="submit" id="confirm-order-button" class="btn-primary">Confirmar Pedido</button>
