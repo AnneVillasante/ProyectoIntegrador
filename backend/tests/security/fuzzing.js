@@ -1,0 +1,33 @@
+const axios = require('axios'); // Asegúrate de tener axios: npm install axios
+
+const TARGET_URL = 'http://localhost:3000/api/auth/login';
+
+const payloads = [
+    { email: "' OR 1=1 --", password: "password" }, // SQL Injection básico
+    { email: "admin@test.com", password: Array(1000).fill('a').join('') }, // Buffer overflow attempt
+    { email: { $gt: "" }, password: "password" }, // NoSQL Injection (aunque usas MySQL, es bueno probar)
+    { js: "<script>alert(1)</script>" } // XSS payload
+];
+
+async function runFuzzing() {
+    console.log('🔥 Iniciando Pruebas de Fuzzing/Seguridad...');
+    
+    for (const payload of payloads) {
+        try {
+            console.log(`Probando payload: ${JSON.stringify(payload).substring(0, 50)}...`);
+            await axios.post(TARGET_URL, payload);
+        } catch (error) {
+            // Si el servidor responde 400 o 401, es bueno (lo bloqueó).
+            // Si responde 500, ¡encontramos un bug!
+            if (error.response && error.response.status === 500) {
+                console.error('❌ ALERTA: Error 500 detectado con payload:', payload);
+                console.error('   Posible vulnerabilidad de manejo de excepciones.');
+            } else {
+                console.log(`✅ Servidor respondió: ${error.response ? error.response.status : error.message} (Controlado)`);
+            }
+        }
+    }
+    console.log('🏁 Fuzzing finalizado.');
+}
+
+runFuzzing();   
