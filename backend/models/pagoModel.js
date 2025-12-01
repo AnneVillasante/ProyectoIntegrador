@@ -1,43 +1,19 @@
-const { DataTypes, Model } = require('sequelize');
-const sequelize = require('../config/database');
+// backend/models/pagoModel.js
 
-class Pago extends Model {}
-
-Pago.init({
-  idPago: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  fechaPago: {
-    type: DataTypes.DATE
-  },
-  monto: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  metodoPago: {
-    type: DataTypes.STRING(50)
-  },
-  estadoTransaccion: {
-    type: DataTypes.STRING(50)
-  },
-  stripe_payment_intent_id: {
-    type: DataTypes.STRING(255),
-    allowNull: true
-  },
-  idPedido: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    unique: true,
-    // Si tienes el modelo Pedido definido, puedes agregar la relación aquí
-    // references: { model: 'Pedido', key: 'idPedido' }
+/**
+ * Representa la estructura de un objeto de Pago.
+ * No es un modelo de base de datos, solo una clase para estructurar datos.
+ */
+class Pago {
+  constructor({ idPago, idPedido, metodoPago, monto, fechaPago, estadoTransaccion, stripe_payment_intent_id }) {
+    this.idPago = idPago;
+    this.idPedido = idPedido;
+    this.metodoPago = metodoPago;
+    this.monto = monto;
+    this.fechaPago = fechaPago;
+    this.estadoTransaccion = estadoTransaccion;
+    this.stripe_payment_intent_id = stripe_payment_intent_id;
   }
-}, {
-  sequelize,
-  modelName: 'Pago',
-  tableName: 'pago',
-  timestamps: false
-});
+}
 
 module.exports = Pago;

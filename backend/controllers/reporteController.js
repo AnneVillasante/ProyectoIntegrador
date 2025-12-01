@@ -1,8 +1,10 @@
 const reporteDAO = require('../dao/reporteDAO');
 const productoDAO = require('../dao/productoDAO');
-const usuarioDAO = require('../dao/usuarioDAO');
 const db = require('../config/db');
 const ReporteDTO = require('../dto/reporteDTO');
+
+// Se asume que jsreport se inicializa en app.js y se pasa a través de req
+const getJsreportRenderer = (req) => require('../services/jsreportService')(req.app.get('jsreport'));
 
 // Función auxiliar para convertir a CSV
 function convertToCSV(data) {
@@ -42,7 +44,7 @@ async function getVentasData() {
       (SELECT COUNT(*) FROM detallepedido dp WHERE dp.idPedido = p.idPedido) as cantidadProductos
     FROM pedido p
     LEFT JOIN cliente c ON p.idCliente = c.idCliente
-    LEFT JOIN usuario u ON c.idUsuario = u.idUsuario
+    LEFT JOIN usuario u ON c.fk_idUsuario = u.idUsuario -- Corregido el JOIN
     ORDER BY p.fecha DESC
   `);
   return rows;
@@ -51,7 +53,7 @@ async function getVentasData() {
 // Generar reporte de ventas
 exports.generateVentasReport = async (req, res) => {
   try {
-    const { formato = 'CSV', usuario } = req.body;
+    const { formato = 'json', usuario } = req.body;
     
     // Obtener datos de ventas
     const ventas = await getVentasData();
@@ -84,11 +86,22 @@ exports.generateVentasReport = async (req, res) => {
     });
 
     // Convertir a formato solicitado
-    if (formato === 'CSV') {
+    if (formato.toLowerCase() === 'csv') {
       const csv = convertToCSV(reportData);
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename=reporte_ventas_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
+    } else if (formato.toLowerCase() === 'pdf') {
+      const render = getJsreportRenderer(req);
+      const report = await render('ventas', {
+        items: reportData,
+        usuario: usuario || 'Sistema',
+        ...parametros
+      });
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=reporte_ventas_${reporteId}.pdf`);
+      res.send(report.content);
+      await reporteDAO.updateExportado(reporteId, true);
     } else {
       res.json({
         success: true,
@@ -109,10 +122,10 @@ exports.generateVentasReport = async (req, res) => {
 // Generar reporte de productos
 exports.generateProductosReport = async (req, res) => {
   try {
-    const { formato = 'CSV', usuario } = req.body;
+    const { formato = 'json', usuario } = req.body;
     
     // Obtener datos de productos
-    const productos = await productoDAO.getAll();
+    const productos = await productoDAO.getAll(); // Corregido: El método es getAll, no findAll
     
     // Preparar datos del reporte
     const reportData = productos.map(producto => ({
@@ -121,7 +134,7 @@ exports.generateProductosReport = async (req, res) => {
       'Descripción': producto.descripcion || 'Sin descripción',
       'Categoría': producto.categoria || 'Sin categoría',
       'Subcategoría': producto.subcategoria || 'Sin subcategoría',
-      'Precio': `S/ ${parseFloat(producto.precio || 0).toFixed(2)}`,
+      'Precio': `S/ ${parseFloat(producto.precio || 0).toFixed(2)}`, // Asegúrate que productoDAO.findAll() devuelve precio
       'Stock': producto.stock || 0
     }));
 
@@ -141,11 +154,22 @@ exports.generateProductosReport = async (req, res) => {
     });
 
     // Convertir a formato solicitado
-    if (formato === 'CSV') {
+    if (formato.toLowerCase() === 'csv') {
       const csv = convertToCSV(reportData);
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename=reporte_productos_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
+    } else if (formato.toLowerCase() === 'pdf') {
+        const render = getJsreportRenderer(req);
+        const report = await render('productos', {
+            items: reportData,
+            usuario: usuario || 'Sistema',
+            ...parametros
+        });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=reporte_productos_${reporteId}.pdf`);
+        res.send(report.content);
+        await reporteDAO.updateExportado(reporteId, true);
     } else {
       res.json({
         success: true,
@@ -166,7 +190,7 @@ exports.generateProductosReport = async (req, res) => {
 // Generar reporte de usuarios
 exports.generateUsuarioReport = async (req, res) => {
   try {
-    const { formato = 'CSV', usuario } = req.body;
+    const { formato = 'json', usuario } = req.body;
     
     // Obtener datos de usuarios
     const [usuarios] = await db.query(`
@@ -180,7 +204,7 @@ exports.generateUsuarioReport = async (req, res) => {
         u.rol,
         CASE WHEN c.idCliente IS NOT NULL THEN 1 ELSE 0 END as tieneCliente
       FROM usuario u
-      LEFT JOIN cliente c ON u.idUsuario = c.idUsuario
+      LEFT JOIN cliente c ON u.idUsuario = c.fk_idUsuario
       ORDER BY u.idUsuario
     `);
     
@@ -213,11 +237,22 @@ exports.generateUsuarioReport = async (req, res) => {
     });
 
     // Convertir a formato solicitado
-    if (formato === 'CSV') {
+    if (formato.toLowerCase() === 'csv') {
       const csv = convertToCSV(reportData);
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename=reporte_usuario_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
+    } else if (formato.toLowerCase() === 'pdf') {
+        const render = getJsreportRenderer(req);
+        const report = await render('usuarios', {
+            items: reportData,
+            usuario: usuario || 'Sistema',
+            ...parametros
+        });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=reporte_usuarios_${reporteId}.pdf`);
+        res.send(report.content);
+        await reporteDAO.updateExportado(reporteId, true);
     } else {
       res.json({
         success: true,
