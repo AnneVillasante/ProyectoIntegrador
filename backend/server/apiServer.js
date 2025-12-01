@@ -1,7 +1,11 @@
 // backend/server/apiServer.js
 const express = require('express');
 const cors = require('cors');
-const jsreport = require('jsreport')(); // 1. Importar e inicializar jsreport
+const jsreport = require('jsreport')({ // 1. Importar e inicializar jsreport
+  sandbox: {
+    allowedModules: ['moment'] // Permitir el módulo 'moment' en las plantillas
+  }
+});
 const helmet = require('helmet');
 const pool = require('../config/db');
 const authRouter = require('../routes/authRoutes');

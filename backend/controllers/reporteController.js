@@ -204,7 +204,7 @@ exports.generateUsuarioReport = async (req, res) => {
         u.rol,
         CASE WHEN c.idCliente IS NOT NULL THEN 1 ELSE 0 END as tieneCliente
       FROM usuario u
-      LEFT JOIN cliente c ON u.idUsuario = c.idUsuario
+      LEFT JOIN cliente c ON u.idUsuario = c.fk_idUsuario
       ORDER BY u.idUsuario
     `);
     
