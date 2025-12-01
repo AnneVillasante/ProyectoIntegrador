@@ -38,6 +38,100 @@
   font-style: italic;
 }
 
+<<<<<<< HEAD
+/* Contenedor de filtros y ordenamiento */
+.filtros-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-filtros-toggle {
+  display: none; /* Oculto en escritorio */
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ordenar-por {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ordenar-por label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.select-ordenar {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.select-ordenar:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.productos-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.filtros-sidebar {
+  background: rgba(27, 38, 59, 0.5);
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  position: sticky;
+  top: 100px;
+}
+
+.filtros-sidebar-header {
+  display: none; /* Oculto en escritorio */
+}
+
+.filtro-grupo h3 {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--text);
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filtro-grupo label {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 30px;
+=======
 /* --- Filtros de Categoría (Superiores) --- */
 .categorias-filtros {
   display: flex;
@@ -255,6 +349,7 @@
   gap: 20px;
   margin-top: 40px;
   perspective: 1000px; /* Para animaciones 3D */
+>>>>>>> progreso
 }
 
 .producto-card {
@@ -285,7 +380,11 @@
 
 .producto-img {
   width: 100%;
+<<<<<<< HEAD
+  height: 280px;
+=======
   height: 250px;
+>>>>>>> progreso
   object-fit: cover;
   border-radius: 0;
   margin: 0;
@@ -297,6 +396,15 @@
   transform: scale(1.05);
 }
 
+.producto-info-simple {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+}
+
 .producto-info {
   padding: 20px;
   flex: 1;
@@ -306,12 +414,16 @@
 }
 
 .producto-card h3 {
+<<<<<<< HEAD
+  font-family: 'Poppins', sans-serif;
+=======
   font-family: 'Cormorant Garamond', serif;
+>>>>>>> progreso
   font-size: 1rem;
   color: var(--text);
-  margin: 0 0 10px 0;
-  font-weight: 600;
-  line-height: 1.3;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .producto-card .descripcion {
@@ -342,9 +454,11 @@
 
 .acciones {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
   margin-top: auto;
+<<<<<<< HEAD
+  width: 100%;
+=======
   padding-top: 10px;
   opacity: 0;
   transform: translateY(10px);
@@ -354,6 +468,7 @@
 .producto-card:hover .acciones {
   opacity: 1;
   transform: translateY(0);
+>>>>>>> progreso
 }
 
 .btn-outline {
@@ -362,7 +477,7 @@
   color: var(--brand);
   border-radius: 8px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
@@ -403,6 +518,44 @@
   color: var(--muted);
   font-size: 1.1rem;
   text-align: center;
+}
+
+.paginacion-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-paginacion {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 600;
+  border-radius: 8px;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-paginacion:hover {
+  background: var(--brand);
+  color: #06070a;
+  border-color: var(--brand);
+}
+
+.btn-paginacion.active {
+  background: var(--brand);
+  color: #06070a;
+  border-color: var(--brand);
+  cursor: default;
 }
 
 .error {
@@ -525,9 +678,69 @@
 
 /* Responsivo */
 @media (max-width: 1024px) {
+  .productos-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: #0d1117;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    border-radius: 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .filtros-sidebar.active {
+    transform: translateX(0);
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+  }
+
+  .filtros-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filtros-sidebar-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+  }
+
+  .btn-cerrar-sidebar {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .btn-filtros-toggle {
+    display: flex;
+  }
+
+  .filtros-container {
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .productos-grid {
+<<<<<<< HEAD
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+=======
+>>>>>>> progreso
     gap: 25px;
   }
+
 }
 
 @media (max-width: 768px) {
@@ -545,11 +758,19 @@
   }
 
   .productos-grid {
+<<<<<<< HEAD
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+=======
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+>>>>>>> progreso
     gap: 20px;
   }
 
   .producto-img {
+<<<<<<< HEAD
+    height: 300px;
+=======
+>>>>>>> progreso
   }
 }
 
@@ -560,6 +781,10 @@
   }
 
   .producto-img {
+<<<<<<< HEAD
+    height: 350px;
+=======
     height: 280px;
+>>>>>>> progreso
   }
 }

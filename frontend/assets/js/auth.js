@@ -1,5 +1,5 @@
 async function loginUser(credentials) {
-  const res = await fetch('http://localhost:4000/api/auth/login', {
+  const res = await fetch(`${window.CONFIG.API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials)
@@ -44,10 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
   btnLogin.addEventListener('click', showLogin);
   btnRegister.addEventListener('click', showRegister);
 
-  const API_BASE = 'http://localhost:4000/api/auth';
-
   async function apiPost(path, body) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(`${window.CONFIG.API_URL}/auth${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)

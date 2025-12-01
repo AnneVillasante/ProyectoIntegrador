@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let subcategorias = [];
   let stockChanges = {};
 
-  // API Base URL
-  const API_BASE = 'http://localhost:4000/api';
-
   // ===== SISTEMA DE PESTAÑAS =====
   function initTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -80,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}${endpoint}`, {
+      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, {
         ...options,
         headers: headers
       });
@@ -104,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function apiDownload(endpoint, options = {}) {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`${API_BASE}${endpoint}`, {
+      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
@@ -427,7 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     tbody.innerHTML = categorias.map(cat => {
       const imagenUrl = cat.imagen 
+<<<<<<< HEAD
+        ? (cat.imagen.startsWith('http') ? cat.imagen : `${window.CONFIG.IMG_URL}/${cat.imagen}`)
+=======
         ? (cat.imagen.startsWith('http') ? cat.imagen : `http://localhost:4000/${cat.imagen}`)
+>>>>>>> progreso
         : null;
       return `
       <tr>
@@ -458,7 +459,11 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = subcategorias.map(sub => {
       const categoria = categorias.find(c => c.idCategoria === sub.idCategoria);
       const imagenUrl = sub.imagen 
+<<<<<<< HEAD
+        ? (sub.imagen.startsWith('http') ? sub.imagen : `${window.CONFIG.IMG_URL}/${sub.imagen}`)
+=======
         ? (sub.imagen.startsWith('http') ? sub.imagen : `http://localhost:4000/${sub.imagen}`)
+>>>>>>> progreso
         : null;
       return `
       <tr>
