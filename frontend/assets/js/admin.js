@@ -633,9 +633,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('saveStocksBtn').addEventListener('click', saveStocks);
 
   // Reportes
-  document.getElementById('generateUsersReport').addEventListener('click', () => generateReport('usuarios'));
-  document.getElementById('generateProductsReport').addEventListener('click', () => generateReport('productos'));
-  document.getElementById('generateVentasReport').addEventListener('click', () => generateReport('ventas'));
+  document.querySelectorAll('.generate-report-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+      const reportType = event.target.dataset.reportType;
+      generateReport(reportType);
+    });
+  });
 
   // Modales
   document.getElementById('closeEditUserModal').addEventListener('click', () => {
