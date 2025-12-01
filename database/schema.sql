@@ -145,8 +145,15 @@ CREATE TABLE `promocion` (
   `fechaInicio` date DEFAULT NULL,
   `fechaFin` date DEFAULT NULL,
   `idCampaña` int DEFAULT NULL,
+  `tipoDescuento` enum('Porcentaje','MontoFijo') NOT NULL DEFAULT 'Porcentaje',
+  `valorDescuento` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `montoMinimoCompra` decimal(10,2) DEFAULT '0.00',
+  `activo` tinyint(1) DEFAULT '1',
+  `idCategoriaAplicable` int DEFAULT NULL,
   PRIMARY KEY (`idPromocion`),
   KEY `idCampaña` (`idCampaña`),
+  KEY `fk_promocion_categoria` (`idCategoriaAplicable`),
+  CONSTRAINT `fk_promocion_categoria` FOREIGN KEY (`idCategoriaAplicable`) REFERENCES `categoria` (`idCategoria`),
   CONSTRAINT `promocion_ibfk_1` FOREIGN KEY (`idCampaña`) REFERENCES `campaña` (`idCampaña`)
 );
 CREATE TABLE `recomendacion` (
@@ -198,10 +205,12 @@ CREATE TABLE `usuario` (
   CONSTRAINT `chk_telefono_format` CHECK (regexp_like(`telefono`,_utf8mb4'^9[0-9]{8}$'))
 );
 CREATE TABLE `usuariopromocion` (
-  `idUsuario` int NOT NULL,
+    `idUsuario` int NOT NULL,
   `idPromocion` int NOT NULL,
+  `estado` enum('Pendiente','Usado') DEFAULT 'Pendiente',
+  `fechaUso` datetime DEFAULT NULL,
   PRIMARY KEY (`idUsuario`,`idPromocion`),
   KEY `idPromocion` (`idPromocion`),
   CONSTRAINT `usuariopromocion_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`),
   CONSTRAINT `usuariopromocion_ibfk_2` FOREIGN KEY (`idPromocion`) REFERENCES `promocion` (`idPromocion`)
-)
+);
