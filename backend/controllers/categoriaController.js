@@ -12,7 +12,13 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const categoria = new CategoriaDTO(req.body);
+    const categoriaData = { ...req.body };
+    // Si se subió un archivo, Multer lo pone en req.file
+    if (req.file) {
+      // Guardamos la ruta relativa que genera Multer
+      categoriaData.imagen = req.file.path.replace(/\\/g, '/');
+    }
+    const categoria = new CategoriaDTO(categoriaData);
     const id = await categoriaDAO.create(categoria);
     res.status(201).json({ message: 'Categoría creada', id });
   } catch (err) {
@@ -24,10 +30,20 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const categoria = new CategoriaDTO(req.body);
+    const categoriaData = { ...req.body };
 
-    const updated = await categoriaDAO.update(id, categoria);
+    // Si se sube una nueva imagen, la usamos
+    if (req.file) {
+      categoriaData.imagen = req.file.path.replace(/\\/g, '/');
+    } else {
+      // Si no se sube una nueva imagen, debemos conservar la existente.
+      const categoriaExistente = await categoriaDAO.getById(id);
+      if (categoriaExistente) {
+        categoriaData.imagen = categoriaExistente.imagen;
+      }
+    }
 
+    const updated = await categoriaDAO.update(id, new CategoriaDTO(categoriaData));
     if (!updated) {
       return res.status(404).json({ message: 'Categoría no encontrada' });
     }

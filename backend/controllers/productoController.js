@@ -24,8 +24,13 @@ exports.get = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const product = req.body;
-    const id = await ProductoDao.create(product);
+    const productData = { ...req.body };
+    if (req.file) {
+      // Guardamos la ruta relativa que genera Multer
+      productData.imagen = req.file.path.replace(/\\/g, '/');
+    }
+
+    const id = await ProductoDao.create(productData);
     res.json({ success: true, id });
   } catch (err) {
     console.error('PRODUCT CREATE ERROR:', err);
@@ -36,9 +41,21 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = req.body;
-    await ProductoDao.update(id, product);
-    res.json({ success: true, message: 'Producto actualizado' });
+    const productData = { ...req.body };
+
+    if (req.file) {
+      productData.imagen = req.file.path.replace(/\\/g, '/');
+    } else {
+      // Conservar la imagen existente si no se sube una nueva
+      const productoExistente = await ProductoDao.getById(id);
+      if (productoExistente) {
+        productData.imagen = productoExistente.imagen;
+      }
+    }
+
+    const updated = await ProductoDao.update(id, productData);
+    if (!updated) return res.status(404).json({ message: 'Producto no encontrado' });
+    res.json({ success: true, message: 'Producto actualizado correctamente' });
   } catch (err) {
     console.error('PRODUCT UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar producto' });
