@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             alert('¡Pedido procesado exitosamente!');
             localStorage.removeItem('cart'); // Limpiar carrito local si aplica
-            window.location.href = 'perfil.html'; 
+            window.location.href = '/perfil'; 
 
         } catch (error) {
             console.error('Error al crear el pedido:', error);
