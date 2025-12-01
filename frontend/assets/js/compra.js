@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // URL base de tu API que corre en el puerto 4000
+    const API_BASE = 'http://localhost:4000/api';
+
     // Elementos de los pasos
     const steps = {
         summary: document.getElementById('step-summary'),
@@ -27,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnToPayment = document.getElementById('btn-to-payment');
     const btnBackToCustomerData = document.getElementById('btn-back-to-customer-data');
     const btnFinalizePurchase = document.getElementById('btn-finalize-purchase');
+    const customerDataForm = document.getElementById('customer-data-form');
 
     // Elementos de datos
     const summaryProductList = document.getElementById('summary-product-list');
@@ -54,10 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
     btnToCustomerData.addEventListener('click', () => navigateToStep('customerData'));
     btnBackToSummary.addEventListener('click', () => navigateToStep('summary'));
     btnToPayment.addEventListener('click', () => {
-        if (document.getElementById('customer-data-form').checkValidity()) {
+        // Añadimos una clase para que el CSS pueda mostrar los errores de validación
+        customerDataForm.classList.add('was-validated');
+        if (customerDataForm.checkValidity()) {
             navigateToStep('payment');
         } else {
-            alert('Por favor, completa tus datos.');
+            // El feedback visual lo dará el CSS, no necesitamos un alert.
         }
     });
     btnBackToCustomerData.addEventListener('click', () => navigateToStep('customerData'));
@@ -67,14 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadCartAndUserData = async () => {
         try {
             // Cargar carrito
-            const cartResponse = await fetch('/api/carrito', {
+            const cartResponse = await fetch(`${API_BASE}/carrito`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!cartResponse.ok) throw new Error('Error al cargar el carrito');
             cartData = await cartResponse.json();
 
             // Cargar datos del usuario
-            const userResponse = await fetch('/api/usuario/perfil', {
+            const userResponse = await fetch(`${API_BASE}/usuario/perfil`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!userResponse.ok) throw new Error('Error al cargar datos del usuario');
@@ -98,9 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         summaryProductList.innerHTML = cartData.items.map(item => `
             <div class="summary-item">
-                <img src="/uploads/${item.imagen}" alt="${item.nombre}">
+                <img src="http://localhost:4000/uploads/${item.imagenProducto.replace(/\\/g, '/')}" alt="${item.nombreProducto}" onerror="this.src='../assets/img/placeholder.png'">
                 <div class="item-details">
-                    <h4>${item.nombre}</h4>
+                    <h4>${item.nombreProducto}</h4>
                     <p>Cantidad: ${item.cantidad}</p>
                 </div>
                 <div class="item-price">
@@ -109,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('');
 
-        summaryTotalAmount.textContent = `S/ ${cartData.total.toFixed(2)}`;
+        summaryTotalAmount.textContent = `S/ ${(parseFloat(cartData.total) || 0).toFixed(2)}`;
     };
 
     const populateUserData = (user) => {
@@ -165,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnFinalizePurchase.disabled = true;
             btnFinalizePurchase.textContent = 'Procesando...';
 
-            const response = await fetch('/api/pedidos', {
+            const response = await fetch(`${API_BASE}/pedidos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
