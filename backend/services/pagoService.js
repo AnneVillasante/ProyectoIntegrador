@@ -27,6 +27,30 @@ class PagoService {
     }
 
     /**
+     * Crea y confirma una intención de pago en un solo paso.
+     * @param {number} monto - El monto a cobrar (en céntimos).
+     * @param {string} moneda - La moneda ('pen', 'usd').
+     * @param {string} paymentMethodId - El ID del método de pago creado en el frontend.
+     * @param {object} metadata - Datos adicionales.
+     * @returns {object} El PaymentIntent de Stripe.
+     */
+    async crearIntentoDePagoConConfirmacion(monto, moneda, paymentMethodId, metadata = {}) {
+        try {
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: monto,
+                currency: moneda,
+                payment_method: paymentMethodId,
+                confirm: true, // Intenta confirmar el pago inmediatamente
+                metadata,
+            });
+            return paymentIntent;
+        } catch (error) {
+            console.error("Error al crear y confirmar el intento de pago en Stripe:", error);
+            throw new Error(`Stripe Error: ${error.message}`);
+        }
+    }
+
+    /**
      * Confirma y guarda un pago después de que Stripe lo procesa.
      * @param {object} stripeEvent - El objeto de evento de Stripe (ej. payment_intent.succeeded).
      * @returns {PagoDTO} El DTO del pago guardado.
