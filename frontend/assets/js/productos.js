@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/carrito`, {
+      const response = await fetch(`${window.CONFIG.API_URL}/carrito`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -320,4 +320,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Error cargando productos:', error);
     productosGrid.innerHTML = `<p class="error">Error al cargar los productos. Por favor, intenta más tarde.</p>`;
   }
+
+  function agregarEventListenersTarjetas() {
+    const botonesAgregar = document.querySelectorAll('.agregar');
+    botonesAgregar.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idProducto = e.target.getAttribute('data-id');
+        // Lógica para agregar al carrito
+        if (typeof agregarAlCarrito === 'function') {
+            agregarAlCarrito(idProducto);
+        } else {
+            console.log('Producto agregado:', idProducto);
+        }
+      });
+    });
+
+    const botonesVer = document.querySelectorAll('.ver');
+    botonesVer.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+         const idProducto = e.target.getAttribute('data-id');
+         window.location.href = `producto.html?id=${idProducto}`;
+      });
+    });
+  }
+
 });
