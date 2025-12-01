@@ -6,9 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // URL base de tu API que corre en el puerto 4000
-    const API_BASE = 'http://localhost:4000/api';
-
     // Elementos de los pasos
     const steps = {
         summary: document.getElementById('step-summary'),
@@ -73,14 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadCartAndUserData = async () => {
         try {
             // Cargar carrito
-            const cartResponse = await fetch(`${API_BASE}/carrito`, {
+            const cartResponse = await fetch(`${window.CONFIG.API_URL}/carrito`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!cartResponse.ok) throw new Error('Error al cargar el carrito');
             cartData = await cartResponse.json();
 
             // Cargar datos del usuario
-            const userResponse = await fetch(`${API_BASE}/usuario/perfil`, {
+            const userResponse = await fetch(`${window.CONFIG.API_URL}/usuario/perfil`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!userResponse.ok) throw new Error('Error al cargar datos del usuario');
@@ -104,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         summaryProductList.innerHTML = cartData.items.map(item => `
             <div class="summary-item">
-                <img src="http://localhost:4000/uploads/${item.imagenProducto.replace(/\\/g, '/')}" alt="${item.nombreProducto}" onerror="this.src='../assets/img/placeholder.png'">
+                <img src="${window.CONFIG.IMG_URL}/${item.imagenProducto.replace(/\\/g, '/')}" alt="${item.nombreProducto}" onerror="this.src='../assets/img/placeholder.png'">
                 <div class="item-details">
                     <h4>${item.nombreProducto}</h4>
                     <p>Cantidad: ${item.cantidad}</p>
@@ -171,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnFinalizePurchase.disabled = true;
             btnFinalizePurchase.textContent = 'Procesando...';
 
-            const response = await fetch(`${API_BASE}/pedidos`, {
+            const response = await fetch(`${window.CONFIG.API_URL}/pedidos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

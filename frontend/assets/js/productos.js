@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
     if (!token) {
       alert('Debes iniciar sesión para agregar productos al carrito.');
-      window.location.href = 'login.html'; // O la ruta a tu página de login
+      window.location.href = '/login'; // O la ruta a tu página de login
       return;
     }
 

@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (!token) {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let cartData = null;
 
     // --- Configuración de Stripe ---
-    // Reemplaza 'TU_CLAVE_PUBLICA_DE_STRIPE' con tu clave real
-    const stripe = Stripe('pk_test_51SZWCJ3flV6CgDCbFFRTIe1p3Ajf59NxdLoQ1fv62Q7fWm6COFgHVUeZJAOocMYOcLfhIW0lRpKEbmHNb61lfXJh007I2a0yjd'); 
+    // Usar la clave pública desde el archivo de configuración
+    const stripe = Stripe(window.CONFIG.STRIPE_PUBLIC_KEY); 
     const elements = stripe.elements();
     const cardElement = elements.create('card', {
         style: { base: { fontSize: '16px' } }
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchCart = async () => {
         try {
-            const response = await fetch('/api/carrito', {
+            const response = await fetch(`${window.CONFIG.API_URL}/carrito`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                     window.location.href = 'login.html';
+                     window.location.href = '/login';
                 }
                 throw new Error('No se pudo cargar el resumen del pedido.');
             }
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const createOrder = async (orderPayload) => {
         try {
-            const response = await fetch('/api/pedidos', {
+            const response = await fetch(`${window.CONFIG.API_URL}/pedidos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
