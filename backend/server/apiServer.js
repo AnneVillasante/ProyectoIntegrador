@@ -11,14 +11,21 @@ const reporteRoutes = require('../routes/reporteRoutes');
 const carritoRoutes = require('../routes/carritoRoutes');
 const clienteRoutes = require('../routes/clienteRoutes');
 const pedidoRoutes = require('../routes/pedidoRoutes');
+const pagoRoutes = require('../routes/pagoRoutes');
 
 const apiApp = express();
-apiApp.use(express.json());
+
 // CORS configurado para permitir solicitudes desde el frontend
 apiApp.use(cors({ 
   origin: ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true
 }));
+
+// Ruta de Webhook ANTES de express.json() para recibir el body en formato raw
+apiApp.use('/api/pagos', pagoRoutes);
+
+// Middleware para parsear JSON para el resto de las rutas de la API
+apiApp.use(express.json());
 
 // Servir archivos estáticos desde la carpeta 'uploads'
 apiApp.use('/uploads', express.static('uploads'));
