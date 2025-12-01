@@ -86,3 +86,21 @@
     padding: 1rem;
     font-size: 1.1rem;
 }
+
+/* Estilos para el elemento de tarjeta de Stripe */
+#card-element {
+    border: 1px solid #ccc;
+    padding: 0.8rem;
+    border-radius: 4px;
+    background-color: white;
+}
+
+#card-errors {
+    color: #fa755a;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.StripeElement--invalid {
+    border-color: #fa755a;
+}
