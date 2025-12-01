@@ -1,131 +1,256 @@
 /lunaria-threads/
+
 │
-├── frontend/                            # Interfaz visual del sistema
-│   ├── assets/                          # Archivos estáticos
-│   │   ├── css/
-│   │   │   └── styles.css
-│   │   ├── js/
-│   │   │   ├── main.js
-│   │   │   ├── auth.js                  # Manejo de login/registro
-│   │   │   ├── cart.js                  # Lógica del carrito
-│   │   │   ├── products.js              # Renderizado de productos
-│   │   │   └── dashboard.js             # Lógica del panel admin
-│   │   └── img/
-│   │       ├── logo.png
-│   │       └── banner.jpg
-│   │
-│   ├── pages/                           # Páginas HTML del sistema
-│   │   ├── index.html                   # Página principal
-│   │   ├── login.html                   # Inicio de sesión
-│   │   ├── register.html                # Registro de usuarios
-│   │   ├── products.html                # Catálogo de productos
-│   │   ├── cart.html                    # Carrito de compras
-│   │   ├── checkout.html                # Confirmación y pago
-│   │   ├── order-history.html           # Historial de pedidos
-│   │   ├── delivery-tracking.html       # Seguimiento de entregas
-│   │   ├── admin-dashboard.html         # Panel del administrador
-│   │   └── reports.html                 # Reportes de ventas
-│   │
-│   └── components/                      # Componentes reutilizables
-│       ├── navbar.html
-│       ├── footer.html
-│       └── sidebar.html
-│
-├── backend/                             # Lógica del sistema en Node.js
-│   ├── controllers/                     # Controladores (MVC)
-│   │   ├── CustomerController.js
-│   │   ├── ProductController.js
-│   │   ├── CartController.js
-│   │   ├── OrderController.js
-│   │   ├── DeliveryController.js
-│   │   ├── SubscriptionController.js
-│   │   ├── ReviewController.js
-│   │   ├── ReportController.js
-│   │   └── NotificationController.js
-│   │
-│   ├── models/                          # Modelos de datos
-│   │   ├── Customer.js
-│   │   ├── Product.js
-│   │   ├── Cart.js
-│   │   ├── Order.js
-│   │   ├── Delivery.js
-│   │   ├── Subscription.js
-│   │   ├── Review.js
-│   │   └── Inventory.js
-│   │
-│   ├── dao/                             # Capa de acceso a datos
-│   │   ├── CustomerDAO.js
-│   │   ├── ProductDAO.js
-│   │   ├── OrderDAO.js
-│   │   ├── DeliveryDAO.js
-│   │   ├── SubscriptionDAO.js
-│   │   ├── ReviewDAO.js
-│   │   └── InventoryDAO.js
-│   │
-│   ├── dto/                             # Objetos de transferencia de datos
-│   │   ├── CustomerDTO.js
-│   │   ├── ProductDTO.js
-│   │   ├── OrderDTO.js
-│   │   ├── DeliveryDTO.js
-│   │   ├── SubscriptionDTO.js
-│   │   └── ReviewDTO.js
-│   │
-│   ├── services/                        # Lógica de negocio
+
+├── README.md
+
+├── backend
+
+│   ├── app.js
+
+│   ├── config
+
+│   │   ├── config.js
+
+│   │   └── db.js
+
+│   ├── controllers
+
+│   │   ├── AuthController.js
+
+│   │   ├── carritoController.js
+
+│   │   ├── categoriaController.js
+
+│   │   ├── clienteController.js
+
+│   │   ├── pagoController.js
+
+│   │   ├── pedidoController.js
+
+│   │   ├── productoController.js
+
+│   │   ├── reporteController.js
+
+│   │   ├── subcategoriaController.js
+
+│   │   └── usuarioController.js
+
+│   ├── dao
+
+│   │   ├── carritoDAO.js
+
+│   │   ├── categoriaDAO.js
+
+│   │   ├── pagoDAO.js
+
+│   │   ├── pedidoDAO.js
+
+│   │   ├── productoDao.js
+
+│   │   ├── reporteDAO.js
+
+│   │   ├── subcategoriaDAO.js
+│   │   ├── usuarioDAO.js
+
+│   │   └── ventaDao.js
+
+│   ├── dto
+
+│   │   ├── carritoDTO.js
+
+│   │   ├── categoriaDTO.js
+
+│   │   ├── pagoDTO.js
+
+│   │   ├── productoDto.js
+
+│   │   ├── reporteDTO.js
+
+│   │   ├── subcategoriaDTO.js
+
+│   │   └── usuarioDTO.js
+
+│   ├── middleware
+
+│   │   └── authMiddleware.js
+
+│   ├── models
+
+│   │   ├── carritoModel.js
+
+│   │   ├── categoriaModel.js
+
+│   │   ├── pagoModel.js
+
+│   │   ├── productoModel.js
+
+│   │   ├── reporteModel.js
+
+│   │   ├── subcategoriaModel.js
+
+│   │   └── usuarioModel.js
+
+│   ├── package-lock.json
+
+│   ├── package.json
+
+│   ├── routes
+
+│   │   ├── authRoutes.js
+
+│   │   ├── carritoRoutes.js
+
+│   │   ├── categoriaRoutes.js
+
+│   │   ├── clienteRoutes.js
+
+│   │   ├── pagoRoutes.js
+
+│   │   ├── pedidoRoutes.js
+
+│   │   ├── productoRoutes.js
+
+│   │   ├── reporteRoutes.js
+
+│   │   ├── subcategoriaRoutes.js
+
+│   │   └── usuarioRoutes.js
+
+│   ├── server
+
+│   │   ├── apiServer.js
+
+│   │   └── staticServer.js
+
+│   ├── services
+
 │   │   ├── AuthService.js
-│   │   ├── PaymentService.js
-│   │   ├── MailService.js
-│   │   ├── RecommendationService.js
-│   │   ├── InventoryService.js
-│   │   ├── DeliveryService.js
-│   │   └── SubscriptionService.js
-│   │
-│   ├── middlewares/                     # Middlewares de seguridad y control
-│   │   ├── authMiddleware.js
-│   │   ├── roleMiddleware.js
-│   │   └── errorHandler.js
-│   │
-│   ├── routes/                          # Rutas de la API REST
-│   │   ├── customerRoutes.js
-│   │   ├── productRoutes.js
-│   │   ├── cartRoutes.js
-│   │   ├── orderRoutes.js
-│   │   ├── deliveryRoutes.js
-│   │   ├── subscriptionRoutes.js
-│   │   ├── reviewRoutes.js
-│   │   └── notificationRoutes.js
-│   │
-│   ├── config/                          # Configuración general
-│   │   ├── db.js                        # Conexión a MySQL
-│   │   ├── sendgrid.js                  # Configuración de envío de correos
-│   │   ├── payment.js                   # Configuración de API de pagos
-│   │   └── env.js                       # Carga de variables .env
-│   │
-│   ├── utils/                           # Funciones auxiliares
-│   │   ├── logger.js
-│   │   ├── emailTemplates.js
-│   │   ├── tokenGenerator.js
-│   │   └── dateFormatter.js
-│   │
-│   ├── facades/                         # Interfaces combinadas (patrón Facade)
-│   │   ├── OrderFacade.js               # Integra pedido + pago + inventario
-│   │   └── DeliveryFacade.js            # Integra entrega + notificación
-│   │
-│   ├── app.js                           # Inicializa la aplicación y middlewares
-│   └── server.js                        # Ejecuta el servidor y maneja despliegue
-│
-├── database/                            # Scripts SQL
-│   ├── schema.sql                       # Tablas principales (Clientes, Productos, etc.)
-│   ├── seed.sql                         # Datos de prueba
-│   └── migrations/
-│       └── init_tables.sql              # Migraciones iniciales
-│
-├── docs/                                # Documentación del sistema
-│   ├── arquitectura.drawio              # Diagrama de arquitectura
-│   ├── modelo_entidad_relacion.png      # MER base de datos
-│   ├── casos_de_uso.pdf
-│   └── manual_usuario.pdf
-│
-├── .env                                 # Variables de entorno
-├── .gitignore
-├── package.json
-└── README.md
+
+│   │   ├── ProductoService.js
+
+│   │   ├── carritoService.js
+
+│   │   ├── clienteService.js
+
+│   │   ├── jsreportService.js
+
+│   │   └── pagoService.js
+
+│   ├── tests
+
+│   │   └── example.test.js
+
+│   └── uploads
+
+│       ├── perfiles
+
+│       │   └── 1763600783058-gurugurugg.gif
+
+│       └── placeholder.png
+
+├── database
+
+│   ├── schema.sql
+
+│   ├── seed.sql
+
+│   └── updates_schema.sql
+
+├── frontend
+
+│   ├── assets
+
+│   │   ├── css
+
+│   │   │   ├── admin.css
+
+│   │   │   ├── carrito.css
+
+│   │   │   ├── compra.css
+
+│   │   │   ├── login.css
+
+│   │   │   ├── perfil.css
+
+│   │   │   ├── productos.css
+
+│   │   │   ├── reportes.css
+
+│   │   │   └── styles.css
+
+│   │   ├── img
+
+│   │   │   ├── Logo-000.png
+
+│   │   │   ├── Logo-001.png
+
+│   │   │   ├── Navbar-000.png
+
+│   │   │   ├── Navbar-001.png
+
+│   │   │   ├── Navbar-001.svg
+
+│   │   │   ├── Planes_Proyecto_Web.docx
+
+│   │   │   ├── Planes_Proyecto_Web_Completado.docx
+
+│   │   │   ├── default-avatar.png
+
+│   │   │   ├── index001.png
+
+│   │   │   └── placeholder.png
+
+│   │   └── js
+
+│   │       ├── admin.js
+
+│   │       ├── auth.js
+
+│   │       ├── carrito.js
+
+│   │       ├── categoria.js
+
+│   │       ├── checkout.js
+
+│   │       ├── compra.js
+
+│   │       ├── config.js
+
+│   │       ├── login.js
+
+│   │       ├── productos.js
+
+│   │       ├── reportes.js
+
+│   │       └── subcategorias.js
+
+│   ├── components
+
+│   │   ├── footer.html
+
+│   │   ├── layout.js
+
+│   │   ├── navbar.html
+
+│   │   ├── navbar.js
+
+│   │   ├── perfil.html
+
+│   │   └── perfil.js
+
+│   └── pages
+
+│       ├── admin_panel.html
+
+│       ├── carrito.html
+
+│       ├── compra.html
+
+│       ├── index.html
+
+│       ├── login.html
+
+│       └── productos.html
+
+└── start.sh
