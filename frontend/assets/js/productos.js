@@ -1,8 +1,6 @@
 // frontend/assets/js/productos.js - Lógica para la página de productos
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const API_BASE = 'http://localhost:4000/api';
-
   // --- ELEMENTOS DEL DOM ---
   const productosGrid = document.getElementById('productosGrid');
   const productosTitle = document.querySelector('.productos-title');
@@ -20,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   let allProductos = [];
   let allCategorias = [];
   let allSubcategorias = [];
-
   let estadoFiltros = {
     categoria: null,
     subcategorias: new Set(), // Usar un Set para múltiples subcategorías
@@ -34,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // --- FUNCIONES DE OBTENCIÓN DE DATOS ---
   const fetchData = async (endpoint) => {
     try {
-      const response = await fetch(`${API_BASE}/${endpoint}`);
+      const response = await fetch(`${window.CONFIG.API_URL}/${endpoint}`);
       if (!response.ok) throw new Error(`Error al cargar ${endpoint}`);
       return await response.json();
     } catch (error) {
@@ -106,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const crearTarjetaProducto = (prod) => {
-    let imagenUrl = prod.imagen ? `http://localhost:4000/${prod.imagen.replace(/\\/g, '/')}` : '../assets/img/placeholder.png';
+    let imagenUrl = prod.imagen ? `${window.CONFIG.IMG_URL}/${prod.imagen.replace(/\\/g, '/')}` : '../assets/img/placeholder.png';
     
     return `
       <div class="producto-card">
@@ -116,6 +113,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <p class="precio">S/ ${parseFloat(prod.precio || 0).toFixed(2)}</p>
           <div class="acciones">
             <button class="btn-primary agregar" data-id="${prod.idProducto}">Agregar</button>
+            <button class="btn-outline ver" data-id="${prod.idProducto}" style="display: none;">Ver</button> <!-- Oculto por ahora -->
           </div>
         </div>
       </div>
@@ -286,12 +284,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
     if (!token) {
       alert('Debes iniciar sesión para agregar productos al carrito.');
-      window.location.href = 'login.html'; // O la ruta a tu página de login
+      window.location.href = '/login'; // O la ruta a tu página de login
       return;
     }
 
     try {
-      const response = await fetch(`${API_BASE}/carrito`, {
+      const response = await fetch(`${window.CONFIG.API_URL}/carrito`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -317,16 +315,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
-  const agregarEventListenersTarjetas = () => {
-    productosGrid.querySelectorAll('.agregar').forEach(button => {
-      button.addEventListener('click', (e) => agregarAlCarrito(e.target.dataset.id));
-    });
-  };
-
   try {
     inicializar();
   } catch (error) {
     console.error('Error cargando productos:', error);
     productosGrid.innerHTML = `<p class="error">Error al cargar los productos. Por favor, intenta más tarde.</p>`;
   }
+
+  function agregarEventListenersTarjetas() {
+    const botonesAgregar = document.querySelectorAll('.agregar');
+    botonesAgregar.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idProducto = e.target.getAttribute('data-id');
+        // Lógica para agregar al carrito
+        if (typeof agregarAlCarrito === 'function') {
+            agregarAlCarrito(idProducto);
+        } else {
+            console.log('Producto agregado:', idProducto);
+        }
+      });
+    });
+
+    const botonesVer = document.querySelectorAll('.ver');
+    botonesVer.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+         const idProducto = e.target.getAttribute('data-id');
+         window.location.href = `producto.html?id=${idProducto}`;
+      });
+    });
+  }
+
 });

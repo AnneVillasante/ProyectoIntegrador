@@ -1,96 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const UsuarioDao = require('../dao/usuarioDao');
-const ProductoDao = require('../dao/productoDao');
-// const VentaDao = require('../dao/ventaDao'); // Comentado temporalmente para evitar el error
+const reporteController = require('../controllers/reporteController');
 
-module.exports = (jsreport) => {
-  // POST /api/reportes/usuario
-  router.post('/usuario', async (req, res) => {
-    try {
-      const usuarios = await UsuarioDao.findAll();
-      const report = await jsreport.render({
-        template: {
-          content: `
-            <html>
-              <head><style>body { font-family: Arial; } table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid #ddd; padding: 8px; } th { background-color: #f2f2f2; }</style></head>
-              <body>
-                <h1>Reporte de Usuarios</h1>
-                <p>Generado el: {{#formatDate now "DD/MM/YYYY HH:mm"}}{{/formatDate}}</p>
-                <table>
-                  <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th></tr>
-                  {{#each items}}
-                  <tr><td>{{idUsuario}}</td><td>{{nombres}} {{apellidos}}</td><td>{{correo}}</td><td>{{rol}}</td></tr>
-                  {{/each}}
-                </table>
-              </body>
-            </html>`,
-          engine: 'handlebars',
-          recipe: 'chrome-pdf',
-          helpers: `function formatDate(date, format) { return require('moment')(date).format(format); }`
-        },
-        data: {
-          items: usuarios,
-          now: new Date()
-        }
-      });
+// Rutas para generar reportes
+// El cuerpo de la solicitud puede incluir { formato: 'pdf' | 'csv' | 'json', usuario: 'nombreUsuario' }
+router.post('/usuarios', reporteController.generateUsuarioReport);
+router.post('/productos', reporteController.generateProductosReport);
+router.post('/ventas', reporteController.generateVentasReport);
 
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename=reporte_usuarios.pdf');
-      res.send(report.content);
-    } catch (e) {
-      console.error(e);
-      res.status(500).send(e.message);
-    }
-  });
+// Rutas para gestionar el historial de reportes
+router.get('/', reporteController.listAll);
+router.get('/:id', reporteController.getById);
+router.get('/tipo/:tipo', reporteController.getByTipo);
+router.delete('/:id', reporteController.delete);
 
-  // POST /api/reportes/productos
-  router.post('/productos', async (req, res) => {
-    // Implementación similar a la de usuarios, pero obteniendo datos con ProductoDao.findAll()
-    try {
-      const productos = await ProductoDao.findAll();
-      const report = await jsreport.render({
-        template: {
-          content: `
-            <html>
-              <head><style>body { font-family: Arial; } table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }</style></head>
-              <body>
-                <h1>Reporte de Productos</h1>
-                <p>Generado el: {{#formatDate now "DD/MM/YYYY HH:mm"}}{{/formatDate}}</p>
-                <table>
-                  <tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th></tr>
-                  {{#each items}}
-                  <tr><td>{{idProducto}}</td><td>{{nombre}}</td><td>{{categoria}}</td><td>S/ {{precio}}</td><td>{{stock}}</td></tr>
-                  {{/each}}
-                </table>
-              </body>
-            </html>`,
-          engine: 'handlebars',
-          recipe: 'chrome-pdf',
-          helpers: `function formatDate(date, format) { return require('moment')(date).format(format); }`
-        },
-        data: {
-          items: productos,
-          now: new Date()
-        }
-      });
-
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename=reporte_productos.pdf');
-      res.send(report.content);
-    } catch (e) {
-      console.error(e);
-      res.status(500).send(e.message);
-    }
-  });
-
-  // POST /api/reportes/ventas
-  router.post('/ventas', async (req, res) => {
-    // Funcionalidad deshabilitada temporalmente hasta que se cree el ventaDao.js
-    res.status(501).json({
-      error: 'Reporte de ventas no implementado. El archivo ventaDao.js no existe.'
-    });
-  });
-
-  return router;
-};
+// El módulo ahora exporta el router directamente.
+// La instancia de jsreport debe ser adjuntada al objeto `app` en tu archivo principal (ej: app.js o server.js)
+// y se accederá a ella a través de `req.app.get('jsreport')` en el controlador.
+module.exports = router;

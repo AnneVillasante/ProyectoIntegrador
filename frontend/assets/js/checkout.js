@@ -1,113 +1,86 @@
-// frontend/assets/js/checkout.js
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        window.location.href = 'login.html';
-        return;
-    }
+// frontend/assets/js/checkout.js - Módulo de Procesamiento de Pagos
 
-    const orderItemsContainer = document.getElementById('order-items-container');
-    const summaryTotal = document.getElementById('summary-total');
-    const checkoutForm = document.getElementById('checkout-form');
-    const metodoEntregaSelect = document.getElementById('metodo-entrega');
-    const direccionEntregaGroup = document.getElementById('direccion-entrega-group');
-    const direccionEntregaInput = document.getElementById('direccion-entrega');
-    const confirmOrderButton = document.getElementById('confirm-order-button');
-
-    let cartData = null;
-
-    const fetchCart = async () => {
-        try {
-            const response = await fetch('/api/carrito', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+const PaymentHandler = (() => {
+    let stripe, cardElement;
+    
+    /**
+     * Inicializa Stripe y monta el elemento de la tarjeta en el contenedor especificado.
+     * @param {string} stripePublicKey - Tu clave pública de Stripe.
+     * @param {string} cardElementSelector - El selector CSS para el div donde se montará la tarjeta.
+     */
+    const init = (stripePublicKey, cardElementSelector) => {
+        stripe = Stripe(stripePublicKey);
+        const elements = stripe.elements({ locale: 'es' });
+        cardElement = elements.create('card', {
+            style: { base: { fontSize: '16px', '::placeholder': { color: '#aab7c4' } } }
+        });
+        cardElement.mount(cardElementSelector);
+    };
+    
+    /**
+     * Procesa el pago. Crea el método de pago si es con tarjeta y luego envía el pedido al backend.
+     * @param {object} orderPayload - El objeto completo con los datos del pedido.
+     * @param {string} token - El token de autenticación del usuario.
+     * @returns {Promise<object>} - Una promesa que se resuelve con el resultado del pedido.
+     */
+    const processPayment = async (orderPayload, token) => {
+        // Si el pago es con tarjeta, primero crea el paymentMethod de Stripe.
+        if (orderPayload.metodoPago === 'card') {
+            const { paymentMethod, error } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    email: orderPayload.correo,
+                },
             });
 
-            if (!response.ok) {
-                if (response.status === 401) {
-                     window.location.href = 'login.html';
-                }
-                throw new Error('No se pudo cargar el resumen del pedido.');
+            if (error) {
+                // En lugar de interactuar con el DOM, rechazamos la promesa con el error.
+                return Promise.reject(error);
             }
-
-            cartData = await response.json();
-            renderOrderSummary(cartData);
-
-        } catch (error) {
-            console.error('Error:', error);
-            orderItemsContainer.innerHTML = `<p>Error al cargar el resumen. Inténtalo de nuevo.</p>`;
-        }
-    };
-
-    const renderOrderSummary = (cart) => {
-        if (!cart || !cart.items || cart.items.length === 0) {
-            orderItemsContainer.innerHTML = '<p>No hay productos en tu pedido.</p>';
-            confirmOrderButton.disabled = true;
-            return;
+            // Añadimos el ID del método de pago al payload del pedido.
+            orderPayload.paymentMethodId = paymentMethod.id;
         }
 
-        orderItemsContainer.innerHTML = cart.items.map(item => `
-            <div class="order-item">
-                <span>${item.nombreProducto} (x${item.cantidad})</span>
-                <span>S/ ${parseFloat(item.subtotal).toFixed(2)}</span>
-            </div>
-        `).join('');
-
-        summaryTotal.textContent = `S/ ${parseFloat(cart.total).toFixed(2)}`;
-    };
-
-    metodoEntregaSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'delivery') {
-            direccionEntregaGroup.style.display = 'block';
-            direccionEntregaInput.required = true;
-        } else {
-            direccionEntregaGroup.style.display = 'none';
-            direccionEntregaInput.required = false;
-        }
-    });
-
-    checkoutForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        confirmOrderButton.disabled = true;
-        confirmOrderButton.textContent = 'Procesando...';
-
-        const formData = new FormData(checkoutForm);
-        const orderPayload = {
-            items: cartData.items,
-            total: cartData.total,
-            metodoEntrega: formData.get('metodoEntrega'),
-            direccionEntrega: formData.get('metodoEntrega') === 'delivery' ? formData.get('direccionEntrega') : null,
-            metodoPago: formData.get('metodoPago')
-        };
-
+        // Ahora, crea el pedido en el backend con el payload completo.
         try {
-            const response = await fetch('/api/pedidos', {
+            const response = await fetch(`${window.CONFIG.API_URL}/pedidos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(orderPayload)
+                body: JSON.stringify(orderPayload),
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'No se pudo crear el pedido.');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'No se pudo procesar el pedido.');
             }
 
             const result = await response.json();
-            alert('¡Pedido creado exitosamente!');
-            // Redirigir a una página de confirmación o al perfil del usuario
-            window.location.href = 'perfil.html'; // Asumiendo que tienes una página de perfil
 
+            // Manejar 3D Secure si es necesario
+            if (result.requiresAction && result.clientSecret) {
+                const { error: confirmationError } = await stripe.handleCardAction(result.clientSecret);
+                if (confirmationError) {
+                    throw new Error(confirmationError.message);
+                }
+            }
+            
+            return result; // Devuelve el resultado exitoso.
         } catch (error) {
-            console.error('Error al crear el pedido:', error);
-            alert(`Error: ${error.message}`);
-            confirmOrderButton.disabled = false;
-            confirmOrderButton.textContent = 'Confirmar Pedido';
+            // Rechaza la promesa si hay un error en la llamada a la API.
+            return Promise.reject(error);
         }
-    });
+    };
 
-    fetchCart();
-});
+    // Exponer los métodos públicos.
+    return {
+        init,
+        processPayment,
+    };
+})();
+
+// Hacemos el objeto accesible globalmente para que compra.js pueda usarlo.
+window.PaymentHandler = PaymentHandler;

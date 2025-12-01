@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cartItemsContainer = document.getElementById('cart-items-container');
-    const API_BASE = 'http://localhost:4000/api';
     const emptyCartMessage = document.getElementById('empty-cart-message');
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryDiscounts = document.getElementById('summary-discounts'); // Asumiendo que podrías tener descuentos
@@ -14,12 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Si no hay token, el usuario no ha iniciado sesión.
                 // Podemos mostrar el carrito vacío y redirigir o mostrar un mensaje.
                 alert('Debes iniciar sesión para ver tu carrito.');
-                window.location.href = 'login.html'; // Redirigir al login
+                window.location.href = '/pages/login.html'; // Redirigir al login
                 return;
             }
 
             // La ruta GET /api/carrito obtiene el carrito del usuario autenticado por su token.
-            const response = await fetch(`${API_BASE}/carrito`, {
+            const response = await fetch(`${window.CONFIG.API_URL}/carrito`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -52,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             cartItemElement.innerHTML = `
                 <div class="cart-item-image">
-                    <img src="${item.imagenProducto || 'https://via.placeholder.com/100'}" alt="${item.nombreProducto}">
+                    <img src="${window.CONFIG.IMG_URL}/${item.imagenProducto}" alt="${item.nombreProducto}" onerror="this.onerror=null;this.src='https://via.placeholder.com/100';">
                 </div>
                 <div class="cart-item-details">
                     <h4>${item.nombreProducto}</h4>
@@ -139,7 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${API_BASE}/carrito/${productId}`, {
+                if (!token) {
+                    alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+                    window.location.href = '/pages/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${window.CONFIG.API_URL}/carrito/${productId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -162,7 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function updateItemQuantity(productId, quantity) {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${API_BASE}/carrito/${productId}`, {
+            if (!token) {
+                alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+                window.location.href = '/pages/login.html';
+                return;
+            }
+
+            const response = await fetch(`${window.CONFIG.API_URL}/carrito/${productId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

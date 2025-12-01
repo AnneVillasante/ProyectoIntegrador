@@ -34,10 +34,14 @@ const reporteDAO = {
     await db.query('UPDATE reporte SET exportado = ? WHERE idReporte = ?', [exportado, id]);
   },
 
+  updateExportado: async (id, exportado) => {
+    const value = exportado ? 1 : 0;
+    await db.query('UPDATE reporte SET exportado = ? WHERE idReporte = ?', [value, id]);
+  },
+
   delete: async (id) => {
     await db.query('DELETE FROM reporte WHERE idReporte = ?', [id]);
   }
 };
 
 module.exports = reporteDAO;
-

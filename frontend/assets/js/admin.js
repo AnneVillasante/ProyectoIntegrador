@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let subcategorias = [];
   let stockChanges = {};
 
-  // API Base URL
-  const API_BASE = 'http://localhost:4000/api';
-
   // ===== SISTEMA DE PESTAÑAS =====
   function initTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -80,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}${endpoint}`, {
+      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, {
         ...options,
         headers: headers
       });
@@ -104,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function apiDownload(endpoint, options = {}) {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`${API_BASE}${endpoint}`, {
+      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
@@ -427,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     tbody.innerHTML = categorias.map(cat => {
       const imagenUrl = cat.imagen 
-        ? (cat.imagen.startsWith('http') ? cat.imagen : `http://localhost:4000/${cat.imagen}`)
+        ? (cat.imagen.startsWith('http') ? cat.imagen : `${window.CONFIG.IMG_URL}/${cat.imagen}`)
         : null;
       return `
       <tr>
@@ -458,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = subcategorias.map(sub => {
       const categoria = categorias.find(c => c.idCategoria === sub.idCategoria);
       const imagenUrl = sub.imagen 
-        ? (sub.imagen.startsWith('http') ? sub.imagen : `http://localhost:4000/${sub.imagen}`)
+        ? (sub.imagen.startsWith('http') ? sub.imagen : `${window.CONFIG.IMG_URL}/${sub.imagen}`)
         : null;
       return `
       <tr>
@@ -587,7 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await apiDownload(`/reportes/${reportType}`, {
         method: 'POST',
         // El body puede estar vacío si no necesitas pasar filtros
-        body: JSON.stringify({ usuario })
+        body: JSON.stringify({ 
+          usuario: usuario,
+          formato: 'pdf' })
       });
 
       const contentType = response.headers.get('content-type');
@@ -634,9 +633,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('saveStocksBtn').addEventListener('click', saveStocks);
 
   // Reportes
-  document.getElementById('generateUsersReport').addEventListener('click', () => generateReport('usuarios'));
-  document.getElementById('generateProductsReport').addEventListener('click', () => generateReport('productos'));
-  document.getElementById('generateVentasReport').addEventListener('click', () => generateReport('ventas'));
+  document.querySelectorAll('.generate-report-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+      const reportType = event.target.dataset.reportType;
+      generateReport(reportType);
+    });
+  });
 
   // Modales
   document.getElementById('closeEditUserModal').addEventListener('click', () => {
