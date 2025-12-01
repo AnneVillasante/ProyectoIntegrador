@@ -1,10 +1,14 @@
 /* frontend/assets/css/checkout.css */
 
 .checkout-page-title {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  color: var(--text);
+  font-weight: 600;
 }
+
 
 .checkout-container {
     display: grid;
@@ -15,25 +19,30 @@
 }
 
 @media (min-width: 768px) {
-    .checkout-container {
-        grid-template-columns: 1fr 1fr;
-    }
+  .checkout-container {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .order-summary, .checkout-form {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background: rgba(27, 38, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
 }
 
 .order-summary h3, .checkout-form h3 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 1rem;
-    color: var(--text-color);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  color: var(--text);
+  font-weight: 500;
 }
+
 
 #order-items-container .order-item {
     display: flex;
@@ -44,7 +53,7 @@
 }
 
 .order-item span:first-child {
-    color: #555;
+    color: var(--muted);
 }
 
 .order-item span:last-child {
@@ -58,7 +67,8 @@
     font-weight: bold;
     margin-top: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--border);
+    color: var(--text);
 }
 
 .form-group {
@@ -69,22 +79,25 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #333;
+    color: var(--muted);
 }
 
 .form-group select,
 .form-group input {
-    width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--text);
 }
 
-.btn-primary {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.1rem;
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(154, 140, 255, 0.2);
 }
 
 /* Estilos para el elemento de tarjeta de Stripe */
@@ -92,7 +105,7 @@
     border: 1px solid #ccc;
     padding: 0.8rem;
     border-radius: 4px;
-    background-color: white;
+    background-color: #fff; /* Stripe requiere un fondo claro para el input */
 }
 
 #card-errors {
@@ -103,4 +116,52 @@
 
 .StripeElement--invalid {
     border-color: #fa755a;
+}
+
+/* --- Estilos para la selección de método de pago (como en compra.html) --- */
+.payment-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.payment-method {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.payment-method:hover {
+  border-color: var(--brand);
+  background-color: rgba(154, 140, 255, 0.1);
+}
+
+.payment-method.active {
+  border-color: var(--brand-2);
+  background-color: rgba(214, 165, 181, 0.15);
+  box-shadow: 0 0 15px rgba(214, 165, 181, 0.3);
+}
+
+.payment-method img {
+  height: 40px;
+  margin-bottom: 0.75rem;
+}
+
+.payment-method i {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--muted);
+}
+
+.payment-method span {
+  color: var(--text);
+  font-weight: 600;
 }

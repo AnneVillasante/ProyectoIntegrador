@@ -1,175 +1,86 @@
-// frontend/assets/js/checkout.js
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        window.location.href = '/login';
-        return;
-    }
+// frontend/assets/js/checkout.js - Módulo de Procesamiento de Pagos
 
-    const orderItemsContainer = document.getElementById('order-items-container');
-    const summaryTotal = document.getElementById('summary-total');
-    const checkoutForm = document.getElementById('checkout-form');
-    const metodoEntregaSelect = document.getElementById('metodo-entrega');
-    const direccionEntregaGroup = document.getElementById('direccion-entrega-group');
-    const direccionEntregaInput = document.getElementById('direccion-entrega');
-    const metodoPagoSelect = document.getElementById('metodo-pago');
-    const cardElementContainer = document.getElementById('card-element-container');
-    const confirmOrderButton = document.getElementById('confirm-order-button');
-
-    let cartData = null;
-
-    // --- Configuración de Stripe ---
-    // Usar la clave pública desde el archivo de configuración
-    const stripe = Stripe(window.CONFIG.STRIPE_PUBLIC_KEY); 
-    const elements = stripe.elements();
-    const cardElement = elements.create('card', {
-        style: { base: { fontSize: '16px' } }
-    });
-    cardElement.mount('#card-element');
-    const cardErrors = document.getElementById('card-errors');
-
-    const fetchCart = async () => {
-        try {
-            const response = await fetch(`${window.CONFIG.API_URL}/carrito`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                     window.location.href = '/login';
-                }
-                throw new Error('No se pudo cargar el resumen del pedido.');
-            }
-
-            cartData = await response.json();
-            renderOrderSummary(cartData);
-
-        } catch (error) {
-            console.error('Error:', error);
-            orderItemsContainer.innerHTML = `<p>Error al cargar el resumen. Inténtalo de nuevo.</p>`;
-        }
+const PaymentHandler = (() => {
+    let stripe, cardElement;
+    
+    /**
+     * Inicializa Stripe y monta el elemento de la tarjeta en el contenedor especificado.
+     * @param {string} stripePublicKey - Tu clave pública de Stripe.
+     * @param {string} cardElementSelector - El selector CSS para el div donde se montará la tarjeta.
+     */
+    const init = (stripePublicKey, cardElementSelector) => {
+        stripe = Stripe(stripePublicKey);
+        const elements = stripe.elements({ locale: 'es' });
+        cardElement = elements.create('card', {
+            style: { base: { fontSize: '16px', '::placeholder': { color: '#aab7c4' } } }
+        });
+        cardElement.mount(cardElementSelector);
     };
-
-    const renderOrderSummary = (cart) => {
-        if (!cart || !cart.items || cart.items.length === 0) {
-            orderItemsContainer.innerHTML = '<p>No hay productos en tu pedido.</p>';
-            confirmOrderButton.disabled = true;
-            return;
-        }
-
-        orderItemsContainer.innerHTML = cart.items.map(item => `
-            <div class="order-item">
-                <span>${item.nombreProducto} (x${item.cantidad})</span>
-                <span>S/ ${parseFloat(item.subtotal).toFixed(2)}</span>
-            </div>
-        `).join('');
-
-        summaryTotal.textContent = `S/ ${parseFloat(cart.total).toFixed(2)}`;
-    };
-
-    metodoEntregaSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'delivery') {
-            direccionEntregaGroup.style.display = 'block';
-            direccionEntregaInput.required = true;
-        } else {
-            direccionEntregaGroup.style.display = 'none';
-            direccionEntregaInput.required = false;
-        }
-    });
-
-    metodoPagoSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'tarjeta') {
-            cardElementContainer.style.display = 'block';
-        } else {
-            cardElementContainer.style.display = 'none';
-        }
-    });
-
-    // Mostrar el campo de tarjeta si es la opción por defecto
-    if (metodoPagoSelect.value === 'tarjeta') {
-        cardElementContainer.style.display = 'block';
-    }
-
-    checkoutForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        confirmOrderButton.disabled = true;
-        confirmOrderButton.textContent = 'Procesando...';
-        cardErrors.textContent = '';
-
-        const formData = new FormData(checkoutForm);
-        const metodoPago = formData.get('metodoPago');
-
-        const orderPayload = {
-            items: cartData.items,
-            total: cartData.total,
-            metodoEntrega: formData.get('metodoEntrega'),
-            direccionEntrega: formData.get('metodoEntrega') === 'delivery' ? formData.get('direccionEntrega') : null,
-            metodoPago: formData.get('metodoPago')
-        };
-
-        if (metodoPago === 'tarjeta') {
+    
+    /**
+     * Procesa el pago. Crea el método de pago si es con tarjeta y luego envía el pedido al backend.
+     * @param {object} orderPayload - El objeto completo con los datos del pedido.
+     * @param {string} token - El token de autenticación del usuario.
+     * @returns {Promise<object>} - Una promesa que se resuelve con el resultado del pedido.
+     */
+    const processPayment = async (orderPayload, token) => {
+        // Si el pago es con tarjeta, primero crea el paymentMethod de Stripe.
+        if (orderPayload.metodoPago === 'card') {
             const { paymentMethod, error } = await stripe.createPaymentMethod({
                 type: 'card',
                 card: cardElement,
+                billing_details: {
+                    email: orderPayload.correo,
+                },
             });
 
             if (error) {
-                cardErrors.textContent = error.message;
-                confirmOrderButton.disabled = false;
-                confirmOrderButton.textContent = 'Confirmar Pedido';
-                return;
+                // En lugar de interactuar con el DOM, rechazamos la promesa con el error.
+                return Promise.reject(error);
             }
-
+            // Añadimos el ID del método de pago al payload del pedido.
             orderPayload.paymentMethodId = paymentMethod.id;
         }
 
-        await createOrder(orderPayload);
-    });
-
-    const createOrder = async (orderPayload) => {
+        // Ahora, crea el pedido en el backend con el payload completo.
         try {
             const response = await fetch(`${window.CONFIG.API_URL}/pedidos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(orderPayload)
+                body: JSON.stringify(orderPayload),
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({})); // Evita error si no hay JSON
-                throw new Error(errorData.error || `Error del servidor: ${response.statusText}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'No se pudo procesar el pedido.');
             }
 
             const result = await response.json();
 
-            // Si el backend requiere una acción adicional (como 3D Secure)
-            if (result.requiresAction) {
-                confirmOrderButton.textContent = 'Autenticando...';
+            // Manejar 3D Secure si es necesario
+            if (result.requiresAction && result.clientSecret) {
                 const { error: confirmationError } = await stripe.handleCardAction(result.clientSecret);
-
                 if (confirmationError) {
                     throw new Error(confirmationError.message);
                 }
-                // El pago se reintentará en el backend después de la autenticación.
-                // Aquí podrías mostrar un mensaje o esperar una confirmación final.
-                // Por simplicidad, redirigimos asumiendo que el backend lo manejará.
             }
-
-            alert('¡Pedido procesado exitosamente!');
-            localStorage.removeItem('cart'); // Limpiar carrito local si aplica
-            window.location.href = '/perfil'; 
-
+            
+            return result; // Devuelve el resultado exitoso.
         } catch (error) {
-            console.error('Error al crear el pedido:', error);
-            alert(`Error: ${error.message}`);
-            confirmOrderButton.disabled = false; // Habilitar el botón en caso de error
-            confirmOrderButton.textContent = 'Confirmar Pedido';
+            // Rechaza la promesa si hay un error en la llamada a la API.
+            return Promise.reject(error);
         }
     };
 
-    fetchCart();
-});
+    // Exponer los métodos públicos.
+    return {
+        init,
+        processPayment,
+    };
+})();
+
+// Hacemos el objeto accesible globalmente para que compra.js pueda usarlo.
+window.PaymentHandler = PaymentHandler;

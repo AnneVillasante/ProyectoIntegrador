@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <p class="precio">S/ ${parseFloat(prod.precio || 0).toFixed(2)}</p>
           <div class="acciones">
             <button class="btn-primary agregar" data-id="${prod.idProducto}">Agregar</button>
+            <button class="btn-outline ver" data-id="${prod.idProducto}" style="display: none;">Ver</button> <!-- Oculto por ahora -->
           </div>
         </div>
       </div>

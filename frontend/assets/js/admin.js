@@ -424,11 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     tbody.innerHTML = categorias.map(cat => {
       const imagenUrl = cat.imagen 
-<<<<<<< HEAD
         ? (cat.imagen.startsWith('http') ? cat.imagen : `${window.CONFIG.IMG_URL}/${cat.imagen}`)
-=======
-        ? (cat.imagen.startsWith('http') ? cat.imagen : `http://localhost:4000/${cat.imagen}`)
->>>>>>> progreso
         : null;
       return `
       <tr>
@@ -459,11 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = subcategorias.map(sub => {
       const categoria = categorias.find(c => c.idCategoria === sub.idCategoria);
       const imagenUrl = sub.imagen 
-<<<<<<< HEAD
         ? (sub.imagen.startsWith('http') ? sub.imagen : `${window.CONFIG.IMG_URL}/${sub.imagen}`)
-=======
-        ? (sub.imagen.startsWith('http') ? sub.imagen : `http://localhost:4000/${sub.imagen}`)
->>>>>>> progreso
         : null;
       return `
       <tr>

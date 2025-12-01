@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../assets/css/styles.css"> <!-- Estilos base -->
     <link rel="stylesheet" href="../assets/css/compra.css"> <!-- Necesitarás crear este archivo CSS -->
     <script src="../assets/js/config.js" defer></script>
+    <script src="https://js.stripe.com/v3/"></script> <!-- AÑADIDO SCRIPT DE STRIPE -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="../components/layout.js" defer></script>
 </head>
@@ -103,6 +104,14 @@
                         <span>Tarjeta de Crédito/Débito</span>
                     </div>
                 </div>
+                <!-- Contenedor para Stripe Card Element (inicialmente oculto) -->
+                <div id="card-element-container" class="form-section hidden">
+                    <div class="form-group">
+                        <label for="card-element">Datos de la Tarjeta</label>
+                        <div id="card-element"></div>
+                        <div id="card-errors" role="alert"></div>
+                    </div>
+                </div>
                 <div class="step-navigation">
                     <button id="btn-back-to-customer-data" class="btn-secondary">Volver</button>
                     <button id="btn-finalize-purchase" class="btn-checkout">Finalizar Compra</button>
@@ -126,6 +135,7 @@
 
     <script src="../components/navbar.js" defer></script>
     <!-- Necesitarás crear este archivo JS para manejar la lógica de los pasos -->
-    <script src="../assets/js/compra.js"></script> 
+    <script src="../assets/js/checkout.js" defer></script> <!-- Módulo de pago -->
+    <script src="../assets/js/compra.js" defer></script> <!-- Controlador de UI -->
 </body>
 </html>

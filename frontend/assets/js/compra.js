@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/login';
         return;
     }
-
+    
     // Elementos de los pasos
     const steps = {
         summary: document.getElementById('step-summary'),
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         payment: document.getElementById('step-payment'),
         confirmation: document.getElementById('step-confirmation')
     };
-
+    
     // Indicadores de progreso
     const progressSteps = {
         step1: document.getElementById('progress-step-1'),
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         step3: document.getElementById('progress-step-3')
     };
 
-    // Botones de navegación
+    // --- Elementos del DOM ---
     const btnToCustomerData = document.getElementById('btn-to-customer-data');
     const btnBackToSummary = document.getElementById('btn-back-to-summary');
     const btnToPayment = document.getElementById('btn-to-payment');
@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnFinalizePurchase = document.getElementById('btn-finalize-purchase');
     const customerDataForm = document.getElementById('customer-data-form');
 
-    // Elementos de datos
     const summaryProductList = document.getElementById('summary-product-list');
     const summaryTotalAmount = document.getElementById('summary-total-amount');
     const customerEmailInput = document.getElementById('customer-email');
@@ -38,11 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const deliveryAddressInput = document.getElementById('delivery-address');
     const orderIdPlaceholder = document.getElementById('order-id-placeholder');
 
-    let cartData = null;
-    let selectedPaymentMethod = null;
+    // Elementos de pago
+    const paymentOptions = document.querySelectorAll('.payment-method');
+    const cardElementContainer = document.getElementById('card-element-container');
+    const cardElementDiv = document.getElementById('card-element');
+    const cardErrors = document.getElementById('card-errors');
 
     // --- LÓGICA DE NAVEGACIÓN ---
-
     const navigateToStep = (stepName) => {
         Object.values(steps).forEach(step => step.classList.remove('active'));
         steps[stepName].classList.add('active');
@@ -66,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnBackToCustomerData.addEventListener('click', () => navigateToStep('customerData'));
 
     // --- CARGA DE DATOS ---
-
     const loadCartAndUserData = async () => {
         try {
             // Cargar carrito
@@ -129,60 +129,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.querySelectorAll('.payment-method').forEach(method => {
+    paymentOptions.forEach(method => {
         method.addEventListener('click', () => {
-            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
-            method.classList.add('selected');
+            paymentOptions.forEach(m => m.classList.remove('active'));
+            method.classList.add('active');
             selectedPaymentMethod = method.dataset.method;
+
+            // Mostrar/ocultar el formulario de tarjeta
+            cardElementContainer.classList.toggle('hidden', selectedPaymentMethod !== 'card');
         });
     });
 
     // --- FINALIZAR COMPRA ---
-
     btnFinalizePurchase.addEventListener('click', async () => {
         if (!selectedPaymentMethod) {
             alert('Por favor, selecciona un método de pago.');
             return;
         }
 
+        // Validar datos del cliente una última vez
         const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
         if (deliveryMethod === 'delivery' && !deliveryAddressInput.value) {
             alert('Por favor, ingresa tu dirección de envío.');
             navigateToStep('customerData');
+            customerDataForm.classList.add('was-validated'); // Marcar para mostrar errores
             return;
         }
 
-        const orderData = {
-            items: cartData.items.map(item => ({
-                idProducto: item.idProducto,
-                cantidad: item.cantidad,
-                precioUnitario: item.precioUnitario
-            })),
+        btnFinalizePurchase.disabled = true;
+        btnFinalizePurchase.textContent = 'Procesando...';
+        cardErrors.textContent = '';
+
+        const orderPayload = {
+            items: cartData.items,
             total: cartData.total,
-            metodoEntrega: deliveryMethod,
+            metodoEntrega: document.querySelector('input[name="deliveryMethod"]:checked').value,
             direccionEntrega: deliveryAddressInput.value,
-            metodoPago: selectedPaymentMethod
+            metodoPago: selectedPaymentMethod,
+            correo: customerEmailInput.value,
+            telefono: customerPhoneInput.value
         };
 
         try {
-            btnFinalizePurchase.disabled = true;
-            btnFinalizePurchase.textContent = 'Procesando...';
-
-            const response = await fetch(`${window.CONFIG.API_URL}/pedidos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(orderData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'No se pudo procesar el pedido.');
-            }
-
-            const result = await response.json();
+            // Llamar al módulo de pago para procesar el pedido
+            const result = await window.PaymentHandler.processPayment(orderPayload, token);
+            
+            // Si el pago es exitoso, mostrar la confirmación
             orderIdPlaceholder.textContent = `#${result.pedido.idPedido}`;
             navigateToStep('confirmation');
 
@@ -190,9 +182,18 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Error al finalizar la compra: ${error.message}`);
             btnFinalizePurchase.disabled = false;
             btnFinalizePurchase.textContent = 'Finalizar Compra';
+            // Mostrar errores de tarjeta si existen
+            if (error.message) {
+                cardErrors.textContent = error.message;
+            }
         }
     });
 
     // Iniciar carga de datos al cargar la página
     loadCartAndUserData();
+
+    // Inicializar el manejador de pagos (Stripe)
+    if (window.PaymentHandler) {
+        window.PaymentHandler.init(window.CONFIG.STRIPE_PUBLIC_KEY, '#card-element');
+    }
 });

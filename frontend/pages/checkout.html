@@ -50,14 +50,17 @@
                     </div>
 
                     <!-- Método de Pago -->
-                    <div class="form-group">
-                        <label for="metodo-pago">Método de Pago</label>
-                        <select id="metodo-pago" name="metodoPago" required>
-                            <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-                            <option value="yape">Yape</option>
-                            <option value="plin">Plin</option>
-                        </select>
+                    <div class="payment-options">
+                        <div class="payment-method" data-method="card">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Tarjeta de Crédito/Débito</span>
+                        </div>
+                        <div class="payment-method" data-method="yape">
+                            <img src="../assets/img/yape-logo.png" alt="Yape">
+                            <span>Pagar con Yape</span>
+                        </div>
                     </div>
+
 
                     <!-- Contenedor para Stripe Card Element -->
                     <div class="form-group" id="card-element-container" style="display: none;">
