@@ -2,8 +2,8 @@
 const express = require('express');
 const cors = require('cors');
 const jsreport = require('jsreport')({ // 1. Importar e inicializar jsreport
-  sandbox: {
-    allowedModules: ['moment'] // Permitir el módulo 'moment' en las plantillas
+  templatingEngines: {
+    allowedModules: ['moment']
   }
 });
 const helmet = require('helmet');
