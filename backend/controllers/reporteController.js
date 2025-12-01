@@ -44,7 +44,7 @@ async function getVentasData() {
       (SELECT COUNT(*) FROM detallepedido dp WHERE dp.idPedido = p.idPedido) as cantidadProductos
     FROM pedido p
     LEFT JOIN cliente c ON p.idCliente = c.idCliente
-    LEFT JOIN usuario u ON c.idUsuario = u.idUsuario
+    LEFT JOIN usuario u ON c.fk_idUsuario = u.idUsuario -- Corregido el JOIN
     ORDER BY p.fecha DESC
   `);
   return rows;
@@ -125,7 +125,7 @@ exports.generateProductosReport = async (req, res) => {
     const { formato = 'json', usuario } = req.body;
     
     // Obtener datos de productos
-    const productos = await productoDAO.findAll();
+    const productos = await productoDAO.getAll(); // Corregido: El método es getAll, no findAll
     
     // Preparar datos del reporte
     const reportData = productos.map(producto => ({

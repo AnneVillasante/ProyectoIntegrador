@@ -197,20 +197,23 @@
           </div>
           <div class="card-content">
             <div class="reports-options">
+              <!-- Reporte de Ventas -->
               <div class="report-item">
-                <h3>Reporte de Ventas</h3>
-                <p>Lista completa de pedidos y ventas realizadas</p>
-                <button class="btn-primary" id="generateVentasReport">Generar CSV</button>
+                <h3><i class="fas fa-file-invoice-dollar"></i> Reporte de Ventas</h3>
+                <p>Lista completa de pedidos y ventas realizadas.</p>
+                <button class="btn-primary generate-report-btn" data-report-type="ventas">Generar PDF</button>
               </div>
+              <!-- Reporte de Productos -->
               <div class="report-item">
-                <h3>Reporte de Productos</h3>
-                <p>Inventario completo de productos</p>
-                <button class="btn-primary" id="generateProductsReport">Generar CSV</button>
+                <h3><i class="fas fa-box-open"></i> Reporte de Productos</h3>
+                <p>Inventario completo de productos, stock y categorías.</p>
+                <button class="btn-primary generate-report-btn" data-report-type="productos">Generar PDF</button>
               </div>
+              <!-- Reporte de Usuarios -->
               <div class="report-item">
-                <h3>Reporte de Usuarios</h3>
-                <p>Lista completa de usuarios registrados</p>
-                <button class="btn-primary" id="generateUsersReport">Generar CSV</button>
+                <h3><i class="fas fa-users"></i> Reporte de Usuarios</h3>
+                <p>Lista de todos los usuarios, sus roles y datos.</p>
+                <button class="btn-primary generate-report-btn" data-report-type="usuarios">Generar PDF</button>
               </div>
             </div>
           </div>

@@ -584,7 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await apiDownload(`/reportes/${reportType}`, {
         method: 'POST',
         // El body puede estar vacío si no necesitas pasar filtros
-        body: JSON.stringify({ usuario })
+        body: JSON.stringify({ 
+          usuario: usuario,
+          formato: 'pdf' })
       });
 
       const contentType = response.headers.get('content-type');

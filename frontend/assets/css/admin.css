@@ -350,8 +350,12 @@
 
 .report-item h3 {
   color: var(--text);
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .report-item p {
@@ -360,6 +364,12 @@
   margin-bottom: 20px;
   line-height: 1.4;
   flex: 1;
+}
+
+.report-item .btn-primary {
+  width: 80%;
+  margin: 0 auto; /* Centra el botón */
+  padding: 12px;
 }
 
 /* Modales */
