@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proceso de Compra - Lunaria Threads</title>
     <link rel="stylesheet" href="../assets/css/styles.css"> <!-- Estilos base -->
-    <link rel="stylesheet" href="../assets/css/compra.css"> <!-- Necesitarás crear este archivo CSS -->
+    <link rel="stylesheet" href="../assets/css/compra.css"> 
     <script src="../assets/js/config.js" defer></script>
     <script src="https://js.stripe.com/v3/"></script> <!-- AÑADIDO SCRIPT DE STRIPE -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -94,22 +94,35 @@
             <!-- Paso 3: Método de Pago -->
             <section id="step-payment" class="checkout-step">
                 <h2>Paso 3: Elige tu Método de Pago</h2>
-                <div class="payment-options">
-                    <div class="payment-method" data-method="yape">
-                        <img src="../assets/img/yape-logo.png" alt="Yape"> <!-- Deberás agregar este logo -->
-                        <span>Pagar con Yape</span>
+                <div class="payment-step-container">
+                    <!-- Columna Izquierda: Opciones de Pago -->
+                    <div class="payment-options">
+                        <div class="payment-method active" data-method="card">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Tarjeta de Crédito/Débito</span>
+                        </div>
+                        <div class="payment-method" data-method="yape">
+                            <img src="../assets/img/yape-logo.png" alt="Yape">
+                            <span>Pagar con Yape</span>
+                        </div>
                     </div>
-                    <div class="payment-method" data-method="card">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Tarjeta de Crédito/Débito</span>
-                    </div>
-                </div>
-                <!-- Contenedor para Stripe Card Element (inicialmente oculto) -->
-                <div id="card-element-container" class="form-section hidden">
-                    <div class="form-group">
-                        <label for="card-element">Datos de la Tarjeta</label>
-                        <div id="card-element"></div>
-                        <div id="card-errors" role="alert"></div>
+
+                    <!-- Columna Derecha: Detalles del Pago -->
+                    <div class="payment-details-content">
+                        <!-- Vista para Tarjeta (Stripe) -->
+                        <div id="payment-view-card" class="payment-details-view active">
+                            <div class="form-group">
+                                <label for="card-element">Datos de la Tarjeta</label>
+                                <div id="card-element" class="form-control"></div>
+                                <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+                            </div>
+                        </div>
+                        <!-- Vista para Yape -->
+                        <div id="payment-view-yape" class="payment-details-view">
+                            <h4>Pagar con Yape</h4>
+                            <p>Escanea el código QR con tu app de Yape para completar el pago.</p>
+                            <!-- Aquí podrías mostrar un QR dinámicamente -->
+                        </div>
                     </div>
                 </div>
                 <div class="step-navigation">
