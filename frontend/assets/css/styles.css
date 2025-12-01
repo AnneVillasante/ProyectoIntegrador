@@ -35,10 +35,9 @@ html, body {
   margin: 0;
   scroll-behavior: smooth;
   font-family: 'Lora', serif;
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(154,140,255,0.10), transparent),
-    radial-gradient(900px 500px at 110% 20%, rgba(214,165,181,0.08), transparent),
-    var(--bg);
+  background-color: var(--bg);
+  background-image: radial-gradient(at top center, rgba(154, 140, 255, 0.15), transparent 40%);
+  background-repeat: no-repeat;
   color: var(--text);
   line-height: 1.6;
 }

@@ -12,10 +12,16 @@
   <div id="navbar"></div>
 
   <!-- SECCIÓN DE PRODUCTOS -->
-  <main class="productos-section container">
-    <h1 class="productos-title">Colección Destacada</h1>
-    <p class="productos-subtitle">Descubre nuestras prendas y accesorios más populares</p>
+  <main class="container">
+    <div class="productos-section">
+      <h1 class="productos-title">Colección Destacada</h1>
+      <p class="productos-subtitle">Descubre nuestras prendas y accesorios más populares</p>
+      <div id="categorias-container" class="categorias-filtros">
+        <!-- Los filtros de categoría se cargarán aquí -->
+      </div>
+    </div>
 
+<<<<<<< HEAD
     <div class="filtros-container">
       <button class="btn-filtros-toggle" id="filtrosToggle">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
@@ -43,15 +49,58 @@
           <h3>Categorías</h3>
           <div id="categoriasFiltro">
             <!-- Las categorías se cargarán aquí dinámicamente -->
+=======
+    <div class="productos-container">
+      <!-- Barra lateral de filtros -->
+      <aside class="filtros-sidebar">
+        <h3>Filtros</h3>
+        <button id="limpiarFiltrosBtn" class="btn-limpiar-filtros" hidden>Limpiar Filtros</button>
+        <div id="filtroSubcategorias" class="filtro-grupo">
+          <!-- Las subcategorías se cargarán aquí -->
+        </div>
+        <div class="filtro-grupo">
+          <h4>Precio</h4>
+          <div class="precio-filtro">
+            <input type="range" id="priceRange" min="0" max="500" value="500">
+            <div class="precio-valores">
+              <span>S/ 0</span> - <span id="priceValue">S/ 500</span>
+            </div>
+>>>>>>> progreso
           </div>
         </div>
       </aside>
 
+<<<<<<< HEAD
       <div class="productos-grid" id="productosGrid">
         <!-- PRODUCTS_PLACEHOLDER -->
       </div>
       <div class="paginacion-container" id="paginacionContainer">
         <!-- Los controles de paginación se insertarán aquí -->
+=======
+      <!-- Contenido principal de productos -->
+      <div class="productos-content">
+        <div class="productos-header">
+          <span class="ordenar-label">Ordenar por:</span>
+          <div class="ordenar-container">
+            <select id="ordenarProductos">
+              <option value="recomendado">Recomendado</option>
+              <option value="precio-asc">Precio: Menor a Mayor</option>
+              <option value="precio-desc">Precio: Mayor a Menor</option>
+              <option value="nombre-asc">Nombre: A-Z</option>
+              <option value="nombre-desc">Nombre: Z-A</option>
+            </select>
+          </div>
+        </div>
+        <div id="activeFiltersContainer" class="active-filters-container">
+          <!-- Las etiquetas de filtros activos se mostrarán aquí -->
+        </div>
+        <div class="productos-grid" id="productosGrid">
+          <!-- Los productos se cargarán aquí -->
+        </div>
+        <div class="paginacion" id="paginacion">
+          <!-- La paginación se cargará aquí -->
+        </div>
+>>>>>>> progreso
       </div>
     </div>
   </main>

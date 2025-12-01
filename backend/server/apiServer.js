@@ -1,9 +1,5 @@
 // backend/server/apiServer.js
 const express = require('express');
-const dotenv = require('dotenv');
-const path = require('path');
-
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const cors = require('cors');
 const pool = require('../config/db');
 const authRouter = require('../routes/authRoutes');
@@ -14,6 +10,7 @@ const subcategoriaRoutes = require('../routes/subcategoriaRoutes');
 const reporteRoutes = require('../routes/reporteRoutes');
 const carritoRoutes = require('../routes/carritoRoutes');
 const clienteRoutes = require('../routes/clienteRoutes');
+const pedidoRoutes = require('../routes/pedidoRoutes');
 
 const apiApp = express();
 apiApp.use(express.json());
@@ -28,12 +25,13 @@ apiApp.use('/uploads', express.static('uploads'));
 apiApp.get('/health', (req, res) => res.json({ status: 'ok' }));
 apiApp.use('/api/auth', authRouter);
 apiApp.use('/api/productos', productosRouter);
-apiApp.use('/api/usuarios', usuarioRouter);
+apiApp.use('/api/usuario', usuarioRouter);
 apiApp.use('/api/categorias', categoriaRoutes);
 apiApp.use('/api/subcategorias', subcategoriaRoutes);
 apiApp.use('/api/reportes', reporteRoutes);
 apiApp.use('/api/carrito', carritoRoutes);
-apiApp.use('/api/clientes', clienteRoutes);
+apiApp.use('/api/cliente', clienteRoutes);
+apiApp.use('/api/pedidos', pedidoRoutes);
 
 async function startApi() {
   try {

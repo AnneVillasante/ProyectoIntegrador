@@ -1,8 +1,11 @@
 // Panel Administrativo - Funcionalidad completa con pestañas
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar autenticación y rol
+  const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  if (!user || user.rol !== 'Administrador') {
+
+  // La verificación más importante es la existencia del token.
+  if (!token || !user || user.rol !== 'Administrador') {
     alert('Acceso denegado. Solo administradores pueden acceder a esta página.');
     window.location.href = '/';
     return;
@@ -12,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let users = [];
   let products = [];
   let stocks = [];
+  let categorias = [];
+  let subcategorias = [];
   let stockChanges = {};
 
   // ===== SISTEMA DE PESTAÑAS =====
@@ -121,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== USUARIOS =====
   async function loadUsers() {
     try {
-      users = await apiCall('/usuarios');
+      users = await apiCall('/usuario');
       renderUsersTable();
     } catch (error) {
       console.error('Error cargando usuarios:', error);
@@ -158,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
 
     try {
-      await apiCall(`/usuarios/${id}`, { method: 'DELETE' });
+      await apiCall(`/usuario/${id}`, { method: 'DELETE' });
       await loadUsers();
       alert('Usuario eliminado correctamente');
     } catch (error) {
@@ -168,9 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== PRODUCTOS =====
-  let categorias = [];
-  let subcategorias = [];
-
   async function loadCategories() {
     try {
       categorias = await apiCall('/categorias');
@@ -691,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rol = document.getElementById('editUserRole').value;
     
     try {
-      await apiCall(`/usuarios/${id}`, {
+      await apiCall(`/usuario/${id}`, {
         method: 'PUT',
         body: JSON.stringify({ rol })
       });

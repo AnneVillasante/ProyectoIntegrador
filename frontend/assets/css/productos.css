@@ -8,10 +8,19 @@
   padding: 0 20px;
 }
 
+.productos-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
 .productos-section {
-  padding: 80px 0;
+  padding: 40px 0;
   text-align: center;
-  min-height: 60vh;
+  /* min-height: 60vh; */ /* Se ajusta dinámicamente */
+  width: 100%;
 }
 
 .productos-title {
@@ -29,6 +38,7 @@
   font-style: italic;
 }
 
+<<<<<<< HEAD
 /* Contenedor de filtros y ordenamiento */
 .filtros-container {
   display: flex;
@@ -121,12 +131,231 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 30px;
+=======
+/* --- Filtros de Categoría (Superiores) --- */
+.categorias-filtros {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.btn-filtro {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--muted);
+  padding: 10px 22px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.btn-filtro:hover {
+  background: rgba(255,255,255,0.15);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.btn-filtro.active {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  border-color: var(--brand-2);
+  color: #06070a;
+  font-weight: bold;
+  box-shadow: 0 8px 25px rgba(154, 140, 255, 0.3);
+}
+
+/* --- Filtros --- */
+.filtros-sidebar {
+  padding: 20px;
+  background: rgba(18, 24, 41, 0.7); /* var(--surface) con más opacidad */
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  align-self: start;
+}
+
+.filtros-sidebar h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.btn-limpiar-filtros {
+  background: none;
+  border: 1px solid var(--brand-2);
+  color: var(--brand-2);
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-limpiar-filtros:hover {
+  background: var(--brand-2);
+  color: #06070a;
+  box-shadow: 0 0 10px rgba(214, 165, 181, 0.5);
+}
+
+.filtro-grupo {
+  margin-bottom: 25px;
+}
+
+.filtro-grupo h4 {
+  font-size: 1.1rem;
+  color: var(--brand);
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+}
+
+.filtro-grupo ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Estilo para checkboxes personalizados */
+.filtro-grupo li input[type="checkbox"] {
+  display: none; /* Ocultar el checkbox por defecto */
+}
+
+.filtro-grupo li label {
+  position: relative;
+  display: flex; /* Clave para la alineación */
+  align-items: center; /* Clave para la alineación */
+
+}
+
+.filtro-grupo li label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px; /* Alineación vertical */
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+  transition: all 0.2s ease;
+  margin-right: 10px; /* ¡ESTE ES EL CAMBIO CLAVE! Añade espacio a la derecha */
+}
+
+.filtro-grupo li input[type="checkbox"]:checked + label::before {
+  background: var(--brand-2);
+  border-color: var(--brand-2);
+}
+
+.filtro-grupo li input[type="checkbox"]:checked + label::after {
+  content: '✔';
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  font-size: 12px;
+  color: #06070a;
+}
+
+.filtro-grupo li input[type="checkbox"]:checked + label {
+  color: var(--brand-2);
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(214, 165, 181, 0.5); /* Efecto de resplandor */
+  transition: all 0.3s ease; /* Transición suave para todos los cambios */
+}
+
+
+.filtro-grupo li button,
+.filtro-grupo li label {
+  color: var(--muted);
+  cursor: pointer;
+  padding: 5px 0 5px 28px; /* Ajustamos el padding izquierdo para compensar el checkbox */
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+.filtro-grupo li button:hover,
+.filtro-grupo li label:hover {
+  color: var(--text);
+}
+
+.filtro-grupo li button.active {
+  color: var(--brand-2);
+  font-weight: bold;
+}
+
+.precio-filtro {
+  display: block;
+}
+
+.precio-filtro input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 5px;
+  outline: none;
+  margin: 10px 0;
+  transition: background 0.3s;
+}
+
+.precio-filtro input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--brand-2);
+  cursor: pointer;
+  border-radius: 50%;
+  border: 3px solid #1B263B; /* Color de fondo para crear un anillo */
+  box-shadow: 0 0 8px rgba(214,165,181,0.5);
+  transition: background-color 0.3s;
+}
+
+.precio-filtro input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--brand-2);
+  cursor: pointer;
+  border-radius: 50%;
+  border: 3px solid #1B263B;
+  box-shadow: 0 0 8px rgba(214,165,181,0.5);
+}
+
+.precio-valores {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.precio-valores span {
+  background: rgba(0,0,0,0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 40px;
+  perspective: 1000px; /* Para animaciones 3D */
+>>>>>>> progreso
 }
 
 .producto-card {
   background: rgba(27, 38, 59, 0.8);
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 24px rgba(0,0,0,0.3);
   padding: 0;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -134,21 +363,37 @@
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(10px);
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .producto-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 16px 40px rgba(154, 140, 255, 0.3);
-  border-color: rgba(154, 140, 255, 0.3);
 }
 
 .producto-img {
   width: 100%;
+<<<<<<< HEAD
   height: 280px;
+=======
+  height: 250px;
+>>>>>>> progreso
   object-fit: cover;
   border-radius: 0;
   margin: 0;
   display: block;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.producto-card:hover .producto-img {
+  transform: scale(1.05);
 }
 
 .producto-info-simple {
@@ -165,10 +410,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .producto-card h3 {
+<<<<<<< HEAD
   font-family: 'Poppins', sans-serif;
+=======
+  font-family: 'Cormorant Garamond', serif;
+>>>>>>> progreso
   font-size: 1rem;
   color: var(--text);
   margin: 0;
@@ -177,15 +427,10 @@
 }
 
 .producto-card .descripcion {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0 0 12px 0;
-  line-height: 1.5;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  display: none; /* Ocultar descripción */
+}
+.producto-card .stock {
+  display: none; /* Ocultar stock */
 }
 
 .categoria-badge {
@@ -197,35 +442,40 @@
   font-size: 0.8rem;
   margin-bottom: 10px;
   font-weight: 600;
+  display: none; /* Ocultar categoría */
 }
 
 .precio {
   color: var(--brand-2);
   font-weight: 700;
-  font-size: 1.4rem;
-  margin: 10px 0;
-}
-
-.stock {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin: 5px 0 15px 0;
+  font-size: 1rem;
+  margin: 8px 0;
 }
 
 .acciones {
   display: flex;
   justify-content: center;
   margin-top: auto;
+<<<<<<< HEAD
   width: 100%;
+=======
+  padding-top: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.producto-card:hover .acciones {
+  opacity: 1;
+  transform: translateY(0);
+>>>>>>> progreso
 }
 
 .btn-outline {
-  flex: 1;
   border: 2px solid var(--brand);
   background: transparent;
   color: var(--brand);
   border-radius: 8px;
-  padding: 12px 20px;
   cursor: pointer;
   font-weight: 700;
   font-size: 0.9rem;
@@ -240,12 +490,9 @@
 }
 
 .btn-primary {
-  flex: 1;
   background: linear-gradient(135deg, var(--brand), var(--brand-2));
   color: #06070a;
   border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
   cursor: pointer;
   font-weight: 600;
   font-size: 0.9rem;
@@ -255,6 +502,13 @@
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(154, 140, 255, 0.4);
+}
+
+.btn-primary, .btn-outline {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  text-align: center;
 }
 
 .sin-productos,
@@ -306,6 +560,120 @@
 
 .error {
   color: #ef4444;
+}
+
+/* Ordenamiento */
+.productos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: rgba(18, 24, 41, 0.7); /* var(--surface) con más opacidad */
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.ordenar-label {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.ordenar-container {
+  margin-left: auto; /* Mueve el select a la derecha */
+}
+
+.ordenar-container select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: rgba(18, 24, 41, 0.8); /* --surface con opacidad */
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 10px 30px 10px 15px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23B0B3C6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 1em;
+}
+
+.ordenar-container select:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+/* Filtros Activos */
+.active-filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.filter-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(154, 140, 255, 0.2);
+  color: var(--brand);
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease;
+}
+
+.filter-tag .remove-tag {
+  background: none;
+  border: none;
+  color: var(--brand);
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0 2px;
+}
+.filter-tag .remove-tag:hover {
+  color: var(--text);
+}
+
+/* Paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+}
+
+.paginacion button {
+  background: transparent;
+  border: 1px solid var(--brand);
+  color: var(--brand);
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.paginacion button:hover {
+  background: var(--brand);
+  color: #06070a;
+}
+
+.paginacion button.active {
+  background: var(--brand);
+  color: #06070a;
+  font-weight: bold;
+}
+
+.paginacion button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Responsivo */
@@ -366,7 +734,10 @@
   }
 
   .productos-grid {
+<<<<<<< HEAD
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+=======
+>>>>>>> progreso
     gap: 25px;
   }
 
@@ -377,17 +748,29 @@
     padding: 60px 0;
   }
 
+  .productos-container {
+    grid-template-columns: 1fr; /* Apilar filtros sobre productos */
+    gap: 20px;
+  }
+
   .productos-title {
     font-size: 2.2rem;
   }
 
   .productos-grid {
+<<<<<<< HEAD
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+=======
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+>>>>>>> progreso
     gap: 20px;
   }
 
   .producto-img {
+<<<<<<< HEAD
     height: 300px;
+=======
+>>>>>>> progreso
   }
 }
 
@@ -397,11 +780,11 @@
     gap: 20px;
   }
 
-  .acciones {
-    flex-direction: row;
-  }
-
   .producto-img {
+<<<<<<< HEAD
     height: 350px;
+=======
+    height: 280px;
+>>>>>>> progreso
   }
 }
