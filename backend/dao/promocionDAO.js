@@ -5,35 +5,52 @@
  * @author Lunaria
  */
 
-const Promocion = require('../models/promocionModel');
+const db = require('../config/db');
 
 const promocionDAO = {
   async crear(promocionData) {
-    return await Promocion.create(promocionData);
+    const { titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
+    const [result] = await db.promise().execute(
+      `INSERT INTO promocion (titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable]
+    );
+    return result.insertId;
   },
 
   async obtenerTodas() {
-    return await Promocion.findAll();
+    const [rows] = await db.promise().query('SELECT * FROM promocion ORDER BY fechaInicio DESC');
+    return rows;
   },
 
   async obtenerPorId(id) {
-    return await Promocion.findByPk(id);
+    const [rows] = await db.promise().query('SELECT * FROM promocion WHERE idPromocion = ?', [id]);
+    return rows[0] || null;
   },
 
   async actualizar(id, promocionData) {
-    const [updated] = await Promocion.update(promocionData, {
-      where: { idPromocion: id },
-    });
-    if (updated) {
-      return await this.obtenerPorId(id);
-    }
-    return null;
+    const { titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
+    const [result] = await db.promise().execute(
+      `UPDATE promocion SET 
+        titulo = ?, 
+        descripcion = ?, 
+        fechaInicio = ?, 
+        fechaFin = ?, 
+        idCampaña = ?, 
+        tipoDescuento = ?, 
+        valorDescuento = ?, 
+        montoMinimoCompra = ?, 
+        activo = ?, 
+        idCategoriaAplicable = ? 
+       WHERE idPromocion = ?`,
+      [titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable, id]
+    );
+    return result.affectedRows;
   },
 
   async eliminar(id) {
-    return await Promocion.destroy({
-      where: { idPromocion: id },
-    });
+    const [result] = await db.promise().execute('DELETE FROM promocion WHERE idPromocion = ?', [id]);
+    return result.affectedRows;
   },
 };
 
