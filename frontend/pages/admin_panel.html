@@ -12,24 +12,62 @@
 <body>
   <div id="navbar"></div>
 
-  <main class="admin-container">
-    <div class="admin-header">
-      <h1>Panel Administrativo</h1>
-      <p>Gestiona usuarios, productos, stocks y reportes</p>
-    </div>
+  <div class="admin-layout">
+    <!-- Barra Lateral de Navegación -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <h3>Menú Principal</h3>
+      </div>
+      <nav class="sidebar-nav">
+        <details open>
+          <summary>1. Clientes</summary>
+          <ul>
+            <li><a href="#" class="nav-link active" data-tab="users">1.1 Usuarios</a></li>
+          </ul>
+        </details>
+        <details open>
+          <summary>2. Productos</summary>
+          <ul>
+            <li><a href="#" class="nav-link" data-tab="products">2.1 Productos</a></li>
+            <li><a href="#" class="nav-link" data-tab="classification">2.2 Categorías y Subcategorías</a></li>
+            <li><a href="#" class="nav-link" data-tab="stocks">2.3 Stocks</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary>3. Ofertas</summary>
+          <ul>
+            <li><a href="#" class="nav-link" data-tab="campaigns">3.1 Campañas</a></li>
+            <li><a href="#" class="nav-link" data-tab="promotions">3.2 Promociones</a></li>
+            <li><a href="#" class="nav-link" data-tab="coupons">3.3 Cupones</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary>4. Pagos y Pedidos</summary>
+          <ul>
+            <li><a href="#" class="nav-link" data-tab="orders">4.1 Pedidos</a></li>
+            <li><a href="#" class="nav-link" data-tab="payments">4.2 Pagos</a></li>
+            <li><a href="#" class="nav-link" data-tab="invoices">4.3 Facturas</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary>5. Devoluciones</summary>
+          <ul>
+            <li><a href="#" class="nav-link" data-tab="returns">5.1 Gestionar Devoluciones</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary>6. Reportes</summary>
+          <ul>
+            <li><a href="#" class="nav-link" data-tab="reports">6.1 Generación de Reportes</a></li>
+            <li><a href="#" class="nav-link" data-tab="metrics">6.2 Métricas</a></li>
+          </ul>
+        </details>
+      </nav>
+    </aside>
 
-    <!-- Sistema de pestañas -->
-    <div class="admin-tabs">
-      <button class="tab-btn active" data-tab="users">👥 Usuarios</button>
-      <button class="tab-btn" data-tab="products">📦 Productos</button>
-      <button class="tab-btn" data-tab="classification">🏷️ Clasificación Productos</button>
-      <button class="tab-btn" data-tab="stocks">📊 Stocks</button>
-      <button class="tab-btn" data-tab="reports">📈 Reportes</button>
-    </div>
-
-    <!-- Contenedor principal -->
-    <div class="admin-content">
-      
+    <!-- Contenido Principal -->
+    <main class="admin-container">
+      <div class="admin-content">
       <!-- Pestaña: Administración de Usuarios -->
       <div class="tab-content active" id="users-tab">
         <div class="admin-card">
@@ -220,8 +258,122 @@
         </div>
       </div>
 
+      <!-- Pestañas nuevas (placeholders) -->
+      <div class="tab-content" id="campaigns-tab">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🎉 Administración de Campañas</h2>
+            <p>Gestiona tus campañas de marketing y eventos.</p>
+          </div>
+          <div class="card-content">
+            <div class="campaigns-controls">
+              <button class="btn-primary" id="addCampaignBtn">Nueva Campaña</button>
+              <button class="btn-secondary" id="loadCampaignsBtn">Cargar Campañas</button>
+            </div>
+            <div class="table-container">
+              <table class="admin-table" id="campaignsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="campaignsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="promotions-tab">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🎁 Administración de Promociones</h2>
+            <p>Crea y gestiona descuentos y ofertas especiales.</p>
+          </div>
+          <div class="card-content">
+            <div class="promotions-controls">
+              <button class="btn-primary" id="addPromotionBtn">Nueva Promoción</button>
+              <button class="btn-secondary" id="loadPromotionsBtn">Cargar Promociones</button>
+            </div>
+            <div class="table-container">
+              <table class="admin-table" id="promotionsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Fechas</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="promotionsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="coupons-tab">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🎟️ Administración de Cupones</h2>
+            <p>Gestiona códigos de descuento para los clientes.</p>
+          </div>
+          <div class="card-content">
+            <div class="coupons-controls">
+              <button class="btn-primary" id="addCouponBtn">Nuevo Cupón</button>
+              <button class="btn-secondary" id="loadCouponsBtn">Cargar Cupones</button>
+            </div>
+            <div class="table-container">
+              <table class="admin-table" id="couponsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Usos restantes</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="couponsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="orders-tab">
+        <div class="admin-card"><h2>4.1 Pedidos</h2><p>Contenido para pedidos...</p></div>
+      </div>
+      <div class="tab-content" id="payments-tab">
+        <div class="admin-card"><h2>4.2 Pagos</h2><p>Contenido para pagos...</p></div>
+      </div>
+      <div class="tab-content" id="invoices-tab">
+        <div class="admin-card"><h2>4.3 Facturas</h2><p>Contenido para facturas...</p></div>
+      </div>
+      <div class="tab-content" id="returns-tab">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>↩️ Gestión de Devoluciones</h2>
+            <p>Procesa y gestiona las solicitudes de devolución.</p>
+          </div>
+          <div class="card-content">
+            <p>Aquí se mostrará la lista de solicitudes de devolución...</p>
+            <!-- Futura tabla de devoluciones -->
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="metrics-tab">
+        <div class="admin-card"><h2>6.2 Métricas</h2><p>Contenido para métricas...</p></div>
+      </div>
+
     </div>
-  </main>
+    </main>
+  </div>
 
   <!-- Modales -->
   <!-- Modal para editar usuario -->
@@ -397,9 +549,70 @@
     </div>
   </div>
 
+  <!-- Modal para agregar/editar promoción -->
+  <div id="promotionModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="promotionModalTitle">Nueva Promoción</h3>
+        <button class="modal-close" id="closePromotionModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="promotionForm">
+          <input type="hidden" id="idPromocion">
+          <div class="form-group">
+            <label for="promoTitulo">Título:</label>
+            <input type="text" id="promoTitulo" required>
+          </div>
+          <div class="form-group">
+            <label for="promoDescripcion">Descripción:</label>
+            <textarea id="promoDescripcion" rows="3"></textarea>
+          </div>
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="promoFechaInicio">Fecha Inicio:</label>
+              <input type="date" id="promoFechaInicio" required>
+            </div>
+            <div class="form-group">
+              <label for="promoFechaFin">Fecha Fin:</label>
+              <input type="date" id="promoFechaFin" required>
+            </div>
+          </div>
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="promoTipoDescuento">Tipo de Descuento:</label>
+              <select id="promoTipoDescuento" required>
+                <option value="Porcentaje">Porcentaje</option>
+                <option value="MontoFijo">Monto Fijo</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="promoValorDescuento">Valor:</label>
+              <input type="number" id="promoValorDescuento" step="0.01" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="promoActivo">Estado:</label>
+            <select id="promoActivo">
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelPromotion">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div id="footer"></div>
 
   <script src="../components/navbar.js" defer></script>
   <script src="../assets/js/admin.js" defer></script>
+  <script src="../assets/js/admin_promotions.js" defer></script>
+  <script src="../assets/js/admin_campaigns.js" defer></script>
+  <script src="../assets/js/admin_coupons.js" defer></script>
+  <script src="../assets/js/admin_returns.js" defer></script>
 </body>
 </html>

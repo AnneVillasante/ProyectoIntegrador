@@ -21,19 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== SISTEMA DE PESTAÑAS =====
   function initTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
+    const navLinks = document.querySelectorAll('.nav-link');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    tabButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const targetTab = button.getAttribute('data-tab');
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetTab = link.getAttribute('data-tab');
         
-        // Remover clase active de todos los botones y contenidos
-        tabButtons.forEach(btn => btn.classList.remove('active'));
+        navLinks.forEach(lnk => lnk.classList.remove('active'));
         tabContents.forEach(content => content.classList.remove('active'));
         
         // Agregar clase active al botón y contenido seleccionado
-        button.classList.add('active');
+        link.classList.add('active');
         document.getElementById(`${targetTab}-tab`).classList.add('active');
         
         // Cargar datos según la pestaña activa
@@ -60,6 +60,20 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'reports':
         // Los reportes no necesitan precarga
         break;
+      case 'promotions':
+        if (typeof loadPromotions === 'function') loadPromotions();
+        break;
+      case 'campaigns':
+        if (typeof loadCampaigns === 'function') loadCampaigns();
+        break;
+      case 'coupons':
+        if (typeof loadCoupons === 'function') loadCoupons();
+        break;
+      case 'returns':
+        if (typeof loadReturns === 'function') loadReturns();
+        break;
+      default:
+        console.log(`Pestaña ${tabName} seleccionada. Sin acción de precarga.`);
     }
   }
 
@@ -138,10 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.getElementById('usersTableBody');
     tbody.innerHTML = users.map(user => `
       <tr>
-        <td>${user.idUsuario}</td>
-        <td>${user.nombres} ${user.apellidos}</td>
-        <td>${user.correo}</td>
-        <td>${user.rol}</td>
+        <td title="${user.idUsuario}">${user.idUsuario}</td>
+        <td title="${user.nombres} ${user.apellidos}">${user.nombres} ${user.apellidos}</td>
+        <td title="${user.correo}">${user.correo}</td>
+        <td title="${user.rol}">${user.rol}</td>
         <td>
           <button class="btn-secondary" onclick="editUser(${user.idUsuario})">Editar Rol</button>
           <button class="btn-danger" onclick="deleteUser(${user.idUsuario})">Eliminar</button>
@@ -245,11 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     tbody.innerHTML = products.map(product => `
       <tr>
-        <td>${product.idProducto}</td>
-        <td>${product.nombre}</td>
-        <td>${product.categoria || 'Sin categoría'}</td>
-        <td>S/ ${parseFloat(product.precio).toFixed(2)}</td>
-        <td>${product.stock}</td>
+        <td title="${product.idProducto}">${product.idProducto}</td>
+        <td title="${product.nombre}">${product.nombre}</td>
+        <td title="${product.categoria || 'Sin categoría'}">${product.categoria || 'Sin categoría'}</td>
+        <td title="S/ ${parseFloat(product.precio).toFixed(2)}">S/ ${parseFloat(product.precio).toFixed(2)}</td>
+        <td title="${product.stock}">${product.stock}</td>
         <td>
           <button class="btn-secondary" onclick="editProduct(${product.idProducto})">Editar</button>
           <button class="btn-danger" onclick="deleteProduct(${product.idProducto})">Eliminar</button>
@@ -341,10 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     tbody.innerHTML = stocks.map(product => `
       <tr>
-        <td>${product.idProducto}</td>
-        <td>${product.nombre}</td>
-        <td>${product.categoria || 'Sin categoría'}</td>
-        <td>${product.stock}</td>
+        <td title="${product.idProducto}">${product.idProducto}</td>
+        <td title="${product.nombre}">${product.nombre}</td>
+        <td title="${product.categoria || 'Sin categoría'}">${product.categoria || 'Sin categoría'}</td>
+        <td title="${product.stock}">${product.stock}</td>
         <td>
           <input type="number" class="stock-input" 
                  value="${product.stock}" 
@@ -428,10 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
         : null;
       return `
       <tr>
-        <td>${cat.idCategoria}</td>
-        <td>${cat.nombre || 'Sin nombre'}</td>
-        <td>${cat.descripcion || 'Sin descripción'}</td>
-        <td>
+        <td title="${cat.idCategoria}">${cat.idCategoria}</td>
+        <td title="${cat.nombre || 'Sin nombre'}">${cat.nombre || 'Sin nombre'}</td>
+        <td title="${cat.descripcion || 'Sin descripción'}">${cat.descripcion || 'Sin descripción'}</td>
+        <td title="${imagenUrl || 'Sin imagen'}">
           ${imagenUrl ? `<img src="${imagenUrl}" alt="${cat.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
         </td>
         <td>
@@ -459,12 +473,12 @@ document.addEventListener('DOMContentLoaded', () => {
         : null;
       return `
       <tr>
-        <td>${sub.idSubcategoria}</td>
-        <td>${sub.nombre || 'Sin nombre'}</td>
-        <td>${sub.descripcion || 'Sin descripción'}</td>
-        <td>${categoria ? categoria.nombre : 'Sin categoría'}</td>
-        <td>${sub.genero || 'Unisex'}</td>
-        <td>
+        <td title="${sub.idSubcategoria}">${sub.idSubcategoria}</td>
+        <td title="${sub.nombre || 'Sin nombre'}">${sub.nombre || 'Sin nombre'}</td>
+        <td title="${sub.descripcion || 'Sin descripción'}">${sub.descripcion || 'Sin descripción'}</td>
+        <td title="${categoria ? categoria.nombre : 'Sin categoría'}">${categoria ? categoria.nombre : 'Sin categoría'}</td>
+        <td title="${sub.genero || 'Unisex'}">${sub.genero || 'Unisex'}</td>
+        <td title="${imagenUrl || 'Sin imagen'}">
           ${imagenUrl ? `<img src="${imagenUrl}" alt="${sub.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
         </td>
         <td>
