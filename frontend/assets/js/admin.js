@@ -869,25 +869,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== MÉTRICAS DEL DASHBOARD =====
   async function loadMetrics() {
-    try {
-      const data = await apiCall('/dashboard/metricas');
-      
-      document.getElementById('metric-users').textContent = data.usuarios || 0;
-      document.getElementById('metric-products').textContent = data.productos || 0;
-      document.getElementById('metric-orders').textContent = data.pedidos || 0;
-      
-      // Formatear ingresos a moneda local (Soles)
-      const ingresos = parseFloat(data.ingresos || 0).toLocaleString('es-PE', {
-        style: 'currency',
-        currency: 'PEN'
-      });
-      document.getElementById('metric-income').textContent = ingresos;
-
-    } catch (error) {
-      console.error('Error cargando métricas:', error);
-      alert('No se pudieron cargar las métricas del negocio.');
+  try {
+    const data = await apiCall('/dashboard/metricas');
+    if (data) {
+      document.getElementById('metric-users').textContent = data.usuarios;
+      document.getElementById('metric-products').textContent = data.productos;
+      document.getElementById('metric-orders').textContent = data.pedidos;
+      document.getElementById('metric-income').textContent = `S/ ${parseFloat(data.ingresos).toFixed(2)}`;
     }
+  } catch (error) {
+    console.error('Error cargando métricas:', error);
   }
+}
+
+// En la función loadTabData(tabName) de admin.js:
+case 'metrics':
+  loadMetrics();
+  break;
 
   // Funciones globales para onclick
   window.editUser = editUser;
