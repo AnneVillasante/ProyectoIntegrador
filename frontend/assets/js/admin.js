@@ -107,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'invoices':
         if (typeof loadInvoices === 'function') loadInvoices();
         break;
+      case 'metrics':
+        loadMetrics(); // Cargar métricas al activar la pestaña
+        break;
       default:
         console.log(`Pestaña ${tabName} seleccionada. Sin acción de precarga.`);
     }
@@ -863,6 +866,28 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Error al guardar producto: ' + (error.message || 'Error desconocido'));
     }
   });
+
+  // ===== MÉTRICAS DEL DASHBOARD =====
+  async function loadMetrics() {
+    try {
+      const data = await apiCall('/dashboard/metricas');
+      
+      document.getElementById('metric-users').textContent = data.usuarios || 0;
+      document.getElementById('metric-products').textContent = data.productos || 0;
+      document.getElementById('metric-orders').textContent = data.pedidos || 0;
+      
+      // Formatear ingresos a moneda local (Soles)
+      const ingresos = parseFloat(data.ingresos || 0).toLocaleString('es-PE', {
+        style: 'currency',
+        currency: 'PEN'
+      });
+      document.getElementById('metric-income').textContent = ingresos;
+
+    } catch (error) {
+      console.error('Error cargando métricas:', error);
+      alert('No se pudieron cargar las métricas del negocio.');
+    }
+  }
 
   // Funciones globales para onclick
   window.editUser = editUser;

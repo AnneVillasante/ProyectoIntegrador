@@ -31,6 +31,9 @@ staticApp.get('/compra', (req, res) => {
 staticApp.get('/admin', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'admin_panel.html'));
 });
+staticApp.get('/dashboard', (req, res) => { // ✅ Ruta directa al panel de admin
+  res.sendFile(path.join(frontendRoot, 'pages', 'admin_panel.html'));
+});
 
 
 // Render de productos

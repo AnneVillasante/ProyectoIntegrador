@@ -23,6 +23,7 @@ const campañaRoutes = require('../routes/campañaRoutes');
 const devolucionRoutes = require('../routes/devolucionRoutes');
 const facturaRoutes = require('../routes/facturaRoutes');
 const logActividadRoutes = require('../routes/logActividadRoutes');
+const dashboardRoutes = require('../routes/dashboardRoutes'); // ✅ Importar rutas del dashboard
 
 const apiApp = express();
 
@@ -51,10 +52,11 @@ apiApp.use(
 );
 
 // Ruta de Webhook ANTES de express.json() para recibir el body en formato raw
-apiApp.use('/api/pagos', pagoRoutes);
+// La ruta específica del webhook debe estar aquí para recibir el body en formato raw.
+apiApp.post('/api/pagos/webhook', express.raw({type: 'application/json'}), require('../controllers/pagoController').handleWebhook);
 
 // Middleware para parsear JSON para el resto de las rutas de la API
-apiApp.use(express.json());
+apiApp.use(express.json()); // Este middleware debe estar ANTES de las rutas que procesan JSON.
 
 // Servir archivos estáticos desde la carpeta 'uploads'
 apiApp.use('/uploads', express.static('uploads'));
@@ -67,12 +69,13 @@ apiApp.use('/api/subcategorias', subcategoriaRoutes);
 apiApp.use('/api/reportes', reporteRoutes);
 apiApp.use('/api/carrito', carritoRoutes);
 apiApp.use('/api/cliente', clienteRoutes);
-apiApp.use('/api/pedidos', pedidoRoutes);
+apiApp.use('/api/pedidos', pedidoRoutes); // Las demás rutas de pago se registran aquí.
 apiApp.use('/api/promociones', promocionRoutes);
 apiApp.use('/api/campanas', campañaRoutes);
 apiApp.use('/api/devoluciones', devolucionRoutes);
 apiApp.use('/api/facturas', facturaRoutes);
 apiApp.use('/api/logs', logActividadRoutes);
+apiApp.use('/api/dashboard', dashboardRoutes); // ✅ Registrar rutas del dashboard
 
 async function startApi() {
   try {
