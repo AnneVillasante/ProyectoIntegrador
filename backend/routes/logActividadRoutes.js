@@ -8,13 +8,13 @@
 const express = require('express');
 const router = express.Router();
 const logActividadController = require('../controllers/logActividadController');
-const { authenticate, authorize } = require('../middleware/authMiddleware');
+const { protect, isAdmin } = require('../middleware/authMiddleware');
 
 /**
  * @route GET /api/logs
  * @description Get all activity logs.
  * @access Private (Admin only)
  */
-router.get('/', authenticate, authorize(['Administrador']), logActividadController.obtenerTodos);
+router.get('/', protect, isAdmin, logActividadController.obtenerTodos);
 
 module.exports = router;
