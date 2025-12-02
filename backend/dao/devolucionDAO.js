@@ -1,43 +1,55 @@
 /**
- * @fileoverview Data Access Object para el modelo Devolucion.
+ * @fileoverview Data Access Object para el modelo Devolucion usando mysql2.
  *
  * @version 1.0
  * @author Lunaria
  */
 
-const Devolucion = require('../models/devolucionModel');
+const db = require('../config/db');
 
 class DevolucionDAO {
   /**
-   * @returns {Promise<Array<Devolucion>>}
+   * @returns {Promise<Array<object>>}
    */
   static async obtenerTodas() {
-    return await Devolucion.findAll();
+    const [rows] = await db.promise().query('SELECT * FROM devolucion ORDER BY fechaSolicitud DESC');
+    return rows;
   }
 
   /**
    * @param {number} id
-   * @returns {Promise<Devolucion|null>}
+   * @returns {Promise<object|null>}
    */
   static async obtenerPorId(id) {
-    return await Devolucion.findByPk(id);
+    const [rows] = await db.promise().query('SELECT * FROM devolucion WHERE idDevolucion = ?', [id]);
+    return rows[0] || null;
   }
 
   /**
    * @param {object} data
-   * @returns {Promise<Devolucion>}
+   * @returns {Promise<number>} El ID de la nueva devolución.
    */
   static async crear(data) {
-    return await Devolucion.create(data);
+    const { idPedido, motivo, estado, montoReembolsado } = data;
+    const [result] = await db.promise().execute(
+      'INSERT INTO devolucion (idPedido, motivo, fechaSolicitud, estado, montoReembolsado) VALUES (?, ?, NOW(), ?, ?)',
+      [idPedido, motivo, estado, montoReembolsado]
+    );
+    return result.insertId;
   }
 
   /**
    * @param {number} id
    * @param {object} data
-   * @returns {Promise<[number, Array<Devolucion>]>}
+   * @returns {Promise<number>} El número de filas afectadas.
    */
   static async actualizar(id, data) {
-    return await Devolucion.update(data, { where: { idDevolucion: id } });
+    const { idPedido, motivo, estado, montoReembolsado } = data;
+    const [result] = await db.promise().execute(
+      'UPDATE devolucion SET idPedido = ?, motivo = ?, estado = ?, montoReembolsado = ? WHERE idDevolucion = ?',
+      [idPedido, motivo, estado, montoReembolsado, id]
+    );
+    return result.affectedRows;
   }
 }
 

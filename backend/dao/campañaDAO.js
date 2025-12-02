@@ -1,51 +1,64 @@
 /**
- * @fileoverview Data Access Object para el modelo Campaña.
+ * @fileoverview Data Access Object para el modelo Campaña usando mysql2.
  *
  * @version 1.0
  * @author Lunaria
  */
 
-const Campaña = require('../models/campañaModel');
+const db = require('../config/db');
 
 class CampañaDAO {
   /**
-   * @returns {Promise<Array<Campaña>>}
+   * @returns {Promise<Array<object>>}
    */
   static async obtenerTodas() {
-    return await Campaña.findAll();
+    const [rows] = await db.promise().query('SELECT * FROM campaña ORDER BY fechaInicio DESC');
+    return rows;
   }
 
   /**
    * @param {number} id
-   * @returns {Promise<Campaña|null>}
+   * @returns {Promise<object|null>}
    */
   static async obtenerPorId(id) {
-    return await Campaña.findByPk(id);
+    const [rows] = await db.promise().query('SELECT * FROM campaña WHERE idCampaña = ?', [id]);
+    return rows[0] || null;
   }
 
   /**
    * @param {object} data
-   * @returns {Promise<Campaña>}
+   * @returns {Promise<number>} El ID de la nueva campaña.
    */
   static async crear(data) {
-    return await Campaña.create(data);
+    const { titulo, imagen, descripcion, fechaInicio, fechaFin } = data;
+    const [result] = await db.promise().execute(
+      'INSERT INTO campaña (titulo, imagen, descripcion, fechaInicio, fechaFin) VALUES (?, ?, ?, ?, ?)',
+      [titulo, imagen, descripcion, fechaInicio, fechaFin]
+    );
+    return result.insertId;
   }
 
   /**
    * @param {number} id
    * @param {object} data
-   * @returns {Promise<[number, Array<Campaña>]>}
+   * @returns {Promise<number>} El número de filas afectadas.
    */
   static async actualizar(id, data) {
-    return await Campaña.update(data, { where: { idCampaña: id } });
+    const { titulo, imagen, descripcion, fechaInicio, fechaFin } = data;
+    const [result] = await db.promise().execute(
+      'UPDATE campaña SET titulo = ?, imagen = ?, descripcion = ?, fechaInicio = ?, fechaFin = ? WHERE idCampaña = ?',
+      [titulo, imagen, descripcion, fechaInicio, fechaFin, id]
+    );
+    return result.affectedRows;
   }
 
   /**
    * @param {number} id
-   * @returns {Promise<number>}
+   * @returns {Promise<number>} El número de filas afectadas.
    */
   static async eliminar(id) {
-    return await Campaña.destroy({ where: { idCampaña: id } });
+    const [result] = await db.promise().execute('DELETE FROM campaña WHERE idCampaña = ?', [id]);
+    return result.affectedRows;
   }
 }
 
