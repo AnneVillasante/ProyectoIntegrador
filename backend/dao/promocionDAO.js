@@ -10,7 +10,7 @@ const db = require('../config/db');
 const promocionDAO = {
   async crear(promocionData) {
     const { titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
-    const [result] = await db.promise().execute(
+    const [result] = await db.execute(
       `INSERT INTO promocion (titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable]
@@ -19,18 +19,18 @@ const promocionDAO = {
   },
 
   async obtenerTodas() {
-    const [rows] = await db.promise().query('SELECT * FROM promocion ORDER BY fechaInicio DESC');
+    const [rows] = await db.query('SELECT * FROM promocion ORDER BY fechaInicio DESC');
     return rows;
   },
 
   async obtenerPorId(id) {
-    const [rows] = await db.promise().query('SELECT * FROM promocion WHERE idPromocion = ?', [id]);
+    const [rows] = await db.query('SELECT * FROM promocion WHERE idPromocion = ?', [id]);
     return rows[0] || null;
   },
 
   async actualizar(id, promocionData) {
     const { titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
-    const [result] = await db.promise().execute(
+    const [result] = await db.execute(
       `UPDATE promocion SET 
         titulo = ?, 
         descripcion = ?, 
@@ -49,7 +49,7 @@ const promocionDAO = {
   },
 
   async eliminar(id) {
-    const [result] = await db.promise().execute('DELETE FROM promocion WHERE idPromocion = ?', [id]);
+    const [result] = await db.execute('DELETE FROM promocion WHERE idPromocion = ?', [id]);
     return result.affectedRows;
   },
 };

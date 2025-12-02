@@ -16,7 +16,7 @@ const logActividadDAO = {
    * @returns {Promise<number>} The ID of the newly created log entry.
    */
   async registrar(idUsuario, accion, descripcion) {
-    const [result] = await db.promise().execute(
+    const [result] = await db.execute(
       'INSERT INTO logactividad (idUsuario, accion, descripcion, fechaHora) VALUES (?, ?, ?, NOW())',
       [idUsuario, accion, descripcion]
     );
@@ -28,9 +28,7 @@ const logActividadDAO = {
    * @returns {Promise<Array<Object>>} A list of all activity logs.
    */
   async obtenerTodos() {
-    const [rows] = await db
-      .promise()
-      .query('SELECT * FROM logactividad ORDER BY fechaHora DESC');
+    const [rows] = await db.query('SELECT * FROM logactividad ORDER BY fechaHora DESC');
     return rows;
   },
 };
