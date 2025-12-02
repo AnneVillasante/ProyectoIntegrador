@@ -8,7 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const logActividadController = require('../controllers/logActividadController');
-const { authenticate, authorize } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/authMiddleware');
 
 /**
  * @route GET /api/logs
