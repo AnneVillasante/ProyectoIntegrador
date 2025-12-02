@@ -8,7 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const promocionController = require('../controllers/promocionController');
-const { authenticate, authorize } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/authMiddleware');
 
 // Public route to get all promotions
 router.get('/', promocionController.obtenerTodas);
