@@ -5,7 +5,7 @@
  * @author Lunaria
  */
 
-const logActividadModel = require('../models/logActividadModel');
+const logActividadDAO = require('../dao/logActividadDAO');
 const LogActividadDTO = require('../dto/logActividadDTO');
 
 class LogActividadService {
@@ -14,7 +14,7 @@ class LogActividadService {
    * @returns {Promise<Array<LogActividadDTO>>} A list of activity logs.
    */
   async obtenerTodos() {
-    const logs = await logActividadModel.obtenerTodos();
+    const logs = await logActividadDAO.obtenerTodos();
     return logs.map((log) => new LogActividadDTO(log));
   }
 
@@ -29,7 +29,7 @@ class LogActividadService {
     if (!idUsuario || !accion) {
       throw new Error('idUsuario and accion are required to register an activity.');
     }
-    return logActividadModel.registrar(idUsuario, accion, descripcion);
+    return logActividadDAO.registrar(idUsuario, accion, descripcion);
   }
 }
 

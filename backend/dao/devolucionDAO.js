@@ -12,7 +12,7 @@ class DevolucionDAO {
    * @returns {Promise<Array<object>>}
    */
   static async obtenerTodas() {
-    const [rows] = await db.promise().query('SELECT * FROM devolucion ORDER BY fechaSolicitud DESC');
+    const [rows] = await db.query('SELECT * FROM devolucion ORDER BY fechaSolicitud DESC');
     return rows;
   }
 
@@ -21,7 +21,7 @@ class DevolucionDAO {
    * @returns {Promise<object|null>}
    */
   static async obtenerPorId(id) {
-    const [rows] = await db.promise().query('SELECT * FROM devolucion WHERE idDevolucion = ?', [id]);
+    const [rows] = await db.query('SELECT * FROM devolucion WHERE idDevolucion = ?', [id]);
     return rows[0] || null;
   }
 
@@ -31,7 +31,7 @@ class DevolucionDAO {
    */
   static async crear(data) {
     const { idPedido, motivo, estado, montoReembolsado } = data;
-    const [result] = await db.promise().execute(
+    const [result] = await db.execute(
       'INSERT INTO devolucion (idPedido, motivo, fechaSolicitud, estado, montoReembolsado) VALUES (?, ?, NOW(), ?, ?)',
       [idPedido, motivo, estado, montoReembolsado]
     );
@@ -45,7 +45,7 @@ class DevolucionDAO {
    */
   static async actualizar(id, data) {
     const { idPedido, motivo, estado, montoReembolsado } = data;
-    const [result] = await db.promise().execute(
+    const [result] = await db.execute(
       'UPDATE devolucion SET idPedido = ?, motivo = ?, estado = ?, montoReembolsado = ? WHERE idDevolucion = ?',
       [idPedido, motivo, estado, montoReembolsado, id]
     );

@@ -14,8 +14,9 @@ class PromocionService {
     if (!promocionData.titulo || !promocionData.tipoDescuento || !promocionData.valorDescuento) {
       throw new Error('Title, discount type, and discount value are required.');
     }
-    const nuevaPromocion = await promocionDAO.crear(promocionData);
-    return new PromocionDTO(nuevaPromocion);
+    const idNuevaPromocion = await promocionDAO.crear(promocionData);
+    const promocionCreada = await promocionDAO.obtenerPorId(idNuevaPromocion);
+    return new PromocionDTO(promocionCreada);
   }
 
   async obtenerTodas() {
@@ -32,10 +33,11 @@ class PromocionService {
   }
 
   async actualizarPromocion(id, promocionData) {
-    const promocionActualizada = await promocionDAO.actualizar(id, promocionData);
-    if (!promocionActualizada) {
+    const affectedRows = await promocionDAO.actualizar(id, promocionData);
+    if (affectedRows === 0) {
       return null;
     }
+    const promocionActualizada = await promocionDAO.obtenerPorId(id);
     return new PromocionDTO(promocionActualizada);
   }
 

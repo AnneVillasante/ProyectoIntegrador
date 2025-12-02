@@ -15,7 +15,7 @@ const usuariopromocionDAO = {
    * @returns {Promise<object>} The created association.
    */
   async asignar(idUsuario, idPromocion) {
-    const [result] = await db.promise().execute(
+    const [result] = await db.execute(
       'INSERT INTO usuariopromocion (idUsuario, idPromocion, estado) VALUES (?, ?, ?)',
       [idUsuario, idPromocion, 'Pendiente']
     );
@@ -28,7 +28,7 @@ const usuariopromocionDAO = {
    * @returns {Promise<Array<object>>} A list of user promotions with promotion details.
    */
   async obtenerPorUsuario(idUsuario) {
-    const [rows] = await db.promise().query(
+    const [rows] = await db.query(
       `SELECT up.*, p.titulo, p.descripcion, p.tipoDescuento, p.valorDescuento 
        FROM usuariopromocion up
        JOIN promocion p ON up.idPromocion = p.idPromocion
@@ -47,7 +47,7 @@ const usuariopromocionDAO = {
    */
   async actualizarEstado(idUsuario, idPromocion, estado) {
     const fechaUso = estado === 'Usado' ? new Date() : null;
-    const [result] = await db.promise().execute(
+    const [result] = await db.execute(
       'UPDATE usuariopromocion SET estado = ?, fechaUso = ? WHERE idUsuario = ? AND idPromocion = ?',
       [estado, fechaUso, idUsuario, idPromocion]
     );

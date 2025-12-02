@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
-const authMiddleware = require('../middleware/authMiddleware'); 
+const { protect, isAdmin } = require('../middleware/authMiddleware'); 
 const multer = require('multer');
 
 // Configuración de Multer para guardar las imágenes de perfil
@@ -16,17 +16,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Rutas de perfil de usuario (protegidas)
-router.use(authMiddleware.protect); // Aplica el middleware a las rutas de abajo
+router.use(protect); // Aplica el middleware 'protect' a todas las rutas de abajo
 router.get('/perfil', usuarioController.obtenerMiPerfil);
 router.put('/perfil', usuarioController.actualizarMiPerfil);
 router.put('/perfil/password', usuarioController.actualizarMiPassword);
 router.post('/perfil/foto', upload.single('profileImage'), usuarioController.subirFotoPerfil); // Nueva ruta para subir foto
 
-// Rutas CRUD completas
-router.get('/', usuarioController.obtenerUsuarios);
-router.get('/:id', usuarioController.obtenerUsuario);
-router.post('/', usuarioController.crearUsuario);
-router.put('/:id', usuarioController.actualizarUsuario);
-router.delete('/:id', usuarioController.eliminarUsuario);
+// Rutas CRUD completas (solo para administradores)
+router.get('/', isAdmin, usuarioController.obtenerUsuarios);
+router.get('/:id', isAdmin, usuarioController.obtenerUsuario);
+router.post('/', isAdmin, usuarioController.crearUsuario);
+router.put('/:id', isAdmin, usuarioController.actualizarUsuario);
+router.delete('/:id', isAdmin, usuarioController.eliminarUsuario);
 
 module.exports = router;

@@ -68,7 +68,7 @@ class PagoService {
                 fechaPago: new Date(paymentIntent.created * 1000) // Stripe usa timestamps de Unix
             });
 
-            return await pagoDAO.crearPago(PagoDTO.toModel(pagoData));
+            return await pagoDAO.crearPago(pagoData);
         }
         // Podrías manejar otros eventos como 'payment_intent.payment_failed'
         return null;

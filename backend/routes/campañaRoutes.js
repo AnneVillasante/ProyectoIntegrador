@@ -8,6 +8,9 @@
 const express = require('express');
 const router = express.Router();
 const campañaController = require('../controllers/campañaController');
+// Importar middleware de seguridad
+const { protect, isAdmin } = require('../middleware/authMiddleware');
+
 
 // Obtener todas las campañas
 router.get('/', campañaController.obtenerTodas);
@@ -15,13 +18,8 @@ router.get('/', campañaController.obtenerTodas);
 // Obtener una campaña por ID
 router.get('/:id', campañaController.obtenerPorId);
 
-// Crear una nueva campaña
-router.post('/', campañaController.crear);
-
-// Actualizar una campaña existente
-router.put('/:id', campañaController.actualizar);
-
-// Eliminar una campaña
-router.delete('/:id', campañaController.eliminar);
+router.post('/', protect, isAdmin, campañaController.crear);
+router.put('/:id', protect, isAdmin, campañaController.actualizar);
+router.delete('/:id', protect, isAdmin, campañaController.eliminar);
 
 module.exports = router;
