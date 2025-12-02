@@ -18,6 +18,11 @@ const carritoRoutes = require('../routes/carritoRoutes');
 const clienteRoutes = require('../routes/clienteRoutes');
 const pedidoRoutes = require('../routes/pedidoRoutes');
 const pagoRoutes = require('../routes/pagoRoutes');
+const promocionRoutes = require('../routes/promocionRoutes');
+const campañaRoutes = require('../routes/campañaRoutes');
+const devolucionRoutes = require('../routes/devolucionRoutes');
+const facturaRoutes = require('../routes/facturaRoutes');
+const logActividadRoutes = require('../routes/logActividadRoutes');
 
 const apiApp = express();
 
@@ -63,6 +68,11 @@ apiApp.use('/api/reportes', reporteRoutes);
 apiApp.use('/api/carrito', carritoRoutes);
 apiApp.use('/api/cliente', clienteRoutes);
 apiApp.use('/api/pedidos', pedidoRoutes);
+apiApp.use('/api/promociones', promocionRoutes);
+apiApp.use('/api/campanas', campañaRoutes);
+apiApp.use('/api/devoluciones', devolucionRoutes);
+apiApp.use('/api/facturas', facturaRoutes);
+apiApp.use('/api/logs', logActividadRoutes);
 
 async function startApi() {
   try {
