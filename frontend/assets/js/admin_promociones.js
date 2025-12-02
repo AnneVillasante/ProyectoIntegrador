@@ -4,10 +4,9 @@ let allPromotions = [];
 
 async function loadPromotions() {
   try {
-    // La ruta /promociones ya existe en el backend y es pública
-    const response = await fetch(`${window.CONFIG.API_URL}/promociones`);
-    if (!response.ok) throw new Error('Error al cargar promociones');
-    allPromotions = await response.json();
+    // Usamos apiCall para consistencia y manejo de token
+    const response = await apiCall('/promociones');
+    allPromotions = Array.isArray(response) ? response : [];
     renderPromotionsTable();
   } catch (error) {
     console.error(error);

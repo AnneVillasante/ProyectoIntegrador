@@ -334,9 +334,9 @@
                   <tr>
                     <th>ID</th>
                     <th>Código</th>
-                    <th>Tipo</th>
-                    <th>Valor</th>
-                    <th>Usos restantes</th>
+                    <th>Descuento</th>
+                    <th>Expiración</th>
+                    <th>Activo</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -606,13 +606,140 @@
     </div>
   </div>
 
+  <!-- Modal para agregar/editar campaña -->
+  <div id="campaignModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="campaignModalTitle">Nueva Campaña</h3>
+        <button class="modal-close" id="closeCampaignModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="campaignForm">
+          <input type="hidden" id="idCampana">
+          <div class="form-group">
+            <label for="campaignNombre">Nombre de la Campaña:</label>
+            <input type="text" id="campaignNombre" required>
+          </div>
+          <div class="form-group">
+            <label for="campaignDescripcion">Descripción:</label>
+            <textarea id="campaignDescripcion" rows="3"></textarea>
+          </div>
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="campaignFechaInicio">Fecha Inicio:</label>
+              <input type="date" id="campaignFechaInicio" required>
+            </div>
+            <div class="form-group">
+              <label for="campaignFechaFin">Fecha Fin:</label>
+              <input type="date" id="campaignFechaFin" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="campaignActivo">Estado:</label>
+            <select id="campaignActivo">
+              <option value="1">Activa</option>
+              <option value="0">Inactiva</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelCampaign">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar/editar cupón -->
+  <div id="couponModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="couponModalTitle">Nuevo Cupón</h3>
+        <button class="modal-close" id="closeCouponModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="couponForm">
+          <input type="hidden" id="idCupon">
+          <div class="form-group">
+            <label for="couponCodigo">Código:</label>
+            <input type="text" id="couponCodigo" required>
+          </div>
+          <div class="form-group">
+            <label for="couponDescripcion">Descripción:</label>
+            <textarea id="couponDescripcion" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="couponFechaExpiracion">Fecha de Expiración:</label>
+            <input type="date" id="couponFechaExpiracion" required>
+          </div>
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="couponTipoDescuento">Tipo de Descuento:</label>
+              <select id="couponTipoDescuento" required>
+                <option value="Porcentaje">Porcentaje</option>
+                <option value="Monto Fijo">Monto Fijo</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="couponValorDescuento">Valor:</label>
+              <input type="number" id="couponValorDescuento" step="0.01" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="couponActivo">Estado:</label>
+            <select id="couponActivo">
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelCoupon">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div id="footer"></div>
 
   <script src="../components/navbar.js" defer></script>
   <script src="../assets/js/admin.js" defer></script>
-  <script src="../assets/js/admin_promotions.js" defer></script>
-  <script src="../assets/js/admin_campaigns.js" defer></script>
-  <script src="../assets/js/admin_coupons.js" defer></script>
-  <script src="../assets/js/admin_returns.js" defer></script>
+  <script src="../assets/js/admin_promociones.js" defer></script>
+  <script src="../assets/js/admin_campañas.js" defer></script>
+  <script src="../assets/js/admin_cupones.js" defer></script>
+  <script src="../assets/js/admin_devoluciones.js" defer></script>
 </body>
 </html>
+
+<!-- Modal para gestionar devoluciones (ya que estamos, lo añadimos también) -->
+<div id="returnModal" class="modal" hidden>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="returnModalTitle">Gestionar Devolución</h3>
+      <button class="modal-close" id="closeReturnModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="returnForm">
+        <input type="hidden" id="idDevolucion">
+        <div class="form-group">
+            <p><strong>ID Devolución:</strong> <span id="returnInfoId"></span></p>
+            <p><strong>ID Pedido:</strong> <span id="returnInfoPedidoId"></span></p>
+            <p><strong>Motivo:</strong> <span id="returnInfoMotivo"></span></p>
+        </div>
+        <div class="form-group">
+          <label for="returnEstado">Cambiar Estado:</label>
+          <select id="returnEstado" required>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Aprobada">Aprobada</option>
+            <option value="Rechazada">Rechazada</option>
+            <option value="Completada">Completada</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="cancelReturn">Cancelar</button>
+          <button type="submit" class="btn-primary">Actualizar Estado</button>
+        </div>
+      </form>
+    </div>
+  </div>

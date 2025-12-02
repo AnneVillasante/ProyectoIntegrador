@@ -1,4 +1,30 @@
 // Panel Administrativo - Funcionalidad completa con pestañas
+
+// Funciones de utilidad globales para ser accesibles desde otros scripts
+async function apiCall(endpoint, options = {}) {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    ...options.headers
+  };
+
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  try {
+    const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, { ...options, headers });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+    }
+    return response.status === 204 ? null : await response.json();
+  } catch (error) {
+    console.error('API Call Error:', error);
+    throw error;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar autenticación y rol
   const token = localStorage.getItem('token');
@@ -74,41 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       default:
         console.log(`Pestaña ${tabName} seleccionada. Sin acción de precarga.`);
-    }
-  }
-
-  // Funciones de utilidad
-  async function apiCall(endpoint, options = {}) {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      ...options.headers
-    };
-
-    // Si el cuerpo es FormData, el navegador establece el Content-Type automáticamente.
-    if (!(options.body instanceof FormData)) {
-      headers['Content-Type'] = 'application/json';
-    }
-
-    try {
-      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, {
-        ...options,
-        headers: headers
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
-      }
-      
-      // Si la respuesta es 204 (No Content), no hay cuerpo que leer.
-      if (response.status === 204) {
-        return null; // O un objeto vacío: {}
-      }
-      return await response.json(); // Para otras respuestas exitosas (200, 201)
-    } catch (error) {
-      console.error('API Call Error:', error);
-      throw error;
     }
   }
 
@@ -636,6 +627,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Productos
   document.getElementById('addProductBtn').addEventListener('click', addProduct);
   document.getElementById('loadProductsBtn').addEventListener('click', loadProducts);
+
+  // Campañas (Añadido para conectar con admin_campañas.js)
+  const addCampaignBtn = document.getElementById('addCampaignBtn');
+  if (addCampaignBtn) {
+    addCampaignBtn.addEventListener('click', () => window.addCampaign && window.addCampaign());
+  }
 
   // Clasificación
   document.getElementById('newCategoryBtn').addEventListener('click', addCategory);
