@@ -98,6 +98,15 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'returns':
         if (typeof loadReturns === 'function') loadReturns();
         break;
+      case 'orders':
+        if (typeof loadOrders === 'function') loadOrders();
+        break;
+      case 'payments':
+        if (typeof loadPayments === 'function') loadPayments();
+        break;
+      case 'invoices':
+        if (typeof loadInvoices === 'function') loadInvoices();
+        break;
       default:
         console.log(`Pestaña ${tabName} seleccionada. Sin acción de precarga.`);
     }

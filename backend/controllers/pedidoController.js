@@ -2,6 +2,15 @@
 const pedidoDAO = require('../dao/pedidoDAO');
 const clienteService = require('../services/clienteService');
 
+exports.getAllOrders = async (req, res) => {
+    try {
+        const pedidos = await pedidoDAO.findAll();
+        res.status(200).json(pedidos);
+    } catch (error) {
+        res.status(500).json({ error: 'Error interno del servidor al obtener los pedidos.' });
+    }
+};
+
 exports.createOrder = async (req, res) => {
     try {
         const idUsuario = req.user.id;

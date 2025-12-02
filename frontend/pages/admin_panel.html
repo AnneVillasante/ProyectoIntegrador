@@ -347,13 +347,78 @@
         </div>
       </div>
       <div class="tab-content" id="orders-tab">
-        <div class="admin-card"><h2>4.1 Pedidos</h2><p>Contenido para pedidos...</p></div>
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🛒 Administración de Pedidos</h2>
+            <p>Visualiza y gestiona todos los pedidos de los clientes.</p>
+          </div>
+          <div class="card-content">
+            <div class="table-container">
+              <table class="admin-table" id="ordersTable">
+                <thead>
+                  <tr>
+                    <th>ID Pedido</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Método Pago</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tab-content" id="payments-tab">
-        <div class="admin-card"><h2>4.2 Pagos</h2><p>Contenido para pagos...</p></div>
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>💳 Administración de Pagos</h2>
+            <p>Revisa el historial de transacciones y su estado.</p>
+          </div>
+          <div class="card-content">
+            <div class="table-container">
+              <table class="admin-table" id="paymentsTable">
+                <thead>
+                  <tr>
+                    <th>ID Pago</th>
+                    <th>ID Pedido</th>
+                    <th>Método</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="paymentsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tab-content" id="invoices-tab">
-        <div class="admin-card"><h2>4.3 Facturas</h2><p>Contenido para facturas...</p></div>
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🧾 Administración de Facturas</h2>
+            <p>Consulta y descarga las facturas generadas.</p>
+          </div>
+          <div class="card-content">
+            <div class="table-container">
+              <table class="admin-table" id="invoicesTable">
+                <thead>
+                  <tr>
+                    <th>ID Factura</th>
+                    <th>ID Pedido</th>
+                    <th>Fecha Emisión</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="invoicesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tab-content" id="returns-tab">
         <div class="admin-card">
@@ -362,8 +427,22 @@
             <p>Procesa y gestiona las solicitudes de devolución.</p>
           </div>
           <div class="card-content">
-            <p>Aquí se mostrará la lista de solicitudes de devolución...</p>
-            <!-- Futura tabla de devoluciones -->
+            <div class="table-container">
+              <table class="admin-table" id="returnsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>ID Pedido</th>
+                    <th>Motivo</th>
+                    <th>Monto Reembolsado</th>
+                    <th>Fecha Solicitud</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="returnsTableBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -708,6 +787,9 @@
   <script src="../assets/js/admin_promociones.js" defer></script>
   <script src="../assets/js/admin_campañas.js" defer></script>
   <script src="../assets/js/admin_cupones.js" defer></script>
+  <script src="../assets/js/admin_pedidos.js" defer></script>
+  <script src="../assets/js/admin_pagos.js" defer></script>
+  <script src="../assets/js/admin_facturas.js" defer></script>
   <script src="../assets/js/admin_devoluciones.js" defer></script>
 </body>
 </html>
@@ -726,15 +808,20 @@
             <p><strong>ID Devolución:</strong> <span id="returnInfoId"></span></p>
             <p><strong>ID Pedido:</strong> <span id="returnInfoPedidoId"></span></p>
             <p><strong>Motivo:</strong> <span id="returnInfoMotivo"></span></p>
+            <p><strong>Monto Reembolsado:</strong> <span id="returnInfoMonto"></span></p>
         </div>
         <div class="form-group">
           <label for="returnEstado">Cambiar Estado:</label>
           <select id="returnEstado" required>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Aprobada">Aprobada</option>
-            <option value="Rechazada">Rechazada</option>
-            <option value="Completada">Completada</option>
+            <option value="solicitada">Solicitada</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="rechazada">Rechazada</option>
+            <option value="reembolsada">Reembolsada</option>
           </select>
+        </div>
+        <div class="form-group" id="montoReembolsadoContainer" hidden>
+            <label for="montoReembolsadoInput">Monto a Reembolsar:</label>
+            <input type="number" id="montoReembolsadoInput" step="0.01" min="0" placeholder="0.00">
         </div>
         <div class="form-actions">
           <button type="button" class="btn-secondary" id="cancelReturn">Cancelar</button>

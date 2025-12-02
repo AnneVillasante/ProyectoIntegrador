@@ -1,5 +1,14 @@
 const pagoService = require('../services/pagoService');
 
+const obtenerTodos = async (req, res) => {
+    try {
+        const pagos = await pagoService.obtenerTodos();
+        res.status(200).json(pagos);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener los pagos', error: error.message });
+    }
+};
+
 const crearIntentoDePago = async (req, res) => {
     try {
         // El monto debe venir en la unidad principal (ej. soles)
@@ -45,6 +54,7 @@ const stripeWebhook = async (req, res) => {
 };
 
 module.exports = {
+    obtenerTodos,
     crearIntentoDePago,
     stripeWebhook,
 };
