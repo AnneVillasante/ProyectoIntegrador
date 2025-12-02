@@ -5,8 +5,8 @@
  * @author Lunaria
  */
 
-const CampañaDAO = require('../data/campañaDAO');
-const CampañaDTO = require('../dtos/campañaDTO');
+const CampañaDAO = require('../dao/campañaDAO');
+const CampañaDTO = require('../dto/campañaDTO');
 
 class CampañaService {
   static async obtenerTodas() {
