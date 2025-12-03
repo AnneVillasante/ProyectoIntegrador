@@ -1,7 +1,6 @@
 // backend/controllers/pedidoController.js
 const pedidoDAO = require('../dao/pedidoDAO');
 const clienteService = require('../services/clienteService');
-const clienteDAO = require('../dao/clienteDAO'); // Asegúrate de importar esto si usas búsqueda directa
 
 exports.getAllOrders = async (req, res) => {
     try {
@@ -24,9 +23,8 @@ exports.createOrder = async (req, res) => {
 
         // CASO A: Es Administrador y quiere asignar la venta a otro cliente (por correo)
         if (rolUsuario === 'Administrador' && req.body.correoCliente) {
-            // Buscamos al cliente por su correo
-            // Nota: Asegúrate de tener este método en tu DAO, o usa una query directa
-            const clienteDestino = await clienteDAO.findByCorreo(req.body.correoCliente);
+            // Buscamos al cliente a través del servicio para mantener la arquitectura de capas.
+            const clienteDestino = await clienteService.findByCorreo(req.body.correoCliente);
             
             if (!clienteDestino) {
                 return res.status(404).json({ error: `No se encontró ningún cliente registrado con el correo: ${req.body.correoCliente}` });
