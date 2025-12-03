@@ -13,4 +13,8 @@ class ProductoDTO {
   }
 }
 
+<<<<<<< HEAD
 module.exports = ProductoDTO;
+=======
+module.exports = ProductoDto;
+>>>>>>> progreso
