@@ -64,6 +64,12 @@
             <li><a href="#" class="nav-link" data-tab="metrics">6.2 Métricas</a></li>
           </ul>
         </details>
+        <details>
+          <summary>7. Auditoría</summary>
+          <ul>
+            <li><a href="#" class="nav-link" data-tab="logs">7.1 Logs de Actividad</a></li>
+          </ul>
+        </details>
       </nav>
     </aside>
 
@@ -90,6 +96,8 @@
                     <th>Nombre</th>
                     <th>Correo</th>
                     <th>Rol</th>
+                    <th>Teléfono</th>
+                    <th>DNI</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -365,6 +373,7 @@
                     <th>Estado</th>
                     <th>Total</th>
                     <th>Método Pago</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody id="ordersTableBody"></tbody>
@@ -489,6 +498,30 @@
         </div>
       </div>
 
+      <!-- Pestaña: Auditoría / Logs -->
+      <div class="tab-content" id="logs-tab">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🛡️ Auditoría - Logs de Actividad</h2>
+            <p>Registro de acciones importantes en el sistema.</p>
+          </div>
+          <div class="card-content">
+            <div class="table-container">
+              <table class="admin-table" id="logsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                    <th>Fecha y Hora</th>
+                  </tr>
+                </thead>
+                <tbody id="logsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     </main>
   </div>
@@ -819,6 +852,34 @@
     </div>
   </div>
 
+  <!-- Modal para ver detalles del pedido -->
+  <div id="orderDetailsModal" class="modal" hidden>
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h3>Detalles del Pedido</h3>
+        <button class="modal-close" id="closeOrderDetailsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="orderDetailsContent">
+          <!-- La información del pedido se cargará aquí -->
+        </div>
+        <h4>Productos del Pedido</h4>
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="orderProductsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="footer"></div>
 
   <script src="../components/navbar.js" defer></script>

@@ -110,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'metrics':
         loadMetrics(); // Cargar métricas al activar la pestaña
         break;
+      case 'logs':
+        if (typeof loadLogs === 'function') loadLogs();
+        break;
       default:
         console.log(`Pestaña ${tabName} seleccionada. Sin acción de precarga.`);
     }
@@ -158,9 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <td title="${user.idUsuario}">${user.idUsuario}</td>
         <td title="${user.nombres} ${user.apellidos}">${user.nombres} ${user.apellidos}</td>
         <td title="${user.correo}">${user.correo}</td>
-        <td title="${user.rol}">${user.rol}</td>
+        <td>${user.rol}</td>
+        <td>${user.telefono || 'N/A'}</td>
+        <td>${user.dni || 'N/A'}</td>
         <td>
-          <button class="btn-secondary" onclick="editUser(${user.idUsuario})">Editar Rol</button>
+          <button class="btn-secondary" onclick="window.editUser(${user.idUsuario})">Editar Rol</button>
           <button class="btn-danger" onclick="deleteUser(${user.idUsuario})">Eliminar</button>
         </td>
       </tr>
@@ -186,6 +191,66 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('Error eliminando usuario:', error);
       alert('Error al eliminar usuario');
+    }
+  }
+
+  // ===== LOGS DE ACTIVIDAD =====
+  async function loadLogs() {
+    try {
+      const logs = await apiCall('/logs');
+      renderLogsTable(logs);
+    } catch (error) {
+      console.error('Error cargando logs:', error);
+      alert('Error al cargar los logs de actividad.');
+    }
+  }
+
+  function renderLogsTable(logs) {
+    const tbody = document.getElementById('logsTableBody');
+    if (!logs || logs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay logs disponibles.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = logs.map(log => `
+      <tr>
+        <td>${log.idLog}</td>
+        <td>${log.usuario || 'Sistema'}</td>
+        <td>${log.accion}</td>
+        <td>${new Date(log.fecha).toLocaleString()}</td>
+      </tr>
+    `).join('');
+  }
+
+  // ===== DETALLES DE PEDIDO (MODAL) =====
+  async function showOrderDetails(idPedido) {
+    try {
+      // Asumiendo que tienes un endpoint /api/pedidos/:id que devuelve el pedido con sus items
+      const pedido = await apiCall(`/pedidos/${idPedido}`);
+      
+      // Llenar la información general del pedido
+      document.getElementById('orderDetailsContent').innerHTML = `
+        <p><strong>ID Pedido:</strong> ${pedido.idPedido}</p>
+        <p><strong>Cliente:</strong> ${pedido.clienteNombre} (${pedido.clienteCorreo})</p>
+        <p><strong>Fecha:</strong> ${new Date(pedido.fecha).toLocaleString()}</p>
+        <p><strong>Estado:</strong> ${pedido.estado}</p>
+        <p><strong>Total:</strong> S/ ${parseFloat(pedido.total).toFixed(2)}</p>
+      `;
+
+      // Llenar la tabla de productos
+      const productsTbody = document.getElementById('orderProductsTableBody');
+      productsTbody.innerHTML = pedido.items.map(item => `
+        <tr>
+          <td>${item.nombreProducto}</td>
+          <td>${item.cantidad}</td>
+          <td>S/ ${parseFloat(item.precioUnitario).toFixed(2)}</td>
+          <td>S/ ${parseFloat(item.subtotal).toFixed(2)}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('orderDetailsModal').hidden = false;
+    } catch (error) {
+      console.error(`Error al cargar detalles del pedido ${idPedido}:`, error);
+      alert('No se pudieron cargar los detalles del pedido.');
     }
   }
 
@@ -268,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td title="S/ ${parseFloat(product.precio).toFixed(2)}">S/ ${parseFloat(product.precio).toFixed(2)}</td>
         <td title="${product.stock}">${product.stock}</td>
         <td>
-          <button class="btn-secondary" onclick="editProduct(${product.idProducto})">Editar</button>
+          <button class="btn-secondary" onclick="window.editProduct(${product.idProducto})">Editar</button>
           <button class="btn-danger" onclick="deleteProduct(${product.idProducto})">Eliminar</button>
         </td>
       </tr>
@@ -452,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ${imagenUrl ? `<img src="${imagenUrl}" alt="${cat.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
         </td>
         <td>
-          <button class="btn-secondary" onclick="editCategory(${cat.idCategoria})">Editar</button>
+          <button class="btn-secondary" onclick="window.editCategory(${cat.idCategoria})">Editar</button>
           <button class="btn-danger" onclick="deleteCategory(${cat.idCategoria})">Eliminar</button>
         </td>
       </tr>
@@ -485,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ${imagenUrl ? `<img src="${imagenUrl}" alt="${sub.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
         </td>
         <td>
-          <button class="btn-secondary" onclick="editSubcategory(${sub.idSubcategoria})">Editar</button>
+          <button class="btn-secondary" onclick="window.editSubcategory(${sub.idSubcategoria})">Editar</button>
           <button class="btn-danger" onclick="deleteSubcategory(${sub.idSubcategoria})">Eliminar</button>
         </td>
       </tr>
@@ -678,6 +743,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('closeSubcategoryModal').addEventListener('click', () => {
     document.getElementById('subcategoryModal').hidden = true;
+  });
+
+  // Modal de detalles de pedido
+  document.getElementById('closeOrderDetailsModal').addEventListener('click', () => {
+    document.getElementById('orderDetailsModal').hidden = true;
   });
 
   document.getElementById('cancelEditUser').addEventListener('click', () => {
@@ -892,6 +962,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.deleteCategory = deleteCategory;
   window.editSubcategory = editSubcategory;
   window.deleteSubcategory = deleteSubcategory;
+  window.showOrderDetails = showOrderDetails; // Exponer la función globalmente
+  window.loadLogs = loadLogs;
 
   // Cargar datos iniciales (solo usuarios por defecto)
   loadUsers();
