@@ -5,6 +5,11 @@ INSERT INTO usuario (`idUsuario`,`nombres`,`apellidos`,`correo`,`dni`,`telefono`
 (3,'Administrador','Principal','admin@gmail.com','75148629','921546387',NULL,'$2b$10$LIhDuvgFv8lxxgCiPt6nIeTPvo5dciVl7TCjH3wNfjLCcijiUHRwy','Administrador'),
 (4,'Pablo','Casas','pablo.casas@gmail.com','45213678','925146895',NULL,'$2b$10$u10n1WVutKhqp99tBX8IueqnvFUaN3QBVT3b1rNeD/A/gTnYAeYi.','Cliente');
 
+INSERT INTO categoria (idCategoria, nombre, descripcion) VALUES
+(1, 'Ropa', 'Prendas de vestir para todas las edades'),
+(2, 'Calzado', 'Zapatos, zapatillas y sandalias'),
+(3, 'Accesorios', 'Complementos como bolsos, joyas y sombreros'),
+(4, 'Disfraces', 'Trajes temáticos y disfraces variados');
 
 INSERT INTO subcategoria (nombre, descripcion, idCategoria, genero) VALUES
 ('Pantalones', 'Prenda para la parte inferior del cuerpo, cubriendo desde la cintura hasta los tobillos.', 1, 'Unisex'),
