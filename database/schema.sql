@@ -5,6 +5,7 @@ CREATE TABLE `campaña` (
   `descripcion` text,
   `fechaInicio` date NOT NULL,
   `fechaFin` date NOT NULL,
+  `activo` BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (`idCampaña`)
 );
 CREATE TABLE `carrito` (
@@ -148,7 +149,7 @@ CREATE TABLE `promocion` (
   `tipoDescuento` enum('Porcentaje','MontoFijo') NOT NULL DEFAULT 'Porcentaje',
   `valorDescuento` decimal(10,2) NOT NULL DEFAULT '0.00',
   `montoMinimoCompra` decimal(10,2) DEFAULT '0.00',
-  `activo` tinyint(1) DEFAULT '1',
+  `activo` BOOLEAN DEFAULT TRUE,
   `idCategoriaAplicable` int DEFAULT NULL,
   PRIMARY KEY (`idPromocion`),
   KEY `idCampaña` (`idCampaña`),
@@ -156,18 +157,7 @@ CREATE TABLE `promocion` (
   CONSTRAINT `fk_promocion_categoria` FOREIGN KEY (`idCategoriaAplicable`) REFERENCES `categoria` (`idCategoria`),
   CONSTRAINT `promocion_ibfk_1` FOREIGN KEY (`idCampaña`) REFERENCES `campaña` (`idCampaña`)
 );
-CREATE TABLE `recomendacion` (
-  `idRecomendacion` int NOT NULL AUTO_INCREMENT,
-  `idCliente` int NOT NULL,
-  `idProducto` int NOT NULL,
-  `motivo` text,
-  `fechaGeneracion` date NOT NULL,
-  PRIMARY KEY (`idRecomendacion`),
-  KEY `idCliente` (`idCliente`),
-  KEY `idProducto` (`idProducto`),
-  CONSTRAINT `recomendacion_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`),
-  CONSTRAINT `recomendacion_ibfk_2` FOREIGN KEY (`idProducto`) REFERENCES `producto` (`idProducto`)
-);
+
 CREATE TABLE `reporte` (
   `idReporte` int NOT NULL AUTO_INCREMENT,
   `tipo` varchar(50) DEFAULT NULL,
@@ -175,7 +165,7 @@ CREATE TABLE `reporte` (
   `fechaGeneracion` datetime DEFAULT CURRENT_TIMESTAMP,
   `parametros` text,
   `usuario` varchar(100) DEFAULT NULL,
-  `exportado` tinyint(1) DEFAULT '0',
+  `exportado` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`idReporte`)
 );
 CREATE TABLE `subcategoria` (
@@ -213,4 +203,14 @@ CREATE TABLE `usuariopromocion` (
   KEY `idPromocion` (`idPromocion`),
   CONSTRAINT `usuariopromocion_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`),
   CONSTRAINT `usuariopromocion_ibfk_2` FOREIGN KEY (`idPromocion`) REFERENCES `promocion` (`idPromocion`)
+);
+CREATE TABLE `cupon` (
+  `idCupon` int NOT NULL AUTO_INCREMENT,
+  `codigo` varchar(50) NOT NULL UNIQUE,
+  `descripcion` text,
+  `fechaExpiracion` date NOT NULL,
+  `tipoDescuento` enum('Porcentaje', 'MontoFijo') NOT NULL,
+  `valorDescuento` decimal(10,2) NOT NULL,
+  `activo` BOOLEAN DEFAULT TRUE,
+  PRIMARY KEY (`idCupon`)
 );

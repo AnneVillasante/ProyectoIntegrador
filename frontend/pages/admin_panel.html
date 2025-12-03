@@ -6,6 +6,8 @@
   <title>Lunaria Threads | Panel Administrativo</title>
   <link rel="stylesheet" href="../assets/css/styles.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
+  <!-- Iconos para las tarjetas de métricas y otros elementos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="../assets/js/config.js" defer></script>
   <script src="../components/layout.js" defer></script>
 </head>
@@ -334,9 +336,9 @@
                   <tr>
                     <th>ID</th>
                     <th>Código</th>
-                    <th>Tipo</th>
-                    <th>Valor</th>
-                    <th>Usos restantes</th>
+                    <th>Descuento</th>
+                    <th>Expiración</th>
+                    <th>Activo</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -347,13 +349,78 @@
         </div>
       </div>
       <div class="tab-content" id="orders-tab">
-        <div class="admin-card"><h2>4.1 Pedidos</h2><p>Contenido para pedidos...</p></div>
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🛒 Administración de Pedidos</h2>
+            <p>Visualiza y gestiona todos los pedidos de los clientes.</p>
+          </div>
+          <div class="card-content">
+            <div class="table-container">
+              <table class="admin-table" id="ordersTable">
+                <thead>
+                  <tr>
+                    <th>ID Pedido</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Método Pago</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tab-content" id="payments-tab">
-        <div class="admin-card"><h2>4.2 Pagos</h2><p>Contenido para pagos...</p></div>
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>💳 Administración de Pagos</h2>
+            <p>Revisa el historial de transacciones y su estado.</p>
+          </div>
+          <div class="card-content">
+            <div class="table-container">
+              <table class="admin-table" id="paymentsTable">
+                <thead>
+                  <tr>
+                    <th>ID Pago</th>
+                    <th>ID Pedido</th>
+                    <th>Método</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="paymentsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tab-content" id="invoices-tab">
-        <div class="admin-card"><h2>4.3 Facturas</h2><p>Contenido para facturas...</p></div>
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>🧾 Administración de Facturas</h2>
+            <p>Consulta y descarga las facturas generadas.</p>
+          </div>
+          <div class="card-content">
+            <div class="table-container">
+              <table class="admin-table" id="invoicesTable">
+                <thead>
+                  <tr>
+                    <th>ID Factura</th>
+                    <th>ID Pedido</th>
+                    <th>Fecha Emisión</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="invoicesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tab-content" id="returns-tab">
         <div class="admin-card">
@@ -362,13 +429,64 @@
             <p>Procesa y gestiona las solicitudes de devolución.</p>
           </div>
           <div class="card-content">
-            <p>Aquí se mostrará la lista de solicitudes de devolución...</p>
-            <!-- Futura tabla de devoluciones -->
+            <div class="table-container">
+              <table class="admin-table" id="returnsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>ID Pedido</th>
+                    <th>Motivo</th>
+                    <th>Monto Reembolsado</th>
+                    <th>Fecha Solicitud</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="returnsTableBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
       <div class="tab-content" id="metrics-tab">
-        <div class="admin-card"><h2>6.2 Métricas</h2><p>Contenido para métricas...</p></div>
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>📊 Métricas del Negocio</h2>
+            <p>Resumen en tiempo real de tu tienda.</p>
+          </div>
+          <div class="card-content">
+            <div class="metrics-grid">
+              <div class="metric-card blue">
+                <div class="metric-icon"><i class="fas fa-users"></i></div>
+                <div class="metric-info">
+                  <h3>Usuarios</h3>
+                  <p id="metric-users">0</p>
+                </div>
+              </div>
+              <div class="metric-card green">
+                <div class="metric-icon"><i class="fas fa-box"></i></div>
+                <div class="metric-info">
+                  <h3>Productos</h3>
+                  <p id="metric-products">0</p>
+                </div>
+              </div>
+              <div class="metric-card orange">
+                <div class="metric-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="metric-info">
+                  <h3>Pedidos Totales</h3>
+                  <p id="metric-orders">0</p>
+                </div>
+              </div>
+              <div class="metric-card purple">
+                <div class="metric-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="metric-info">
+                  <h3>Ingresos</h3>
+                  <p id="metric-income">S/ 0.00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -606,13 +724,148 @@
     </div>
   </div>
 
+  <!-- Modal para agregar/editar campaña -->
+  <div id="campaignModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="campaignModalTitle">Nueva Campaña</h3>
+        <button class="modal-close" id="closeCampaignModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="campaignForm">
+          <input type="hidden" id="idCampana">
+          <div class="form-group">
+            <label for="campaignNombre">Nombre de la Campaña:</label>
+            <input type="text" id="campaignNombre" required>
+          </div>
+          <div class="form-group">
+            <label for="campaignDescripcion">Descripción:</label>
+            <textarea id="campaignDescripcion" rows="3"></textarea>
+          </div>
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="campaignFechaInicio">Fecha Inicio:</label>
+              <input type="date" id="campaignFechaInicio" required>
+            </div>
+            <div class="form-group">
+              <label for="campaignFechaFin">Fecha Fin:</label>
+              <input type="date" id="campaignFechaFin" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="campaignActivo">Estado:</label>
+            <select id="campaignActivo">
+              <option value="1">Activa</option>
+              <option value="0">Inactiva</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelCampaign">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar/editar cupón -->
+  <div id="couponModal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="couponModalTitle">Nuevo Cupón</h3>
+        <button class="modal-close" id="closeCouponModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="couponForm">
+          <input type="hidden" id="idCupon">
+          <div class="form-group">
+            <label for="couponCodigo">Código:</label>
+            <input type="text" id="couponCodigo" required>
+          </div>
+          <div class="form-group">
+            <label for="couponDescripcion">Descripción:</label>
+            <textarea id="couponDescripcion" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="couponFechaExpiracion">Fecha de Expiración:</label>
+            <input type="date" id="couponFechaExpiracion" required>
+          </div>
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="couponTipoDescuento">Tipo de Descuento:</label>
+              <select id="couponTipoDescuento" required>
+                <option value="Porcentaje">Porcentaje</option>
+                <option value="Monto Fijo">Monto Fijo</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="couponValorDescuento">Valor:</label>
+              <input type="number" id="couponValorDescuento" step="0.01" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="couponActivo">Estado:</label>
+            <select id="couponActivo">
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelCoupon">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div id="footer"></div>
 
   <script src="../components/navbar.js" defer></script>
   <script src="../assets/js/admin.js" defer></script>
-  <script src="../assets/js/admin_promotions.js" defer></script>
-  <script src="../assets/js/admin_campaigns.js" defer></script>
-  <script src="../assets/js/admin_coupons.js" defer></script>
-  <script src="../assets/js/admin_returns.js" defer></script>
+  <script src="../assets/js/admin_promociones.js" defer></script>
+  <script src="../assets/js/admin_campañas.js" defer></script>
+  <script src="../assets/js/admin_cupones.js" defer></script>
+  <script src="../assets/js/admin_pedidos.js" defer></script>
+  <script src="../assets/js/admin_pagos.js" defer></script>
+  <script src="../assets/js/admin_facturas.js" defer></script>
+  <script src="../assets/js/admin_devoluciones.js" defer></script>
 </body>
 </html>
+
+<!-- Modal para gestionar devoluciones (ya que estamos, lo añadimos también) -->
+<div id="returnModal" class="modal" hidden>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="returnModalTitle">Gestionar Devolución</h3>
+      <button class="modal-close" id="closeReturnModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="returnForm">
+        <input type="hidden" id="idDevolucion">
+        <div class="form-group">
+            <p><strong>ID Devolución:</strong> <span id="returnInfoId"></span></p>
+            <p><strong>ID Pedido:</strong> <span id="returnInfoPedidoId"></span></p>
+            <p><strong>Motivo:</strong> <span id="returnInfoMotivo"></span></p>
+            <p><strong>Monto Reembolsado:</strong> <span id="returnInfoMonto"></span></p>
+        </div>
+        <div class="form-group">
+          <label for="returnEstado">Cambiar Estado:</label>
+          <select id="returnEstado" required>
+            <option value="solicitada">Solicitada</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="rechazada">Rechazada</option>
+            <option value="reembolsada">Reembolsada</option>
+          </select>
+        </div>
+        <div class="form-group" id="montoReembolsadoContainer" hidden>
+            <label for="montoReembolsadoInput">Monto a Reembolsar:</label>
+            <input type="number" id="montoReembolsadoInput" step="0.01" min="0" placeholder="0.00">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="cancelReturn">Cancelar</button>
+          <button type="submit" class="btn-primary">Actualizar Estado</button>
+        </div>
+      </form>
+    </div>
+  </div>

@@ -1,4 +1,30 @@
 // Panel Administrativo - Funcionalidad completa con pestañas
+
+// Funciones de utilidad globales para ser accesibles desde otros scripts
+async function apiCall(endpoint, options = {}) {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    ...options.headers
+  };
+
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  try {
+    const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, { ...options, headers });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+    }
+    return response.status === 204 ? null : await response.json();
+  } catch (error) {
+    console.error('API Call Error:', error);
+    throw error;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar autenticación y rol
   const token = localStorage.getItem('token');
@@ -72,43 +98,20 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'returns':
         if (typeof loadReturns === 'function') loadReturns();
         break;
+      case 'orders':
+        if (typeof loadOrders === 'function') loadOrders();
+        break;
+      case 'payments':
+        if (typeof loadPayments === 'function') loadPayments();
+        break;
+      case 'invoices':
+        if (typeof loadInvoices === 'function') loadInvoices();
+        break;
+      case 'metrics':
+        loadMetrics(); // Cargar métricas al activar la pestaña
+        break;
       default:
         console.log(`Pestaña ${tabName} seleccionada. Sin acción de precarga.`);
-    }
-  }
-
-  // Funciones de utilidad
-  async function apiCall(endpoint, options = {}) {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      ...options.headers
-    };
-
-    // Si el cuerpo es FormData, el navegador establece el Content-Type automáticamente.
-    if (!(options.body instanceof FormData)) {
-      headers['Content-Type'] = 'application/json';
-    }
-
-    try {
-      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, {
-        ...options,
-        headers: headers
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
-      }
-      
-      // Si la respuesta es 204 (No Content), no hay cuerpo que leer.
-      if (response.status === 204) {
-        return null; // O un objeto vacío: {}
-      }
-      return await response.json(); // Para otras respuestas exitosas (200, 201)
-    } catch (error) {
-      console.error('API Call Error:', error);
-      throw error;
     }
   }
 
@@ -637,6 +640,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('addProductBtn').addEventListener('click', addProduct);
   document.getElementById('loadProductsBtn').addEventListener('click', loadProducts);
 
+  // Campañas (Añadido para conectar con admin_campañas.js)
+  const addCampaignBtn = document.getElementById('addCampaignBtn');
+  if (addCampaignBtn) {
+    addCampaignBtn.addEventListener('click', () => window.addCampaign && window.addCampaign());
+  }
+
   // Clasificación
   document.getElementById('newCategoryBtn').addEventListener('click', addCategory);
   document.getElementById('newSubcategoryBtn').addEventListener('click', addSubcategory);
@@ -857,6 +866,21 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Error al guardar producto: ' + (error.message || 'Error desconocido'));
     }
   });
+
+  // ===== MÉTRICAS DEL DASHBOARD =====
+  async function loadMetrics() {
+  try {
+    const data = await apiCall('/dashboard/metricas');
+    if (data) {
+      document.getElementById('metric-users').textContent = data.usuarios;
+      document.getElementById('metric-products').textContent = data.productos;
+      document.getElementById('metric-orders').textContent = data.pedidos;
+      document.getElementById('metric-income').textContent = `S/ ${parseFloat(data.ingresos).toFixed(2)}`;
+    }
+  } catch (error) {
+    console.error('Error cargando métricas:', error);
+  }
+}
 
   // Funciones globales para onclick
   window.editUser = editUser;
