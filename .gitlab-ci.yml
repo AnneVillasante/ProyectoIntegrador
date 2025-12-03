@@ -43,14 +43,25 @@ instalar_dependencias:
 pruebas_unitarias_integrales:
   stage: test
   script:
+    # 1. Instalamos el cliente MySQL (necesario para ejecutar comandos SQL)
+    - apt-get update && apt-get install -y default-mysql-client
+    
     - cd backend
-    - sleep 20
-    # Aquí se ejecutaría Jest. Jest debe estar configurado para conectar a la DB de prueba si es necesario.
+    - echo "Esperando a que MySQL inicie..."
+    - sleep 20 
+    
+    # 2. Creamos las tablas usando tu archivo schema.sql
+    # (Usamos ../database/ porque estamos dentro de la carpeta backend)
+    - mysql -h mysql -u test_user -p$MYSQL_PASSWORD lunariathreadsdb < ../database/schema.sql
+    
+    # 3. Insertamos datos de prueba usando seed.sql (para que las tablas no estén vacías)
+    - mysql -h mysql -u test_user -p$MYSQL_PASSWORD lunariathreadsdb < ../database/seed.sql
+    
     - npm test 
   artifacts:
     when: always
     reports:
-      junit: backend/report.xml # Si configuras Jest para exportar reportes
+      junit: backend/report.xml
 
 # --- ETAPA 3: PLAN DE PRUEBAS DE SEGURIDAD ---
 # 3.1 Auditoría de Dependencias (Busca vulnerabilidades conocidas en librerías)
