@@ -6,13 +6,14 @@
  */
 
 class CampanaDTO {
-  constructor({ idCampana, titulo, imagen, descripcion, fechaInicio, fechaFin }) {
+  constructor({ idCampana, titulo, imagen, descripcion, fechaInicio, fechaFin, activo }) {
     this.id = idCampana;
     this.titulo = titulo;
     this.imagen = imagen;
     this.descripcion = descripcion;
     this.fechaInicio = fechaInicio;
     this.fechaFin = fechaFin;
+    this.activo = activo;
   }
 }
 

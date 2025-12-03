@@ -31,8 +31,9 @@ function renderCampaignsTable() {
     return `
       <tr>
         <td title="${camp.idCampana}">${camp.idCampana}</td>
-        <td title="${camp.nombre}">${camp.nombre}</td>
-        <td title="${fechaInicio} - ${fechaFin}">${fechaInicio} - ${fechaFin}</td>
+        <td title="${camp.titulo}">${camp.titulo}</td>
+        <td title="${fechaInicio}">${fechaInicio}</td>
+        <td title="${fechaFin}">${fechaFin}</td>
         <td title="${camp.activo ? 'Activo' : 'Inactivo'}">${camp.activo ? '✅' : '❌'}</td>
         <td>
           <button class="btn-secondary" onclick="editCampaign(${camp.idCampana})">Editar</button>
@@ -56,7 +57,7 @@ function editCampaign(id) {
 
   document.getElementById('campaignModalTitle').textContent = 'Editar Campana';
   document.getElementById('idCampana').value = camp.idCampana;
-  document.getElementById('campaignNombre').value = camp.nombre;
+  document.getElementById('campaignNombre').value = camp.titulo;
   document.getElementById('campaignDescripcion').value = camp.descripcion;
   document.getElementById('campaignFechaInicio').value = camp.fechaInicio.split('T')[0];
   document.getElementById('campaignFechaFin').value = camp.fechaFin.split('T')[0];
@@ -94,17 +95,23 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('idCampana').value;
-      const data = {
-        titulo: document.getElementById('campaignNombre').value,
-        descripcion: document.getElementById('campaignDescripcion').value,
-        fechaInicio: document.getElementById('campaignFechaInicio').value,
-        fechaFin: document.getElementById('campaignFechaFin').value,
-        activo: document.getElementById('campaignActivo').value === '1',
-      };
+      const imagenFile = document.getElementById('campaignImagen').files[0];
+
+      const formData = new FormData();
+      formData.append('titulo', document.getElementById('campaignNombre').value);
+      formData.append('descripcion', document.getElementById('campaignDescripcion').value);
+      formData.append('fechaInicio', document.getElementById('campaignFechaInicio').value);
+      formData.append('fechaFin', document.getElementById('campaignFechaFin').value);
+      formData.append('activo', document.getElementById('campaignActivo').value === '1');
+
+      if (imagenFile) {
+        formData.append('imagen', imagenFile);
+      }
+
       const method = id ? 'PUT' : 'POST';
       const endpoint = id ? `/campanas/${id}` : '/campanas';
       try {
-        await apiCall(endpoint, { method, body: JSON.stringify(data) });
+        await apiCall(endpoint, { method, body: formData });
         alert(`Campana ${id ? 'actualizada' : 'creada'} correctamente.`);
         modal.hidden = true;
         loadCampaigns();

@@ -286,8 +286,9 @@
                   <tr>
                     <th>ID</th>
                     <th>Título</th>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Fin</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Activo</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -776,6 +777,10 @@
             <textarea id="campaignDescripcion" rows="3"></textarea>
           </div>
           <div class="form-group-row">
+            <div class="form-group">
+              <label for="campaignImagen">Imagen:</label>
+              <input type="file" id="campaignImagen" accept="image/*">
+            </div>
             <div class="form-group">
               <label for="campaignFechaInicio">Fecha Inicio:</label>
               <input type="date" id="campaignFechaInicio" required>
