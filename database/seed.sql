@@ -1,14 +1,10 @@
 -- Insertar usuarios, a diferencia de los usuarios registrados, los usuarios insertados no tienen codificada la contrasena
-INSERT INTO Usuario (idUsuario, nombres, apellidos, correo, dni, telefono, contrasena, rol) VALUES
-(1, 'Anne', 'Villasante', 'anne.villasante@gmail.com', '12345678', '912345678', 'Anne1234', 'Administrador'),
-(2, 'Laura', 'Pérez', 'laura.perez@gmail.com', '23456789', '923456789', 'clave123', 'Cliente'),
-(3, 'Carlos', 'Gómez', 'carlos.gomez@outlook.com', '34567890', '934567890', 'pass456', 'Cliente'),
-(4, 'Ana', 'Torres', 'ana.torres@hotmail.com', '45678901', '945678901', 'secreto789', 'Cliente'),
-(5, 'Miguel', 'Ramírez', 'miguel.ramirez@gmail.com', '56789012', '956789012', 'admin2024', 'Cliente'),
-(6, 'Sofía', 'Hernández', 'sofia.hernandez@outlook.com', '67890123', '967890123', 'password321', 'Cliente'),
-(7, 'Juan', 'Corrales', 'juan.corrales@gmail.com', '78901234', '978901234', 'Juan123', 'Cliente'),
-(8, 'Administrador', '', 'admin@hotmail.com', '89012345', '989012345', 'admin123', 'Administrador'),
-(9, 'Jesus', 'Paredes', 'jesus.paredes@gmail.com', '90123456', '999012345', 'Jesus123', 'Cliente');
+INSERT INTO usuario (`idUsuario`,`nombres`,`apellidos`,`correo`,`dni`,`telefono`,`foto_perfil`,`contrasena`,`rol`) VALUES
+(1,'Suemy','Villasante Villasante','anne.villasante@gmail.com','72076000','922512124','perfiles/1763600783058-gurugurugg.gif','$2b$10$9wYyDyl.N3.Uh8cYPwddmu/n9grE0fwbIfnG6/mlId/h8pxMD.vfy','Administrador'),
+(2,'Manuel','Garcia','manuel.garcia@gmail.com','12456358','954682341',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente'),
+(3,'Administrador','Principal','admin@gmail.com','75148629','921546387',NULL,'$2b$10$LIhDuvgFv8lxxgCiPt6nIeTPvo5dciVl7TCjH3wNfjLCcijiUHRwy','Administrador'),
+(4,'Pablo','Casas','pablo.casas@gmail.com','45213678','925146895',NULL,'$2b$10$u10n1WVutKhqp99tBX8IueqnvFUaN3QBVT3b1rNeD/A/gTnYAeYi.','Cliente');
+
 
 INSERT INTO subcategoria (nombre, descripcion, idCategoria, genero) VALUES
 ('Pantalones', 'Prenda para la parte inferior del cuerpo, cubriendo desde la cintura hasta los tobillos.', 1, 'Unisex'),
