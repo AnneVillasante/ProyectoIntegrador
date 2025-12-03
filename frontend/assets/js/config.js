@@ -1,15 +1,20 @@
 // frontend/assets/js/config.js
 
-// Determina la URL base de la API dinámicamente usando el hostname del navegador.
-// Esto permite que funcione tanto en localhost como en un dominio de producción.
-const API_HOSTNAME = window.location.hostname;
-const API_PORT = 4000; // Puerto del backend
+// frontend/assets/js/config.js
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+// Si es local, usa localhost:4000. Si está en la nube, usa la URL de producción de Render.
+// NOTA: Cuando subas el backend a Render, te darán una URL (ej: https://lunaria-api.onrender.com)
+// Debes cambiar la URL de abajo por la tuya real de Render cuando la tengas.
+
+const API_BASE_URL = isLocalhost 
+    ? 'http://localhost:4000' 
+    : 'https://TU-APP-EN-RENDER.onrender.com'; 
 
 const CONFIG = {
-    API_URL: `http://${API_HOSTNAME}:${API_PORT}/api`,
-    IMG_URL: `http://${API_HOSTNAME}:${API_PORT}`,
+    API_URL: `${API_BASE_URL}/api`,
+    IMG_URL: API_BASE_URL, // Cloudinary ya trae http, pero por si acaso
     STRIPE_PUBLIC_KEY: 'pk_test_51SZWCJ3flV6CgDCbFFRTIe1p3Ajf59NxdLoQ1fv62Q7fWm6COFgHVUeZJAOocMYOcLfhIW0lRpKEbmHNb61lfXJh007I2a0yjd'
 };
 
-// Exportar para que otros archivos lo usen (si usas módulos) o dejarlo global
 window.CONFIG = CONFIG;

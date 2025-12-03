@@ -15,8 +15,8 @@ exports.create = async (req, res) => {
     const categoriaData = { ...req.body };
     // Si se subió un archivo, Multer lo pone en req.file
     if (req.file) {
-      // Guardamos la ruta relativa que genera Multer
-      categoriaData.imagen = req.file.path.replace(/\\/g, '/');
+      // Guardamos la URL segura que Cloudinary proporciona
+      categoriaData.imagen = req.file.path;
     }
     const categoria = new CategoriaDTO(categoriaData);
     const id = await categoriaDAO.create(categoria);
@@ -34,7 +34,7 @@ exports.update = async (req, res) => {
 
     // Si se sube una nueva imagen, la usamos
     if (req.file) {
-      categoriaData.imagen = req.file.path.replace(/\\/g, '/');
+      categoriaData.imagen = req.file.path;
     } else {
       // Si no se sube una nueva imagen, debemos conservar la existente.
       const categoriaExistente = await categoriaDAO.getById(id);

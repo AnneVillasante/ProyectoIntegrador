@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isAuthenticated()) {
         const user = getUserData();
         const isAdmin = user && user.rol === 'Administrador';
+        const adminCartSwitcher = document.getElementById('adminCartSwitcher');
         
         let content = `
           <div class="account-info">
@@ -93,6 +94,27 @@ document.addEventListener('DOMContentLoaded', () => {
               Panel administrativo
             </a>
           `;
+        }
+
+        // Si es admin, mostrar el selector de carrito
+        if (isAdmin && adminCartSwitcher) {
+          const activeCart = localStorage.getItem('activeCart') || 'personal';
+          adminCartSwitcher.style.display = 'block';
+          adminCartSwitcher.innerHTML = `
+            <div class="menu-divider"></div>
+            <div class="menu-item-static">
+              <span>Modo Carrito:</span>
+              <select id="cartModeSelector" class="cart-mode-selector">
+                <option value="personal" ${activeCart === 'personal' ? 'selected' : ''}>Personal</option>
+                <option value="venta" ${activeCart === 'venta' ? 'selected' : ''}>Venta Física</option>
+              </select>
+            </div>
+          `;
+          
+          // Añadir listener para el cambio de modo
+          setTimeout(() => { // Timeout para asegurar que el elemento está en el DOM
+            document.getElementById('cartModeSelector').addEventListener('change', handleCartModeChange);
+          }, 0);
         }
 
         // "Cerrar sesión" se muestra para todos los usuarios autenticados
@@ -132,6 +154,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Función para manejar el cambio de modo de carrito
+    function handleCartModeChange(e) {
+      const newMode = e.target.value;
+      localStorage.setItem('activeCart', newMode);
+      alert(`Modo de carrito cambiado a: ${newMode === 'personal' ? 'Personal' : 'Venta Física'}. La página del carrito se recargará.`);
+      // Si estamos en la página del carrito, la recargamos para que muestre el contenido correcto
+      if (window.location.pathname.includes('/pages/carrito.html')) {
+        window.location.reload();
+      }
+    }
     // Función para cerrar sesión
     function logout() {
       localStorage.removeItem('token');

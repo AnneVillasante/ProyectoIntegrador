@@ -14,8 +14,8 @@ exports.create = async (req, res) => {
   try {
     const subcategoriaData = { ...req.body };
     if (req.file) {
-      // Guardamos la ruta relativa que genera Multer
-      subcategoriaData.imagen = req.file.path.replace(/\\/g, '/');
+      // Guardamos la URL segura que Cloudinary proporciona
+      subcategoriaData.imagen = req.file.path;
     }
     const subcategoria = new SubcategoriaDTO(subcategoriaData);
     const id = await subcategoriaDAO.create(subcategoria);
@@ -31,7 +31,8 @@ exports.update = async (req, res) => {
     const subcategoriaData = { ...req.body };
 
     if (req.file) {
-      subcategoriaData.imagen = req.file.path.replace(/\\/g, '/');
+      // Si se sube un nuevo archivo, guardamos la nueva URL de Cloudinary
+      subcategoriaData.imagen = req.file.path;
     } else {
       // Conservar la imagen existente si no se sube una nueva
       const subcategoriaExistente = await subcategoriaDAO.getById(id);

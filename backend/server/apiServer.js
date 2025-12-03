@@ -23,6 +23,7 @@ const campañaRoutes = require('../routes/campañaRoutes');
 const devolucionRoutes = require('../routes/devolucionRoutes');
 const facturaRoutes = require('../routes/facturaRoutes');
 const logActividadRoutes = require('../routes/logActividadRoutes');
+const cuponRoutes = require('../routes/cuponRoutes');
 const dashboardRoutes = require('../routes/dashboardRoutes'); // ✅ Importar rutas del dashboard
 
 const apiApp = express();
@@ -75,6 +76,7 @@ apiApp.use('/api/campanas', campañaRoutes);
 apiApp.use('/api/devoluciones', devolucionRoutes);
 apiApp.use('/api/facturas', facturaRoutes);
 apiApp.use('/api/logs', logActividadRoutes);
+apiApp.use('/api/cupones', cuponRoutes);
 apiApp.use('/api/dashboard', dashboardRoutes); // ✅ Registrar rutas del dashboard
 
 async function startApi() {

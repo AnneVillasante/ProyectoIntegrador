@@ -1,10 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cartItemsContainer = document.getElementById('cart-items-container');
     const emptyCartMessage = document.getElementById('empty-cart-message');
+    const cartTitle = document.getElementById('cart-title');
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryDiscounts = document.getElementById('summary-discounts'); // Asumiendo que podrías tener descuentos
     const summaryTotal = document.getElementById('summary-total');
     const checkoutButton = document.getElementById('checkout-button');
+
+    // Determinar el modo del carrito (para administradores)
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAdmin = user.rol === 'Administrador';
+    const cartType = isAdmin ? (localStorage.getItem('activeCart') || 'personal') : 'personal';
+
+    if (cartTitle) {
+        cartTitle.textContent = cartType === 'venta' ? 'Carrito de Venta Física' : 'Mi Carrito de Compras';
+    }
 
     async function fetchCartData() {
         try {
@@ -17,8 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            const apiUrl = `${window.CONFIG.API_URL}/carrito?type=${cartType}`;
             // La ruta GET /api/carrito obtiene el carrito del usuario autenticado por su token.
-            const response = await fetch(`${window.CONFIG.API_URL}/carrito`, {
+            const response = await fetch(apiUrl, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -144,7 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                const response = await fetch(`${window.CONFIG.API_URL}/carrito/${productId}`, {
+                const apiUrl = `${window.CONFIG.API_URL}/carrito/${productId}?type=${cartType}`;
+                const response = await fetch(apiUrl, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -173,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const response = await fetch(`${window.CONFIG.API_URL}/carrito/${productId}`, {
+            const apiUrl = `${window.CONFIG.API_URL}/carrito/${productId}?type=${cartType}`;
+            const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

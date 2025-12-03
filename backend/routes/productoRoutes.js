@@ -2,21 +2,11 @@ const express = require('express');
 const router = express.Router();
 const productoController = require('../controllers/productoController');
 const multer = require('multer');
-const path = require('path');
+const { createStorage } = require('../config/cloudinary');
 
-// Configuración de Multer para guardar imágenes de productos
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/productos/'); // Directorio donde se guardarán las imágenes
-  },
-  filename: function (req, file, cb) {
-    // Generar un nombre de archivo único para evitar colisiones
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage: storage });
+// Configuración de Multer para guardar imágenes de productos en Cloudinary
+const productoStorage = createStorage('productos');
+const upload = multer({ storage: productoStorage });
 
 // CRUD completo
 router.get('/', productoController.list);

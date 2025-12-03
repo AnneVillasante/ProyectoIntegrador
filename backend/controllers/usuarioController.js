@@ -153,14 +153,13 @@ exports.subirFotoPerfil = async (req, res) => {
       return res.status(400).json({ error: 'No se ha subido ningún archivo.' });
     }
 
-    // El nombre del archivo guardado por Multer
-    const nombreArchivo = req.file.filename;
-    const rutaArchivo = `perfiles/${nombreArchivo}`; // Guardamos la ruta relativa
+    // La URL segura de la imagen subida a Cloudinary
+    const imageUrl = req.file.path;
 
     // Actualizar la base de datos con la nueva ruta de la foto
-    await usuarioModel.update(id, { foto_perfil: rutaArchivo });
+    await usuarioModel.update(id, { foto_perfil: imageUrl });
 
-    res.json({ success: true, message: 'Foto de perfil actualizada correctamente', filePath: rutaArchivo });
+    res.json({ success: true, message: 'Foto de perfil actualizada correctamente', filePath: imageUrl });
   } catch (err) {
     console.error('USER PHOTO UPLOAD ERROR:', err);
     res.status(500).json({ error: 'Error al subir la foto de perfil' });

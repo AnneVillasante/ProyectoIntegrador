@@ -26,8 +26,8 @@ exports.create = async (req, res) => {
   try {
     const productData = { ...req.body };
     if (req.file) {
-      // Guardamos la ruta relativa que genera Multer
-      productData.imagen = req.file.path.replace(/\\/g, '/');
+      // Guardamos la URL segura que Cloudinary proporciona
+      productData.imagen = req.file.path;
     }
 
     const id = await ProductoDao.create(productData);
@@ -44,7 +44,8 @@ exports.update = async (req, res) => {
     const productData = { ...req.body };
 
     if (req.file) {
-      productData.imagen = req.file.path.replace(/\\/g, '/');
+      // Si se sube un nuevo archivo, guardamos la nueva URL de Cloudinary
+      productData.imagen = req.file.path;
     } else {
       // Conservar la imagen existente si no se sube una nueva
       const productoExistente = await ProductoDao.getById(id);

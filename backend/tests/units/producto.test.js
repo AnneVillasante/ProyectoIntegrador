@@ -8,7 +8,7 @@ const mockProductoDAO = {
 
 // Importamos el controlador (Asegúrate de que tu controlador use inyección de dependencias o adapta esto)
 // Si tu controlador importa directamente el modelo, Jest puede interceptarlo así:
-jest.mock('../../dao/productoDao', () => mockProductoDAO);
+jest.mock('../../dao/productoDAO', () => mockProductoDAO);
 
 const productoController = require('../../controllers/productoController');
 const httpMocks = require('node-mocks-http'); // Necesitarás: npm install --save-dev node-mocks-http
