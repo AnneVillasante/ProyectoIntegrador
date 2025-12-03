@@ -13,4 +13,4 @@ class ProductoDTO {
   }
 }
 
-module.exports = ProductoDto;
+module.exports = ProductoDTO;
