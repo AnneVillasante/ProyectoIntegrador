@@ -1,5 +1,5 @@
 const reporteDAO = require('../dao/reporteDAO');
-const productoDAO = require('../dao/productitosDAO');
+const productoDAO = require('../dao/productoDAO');
 const db = require('../config/db');
 const ReporteDTO = require('../dto/reporteDTO');
 // Se importa la función para generar plantillas HTML.

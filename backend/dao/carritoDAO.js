@@ -1,5 +1,5 @@
 const carritoModel = require('../models/carritoModel');
-const productoDAO = require('./productitosDAO'); // Necesario para verificar stock y precio del producto
+const productoDAO = require('./productoDAO'); // Necesario para verificar stock y precio del producto
 
 class CarritoDAO {
     async getOrCreateCart(idCliente) {

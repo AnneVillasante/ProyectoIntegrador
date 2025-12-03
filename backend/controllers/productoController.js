@@ -1,4 +1,4 @@
-const ProductoDao = require('../dao/productitosDAO');
+const ProductoDao = require('../dao/productoDAO');
 const ProductoDto = require('../dto/productoDTO');
 
 exports.list = async (req, res) => {
