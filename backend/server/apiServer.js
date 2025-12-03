@@ -52,10 +52,6 @@ apiApp.use(
   })
 );
 
-// Ruta de Webhook ANTES de express.json() para recibir el body en formato raw
-// La ruta específica del webhook debe estar aquí para recibir el body en formato raw.
-apiApp.post('/api/pagos/webhook', express.raw({type: 'application/json'}), require('../controllers/pagoController').stripeWebhook);
-
 // Middleware para parsear JSON para el resto de las rutas de la API
 apiApp.use(express.json()); // Este middleware debe estar ANTES de las rutas que procesan JSON.
 
@@ -71,7 +67,7 @@ apiApp.use('/api/reportes', reporteRoutes);
 apiApp.use('/api/carrito', carritoRoutes);
 apiApp.use('/api/cliente', clienteRoutes);
 apiApp.use('/api/pedidos', pedidoRoutes);
-apiApp.use('/api/pagos', pagoRoutes); // ✅ Registrar las rutas de pago
+apiApp.use('/api/pagos', pagoRoutes);
 apiApp.use('/api/promociones', promocionRoutes);
 apiApp.use('/api/campanas', campañaRoutes);
 apiApp.use('/api/devoluciones', devolucionRoutes);

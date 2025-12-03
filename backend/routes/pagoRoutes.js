@@ -7,6 +7,9 @@ const { protect } = require('../middleware/authMiddleware');
 // POST /api/pagos/crear-intento-pago
 router.post('/crear-intento-pago', protect, pagoController.crearIntentoDePago);
 
+// Ruta para obtener todos los pagos (para el panel de administración)
+router.get('/', protect, pagoController.getAllPagos);
+
 // Endpoint de Webhook para que Stripe notifique a nuestro backend sobre el estado del pago.
 // Es crucial para confirmar la transacción de forma segura.
 // POST /api/pagos/webhook
