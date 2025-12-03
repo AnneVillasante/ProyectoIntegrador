@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const cuponController = require('../../controllers/cuponController');
+const cuponController = require('../controllers/cuponController');
 
 // GET /api/cupones - Obtener todos los cupones
 router.get('/', cuponController.getAllCoupons);
