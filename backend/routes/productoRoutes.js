@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productoController = require('../controllers/productoController');
 const multer = require('multer');
-const { createStorage } = require('../config/cloudinaryConfig');
+const { createStorage } = require('../config/cloudinary');
 
 // Configuración de Multer para guardar imágenes de productos en Cloudinary
 const productoStorage = createStorage('productos');

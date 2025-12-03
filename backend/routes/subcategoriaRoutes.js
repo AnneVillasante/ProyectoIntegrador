@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const subcategoriaController = require('../controllers/subcategoriaController');
 const multer = require('multer');
-const { createStorage } = require('../config/cloudinaryConfig');
+const { createStorage } = require('../config/cloudinary');
 
 // Configuración de Multer para guardar imágenes de subcategorías en Cloudinary
 const subcategoriaStorage = createStorage('subcategorias');

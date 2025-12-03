@@ -3,7 +3,7 @@ const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const { protect, isAdmin } = require('../middleware/authMiddleware'); 
 const multer = require('multer');
-const { createStorage } = require('../config/cloudinaryConfig');
+const { createStorage } = require('../config/cloudinary');
 
 // Configuración de Multer para guardar imágenes de perfil en Cloudinary
 const perfilStorage = createStorage('perfiles');
