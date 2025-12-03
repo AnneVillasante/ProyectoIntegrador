@@ -1,4 +1,4 @@
-class ProductoDto {
+class ProductoDTO {
   constructor({ idProducto, nombre, descripcion, idCategoria, imagen, precio, stock, idSubcategoria, categoria, subcategoria }) {
     this.idProducto = idProducto;
     this.nombre = nombre;
