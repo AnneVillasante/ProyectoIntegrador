@@ -59,12 +59,16 @@ class PedidoDAO {
             // Se hace un JOIN con las tablas cliente y usuario para obtener el nombre y correo del cliente.
             const sql = `
                 SELECT 
-                    p.idPedido, p.fecha, p.total, p.estado,
-                    c.idCliente, c.nombres, c.apellidos,
-                    u.correo
+                    p.idPedido,
+                    p.fecha,
+                    p.total,
+                    p.estado,
+                    p.metodoPago,
+                    c.idCliente,
+                    c.nombres,
+                    c.apellidos
                 FROM pedido p
-                JOIN cliente c ON p.idCliente = c.idCliente
-                JOIN usuario u ON c.idUsuario = u.idUsuario
+                LEFT JOIN cliente c ON p.idCliente = c.idCliente
                 ORDER BY p.fecha DESC
             `;
             const [rows] = await db.query(sql);
