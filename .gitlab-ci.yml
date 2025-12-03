@@ -12,9 +12,8 @@ variables:
   MYSQL_DATABASE: lunariathreadsdb
   MYSQL_ROOT_PASSWORD: Sapphire_27
   # Variables para la aplicación Node.js
-  MYSQL_HOST: mysql # El nombre del servicio definido arriba
-  #MYSQL_USER: root
-  MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD # Usamos la variable definida para el servicio
+  MYSQL_USER: test_user      
+  MYSQL_PASSWORD: test_password
 # AGREGA ESTA LÍNEA DEBAJO:
   STRIPE_SECRET_KEY: "sk_test_dummy_key_para_gitlab"
 

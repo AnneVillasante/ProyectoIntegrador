@@ -15,21 +15,47 @@ const httpMocks = require('node-mocks-http'); // Necesitarás: npm install --sav
 
 describe('Pruebas Unitarias - ProductoController', () => {
     
-    test('Debería retornar estatus 200 y lista de productos', async () => {
-        // 1. Preparación (Given)
-        const req = httpMocks.createRequest();
-        const res = httpMocks.createResponse();
-        const mockProductos = [{ id: 1, nombre: 'Vestido Lunaria' }];
-        
-        // Cuando el DAO sea llamado, devolverá esto falsamente
-        mockProductoDAO.getAll.mockResolvedValue(mockProductos);
+    // backend/tests/units/producto.test.js
 
-        // 2. Ejecución (When)
-        // Nota: Asegúrate de que tu metodo se llame 'obtenerProductos' o ajusta el nombre
-        await productoController.list(req, res);
+test('Debería retornar estatus 200 y lista de productos', async () => {
+    // 1. Preparación (Given)
+    const req = httpMocks.createRequest();
+    const res = httpMocks.createResponse();
+    
+    // LO QUE DEVUELVE LA BD (Simulado)
+    // Usamos 'idProducto' porque eso es lo que espera tu DTO, no 'id'
+    const datosDeLaBD = [{ 
+        idProducto: 1, 
+        nombre: 'Vestido Lunaria',
+        descripcion: 'Un vestido bonito', // Agregamos datos para que el DTO no devuelva vacíos
+        categoria: 'Ropa',
+        subcategoria: 'Vestidos'
+    }];
+    
+    // LO QUE ESPERAMOS QUE RESPONDA LA API (DTO Transformado)
+    // El DTO mantiene los nombres y agrega estructuras
+    const respuestaEsperada = [{
+        idProducto: 1,
+        nombre: 'Vestido Lunaria',
+        descripcion: 'Un vestido bonito',
+        idCategoria: undefined, // El DTO asigna undefined si no vienen del DAO
+        categoria: 'Ropa',
+        imagen: undefined,
+        precio: undefined,
+        stock: undefined,
+        idSubcategoria: undefined,
+        subcategoria: 'Vestidos'
+    }];
+    
+    // Cuando el DAO sea llamado, devolverá los datos crudos de la BD
+    mockProductoDAO.getAll.mockResolvedValue(datosDeLaBD);
 
-        // 3. Verificación (Then)
-        expect(res.statusCode).toBe(200);
-        expect(res._getJSONData()).toEqual(mockProductos);
-    });
+    // 2. Ejecución (When)
+    await productoController.list(req, res);
+
+    // 3. Verificación (Then)
+    expect(res.statusCode).toBe(200);
+    // Usamos JSON.parse para asegurar que comparamos objetos planos
+    expect(JSON.parse(res._getData())).toEqual(respuestaEsperada);
+});
 });
