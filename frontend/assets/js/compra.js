@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnToCustomerData.addEventListener('click', () => navigateToStep('customerData'));
     btnBackToSummary.addEventListener('click', () => navigateToStep('summary'));
     btnToPayment.addEventListener('click', () => {
-        // Añadimos una clase para que el CSS pueda mostrar los errores de validación
+        // Anadimos una clase para que el CSS pueda mostrar los errores de validación
         customerDataForm.classList.add('was-validated');
         if (customerDataForm.checkValidity()) {
             navigateToStep('payment');

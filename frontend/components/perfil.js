@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const profilePictureLabel = document.querySelector('.profile-picture-upload-label');
 
 
-  // --- Lógica para el sistema de pestañas ---
+  // --- Lógica para el sistema de pestanas ---
   const tabButtons = document.querySelectorAll('.tab-btn'); // Corregido: ahora selecciona los botones con la clase 'tab-btn'
   const tabContents = document.querySelectorAll('.form'); // Apuntamos a la clase .form
 
@@ -28,12 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
       tabContents.forEach(content => content.classList.remove('active'));
       tabButtons.forEach(btn => btn.classList.remove('active'));
 
-      // Mostrar el contenido de la pestaña seleccionada y marcar el botón como activo
+      // Mostrar el contenido de la pestana seleccionada y marcar el botón como activo
       document.getElementById(targetTab).classList.add('active');
       button.classList.add('active');
     });
     });
-  // --- Fin de la lógica de pestañas ---
+  // --- Fin de la lógica de pestanas ---
 
   // --- Lógica para edición de perfil ---
   function toggleEditMode(isEditing) {
@@ -157,20 +157,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Manejar el envío del formulario de contraseña
+  // Manejar el envío del formulario de contrasena
   passwordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const contraseñaActual = document.getElementById('contraseñaActual').value;
-    const contraseñaNueva = document.getElementById('contraseñaNueva').value;
-    const confirmarContraseña = document.getElementById('confirmarContraseña').value;
+    const contrasenaActual = document.getElementById('contrasenaActual').value;
+    const contrasenaNueva = document.getElementById('contrasenaNueva').value;
+    const confirmarContrasena = document.getElementById('confirmarContrasena').value;
 
-    if (!contraseñaActual || !contraseñaNueva) {
-      alert('Para cambiar la contraseña, debes completar la contraseña actual y la nueva.');
+    if (!contrasenaActual || !contrasenaNueva) {
+      alert('Para cambiar la contrasena, debes completar la contrasena actual y la nueva.');
       return;
     }
 
-    if (contraseñaNueva !== confirmarContraseña) {
-      alert('Las nuevas contraseñas no coinciden.');
+    if (contrasenaNueva !== confirmarContrasena) {
+      alert('Las nuevas contrasenas no coinciden.');
       return;
     }
 
@@ -181,12 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ contraseñaActual, contraseñaNueva })
+        body: JSON.stringify({ contrasenaActual, contrasenaNueva })
       });
 
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Error al cambiar la contraseña.');
-      alert('Contraseña cambiada con éxito.');
+      if (!response.ok) throw new Error(result.error || 'Error al cambiar la contrasena.');
+      alert('Contrasena cambiada con éxito.');
       passwordForm.reset();
     } catch (error) {
       alert(error.message);

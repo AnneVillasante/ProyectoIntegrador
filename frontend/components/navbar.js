@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
       searchBtn.setAttribute('aria-expanded', String(willExpand));
       if (willExpand && searchInput) setTimeout(() => searchInput.focus(), 0);
 
-      // Añadir listener para la búsqueda al expandir
+      // Anadir listener para la búsqueda al expandir
       if (willExpand && searchInput && !searchInput.__bound) {
         searchInput.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' && searchInput.value.trim() !== '') {
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           `;
           
-          // Añadir listener para el cambio de modo
+          // Anadir listener para el cambio de modo
           setTimeout(() => { // Timeout para asegurar que el elemento está en el DOM
             document.getElementById('cartModeSelector').addEventListener('change', handleCartModeChange);
           }, 0);
