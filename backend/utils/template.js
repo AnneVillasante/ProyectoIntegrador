@@ -1,25 +1,19 @@
 // backend/utils/template.js
 const path = require('path');
 const fs = require('fs');
-// Importamos la configuración para acceder a la URL base del servidor
-const { BASE_URL } = require('../config/config');
-// Función para convertir imagen a Base64
+
 const obtenerLogoBase64 = () => {
   try {
-    // Buscamos la imagen en la carpeta del frontend
+    // Ajustamos la ruta para llegar desde backend/utils/ hasta frontend/assets/img/
     const imagePath = path.join(__dirname, '../../frontend/assets/img/Logo-000.png');
-    
-    // Leemos el archivo
-    const bitmap = fs.readFileSync(imagePath);
-    
-    // Convertimos a base64
-    const base64 = Buffer.from(bitmap).toString('base64');
-    
-    // Retornamos el string listo para usar en <img src="...">
-    return `data:image/png;base64,${base64}`;
+    if (fs.existsSync(imagePath)) {
+      const bitmap = fs.readFileSync(imagePath);
+      return `data:image/png;base64,${Buffer.from(bitmap).toString('base64')}`;
+    }
+    return '';
   } catch (error) {
-    console.error('Error cargando logo para reporte:', error.message);
-    return ''; // Si falla, retorna vacío para no romper el reporte
+    console.error('Error cargando logo:', error.message);
+    return '';
   }
 };
 
@@ -28,121 +22,50 @@ const generarPlantillaHtml = (titulo, datos, resumen = '') => {
     year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' 
   });
 
-  // Si no hay datos
+  const logoSrc = obtenerLogoBase64();
+
   if (!datos || datos.length === 0) {
-    return `<h1>${titulo}</h1><p>No hay datos disponibles para este reporte.</p>`;
+    return `<h1>${titulo}</h1><p>No hay datos disponibles.</p>`;
   }
 
-  // Columnas dinámicas
   const columnas = Object.keys(datos[0]);
-
-  // Cabeceras de tabla
   const headers = columnas.map(col => `<th>${col}</th>`).join('');
+  const filas = datos.map(row => `<tr>${columnas.map(col => `<td>${row[col]}</td>`).join('')}</tr>`).join('');
 
-  // Filas de tabla
-  const filas = datos.map(row => {
-    const celdas = columnas.map(col => `<td>${row[col]}</td>`).join('');
-    return `<tr>${celdas}</tr>`;
-  }).join('');
-
-  // HTML COMPLETO CON DISEÑO "LUNARIA THREADS"
   return `
   <!DOCTYPE html>
   <html lang="es">
   <head>
     <meta charset="UTF-8">
     <style>
-      body { 
-        font-family: 'Helvetica', 'Arial', sans-serif; 
-        color: #333; 
-        margin: 0; 
-        padding: 20px;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 2px solid #6a1b9a; /* Color Morado Lunaria */
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-      }
-      .logo img {
-        height: 50px; /* Ajusta la altura de tu logo */
-        width: auto;
-      }
-      .report-info {
-        text-align: right;
-        font-size: 12px;
-        color: #666;
-      }
-      h1 {
-        text-align: center;
-        color: #4a148c;
-        margin-bottom: 5px;
-        font-size: 22px;
-      }
-      .summary {
-        background-color: #f3e5f5;
-        border-left: 4px solid #8e24aa;
-        padding: 10px;
-        margin-bottom: 20px;
-        font-size: 14px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-      }
-      thead {
-        background-color: #6a1b9a;
-        color: white;
-      }
-      th, td {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-      }
-      tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-      .footer {
-        margin-top: 30px;
-        text-align: center;
-        font-size: 10px;
-        color: #999;
-        border-top: 1px solid #eee;
-        padding-top: 10px;
-      }
+      body { font-family: 'Helvetica', sans-serif; padding: 20px; color: #333; }
+      .header { display: flex; justify-content: space-between; border-bottom: 2px solid #6a1b9a; padding-bottom: 10px; margin-bottom: 20px; }
+      .logo img { height: 60px; display: block; }
+      .logo-text { font-size: 24px; font-weight: bold; color: #6a1b9a; }
+      .report-info { text-align: right; font-size: 12px; color: #666; }
+      h1 { text-align: center; color: #4a148c; }
+      table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+      th { background-color: #6a1b9a; color: white; padding: 10px; text-align: left; }
+      td { border-bottom: 1px solid #ddd; padding: 10px; }
+      .summary { background: #f3e5f5; padding: 10px; border-left: 4px solid #8e24aa; margin-bottom: 15px; }
     </style>
   </head>
   <body>
     <div class="header">
       <div class="logo">
-        <!-- ✅ AQUÍ VA TU LOGO: Reemplaza la URL por la ruta a tu imagen -->
-        <img src="${BASE_URL}/assets/img/Logo-000.png" alt="Logo Lunaria Threads">
+        ${logoSrc ? `<img src="${logoSrc}" />` : '<div class="logo-text">LUNARIA THREADS</div>'}
       </div>
       <div class="report-info">
-        <p>Generado el: ${fecha}</p>
+        <p>${fecha}</p>
         <p>Sistema de Gestión</p>
       </div>
     </div>
-
     <h1>${titulo}</h1>
-
     ${resumen ? `<div class="summary"><strong>Resumen:</strong> ${resumen}</div>` : ''}
-
     <table>
-      <thead>
-        <tr>${headers}</tr>
-      </thead>
-      <tbody>
-        ${filas}
-      </tbody>
+      <thead><tr>${headers}</tr></thead>
+      <tbody>${filas}</tbody>
     </table>
-
-    <div class="footer">
-      &copy; ${new Date().getFullYear()} Lunaria Threads. Reporte confidencial para uso interno.
-    </div>
   </body>
   </html>
   `;
