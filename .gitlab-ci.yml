@@ -15,6 +15,8 @@ variables:
   MYSQL_HOST: mysql # El nombre del servicio definido arriba
   #MYSQL_USER: root
   MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD # Usamos la variable definida para el servicio
+# AGREGA ESTA LÍNEA DEBAJO:
+  STRIPE_SECRET_KEY: "sk_test_dummy_key_para_gitlab"
 
 # 1. DEFINICIÓN DE ETAPAS (Cubre tu Plan de Pruebas y Despliegue)
 stages:

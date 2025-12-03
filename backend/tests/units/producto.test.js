@@ -26,7 +26,7 @@ describe('Pruebas Unitarias - ProductoController', () => {
 
         // 2. Ejecución (When)
         // Nota: Asegúrate de que tu metodo se llame 'obtenerProductos' o ajusta el nombre
-        await productoController.obtenerProductos(req, res);
+        await productoController.list(req, res);
 
         // 3. Verificación (Then)
         expect(res.statusCode).toBe(200);
