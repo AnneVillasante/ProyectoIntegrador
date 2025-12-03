@@ -1,7 +1,27 @@
 // backend/utils/template.js
-
+const path = require('path');
+const fs = require('fs');
 // Importamos la configuración para acceder a la URL base del servidor
 const { BASE_URL } = require('../config/config');
+// Función para convertir imagen a Base64
+const obtenerLogoBase64 = () => {
+  try {
+    // Buscamos la imagen en la carpeta del frontend
+    const imagePath = path.join(__dirname, '../../frontend/assets/img/Logo-000.png');
+    
+    // Leemos el archivo
+    const bitmap = fs.readFileSync(imagePath);
+    
+    // Convertimos a base64
+    const base64 = Buffer.from(bitmap).toString('base64');
+    
+    // Retornamos el string listo para usar en <img src="...">
+    return `data:image/png;base64,${base64}`;
+  } catch (error) {
+    console.error('Error cargando logo para reporte:', error.message);
+    return ''; // Si falla, retorna vacío para no romper el reporte
+  }
+};
 
 const generarPlantillaHtml = (titulo, datos, resumen = '') => {
   const fecha = new Date().toLocaleDateString('es-PE', { 
