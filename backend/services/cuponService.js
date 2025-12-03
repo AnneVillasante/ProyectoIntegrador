@@ -1,5 +1,5 @@
-const cuponDAO = require('../daos/cuponDAO');
-const CuponDTO = require('../dtos/cuponDTO');
+const cuponDAO = require('../dao/cuponDAO');
+const CuponDTO = require('../dto/cuponDTO');
 
 class CuponService {
     async getAllCoupons() {
