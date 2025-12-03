@@ -74,6 +74,7 @@ seguridad_dependencias:
 # 3.2 Análisis Estático de Código (SAST) - Busca patrones de código inseguro
 seguridad_codigo_sast:
   stage: seguridad
+  image: python:3.10
   script:
     # Njsscan es una herramienta para buscar vulnerabilidades en Node.js
     - pip install njsscan
