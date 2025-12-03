@@ -16,6 +16,11 @@ staticApp.use('/frontend', express.static(frontendRoot));
 staticApp.get('/', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'index.html'));
 });
+
+// Ignorar peticiones de favicon.ico para evitar errores 404 en la consola
+staticApp.get('/favicon.ico', (req, res) => {
+  res.status(204).send();
+});
 staticApp.get('/login', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'login.html'));
 });

@@ -99,10 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof loadReturns === 'function') loadReturns();
         break;
       case 'orders':
-        if (typeof loadOrders === 'function') loadOrders();
+        if (typeof loadOrders === 'function') loadOrders(); // Llama a la función si existe
         break;
       case 'payments':
-        if (typeof loadPayments === 'function') loadPayments();
+        if (typeof loadPayments === 'function') loadPayments(); // Llama a la función si existe
         break;
       case 'invoices':
         if (typeof loadInvoices === 'function') loadInvoices();

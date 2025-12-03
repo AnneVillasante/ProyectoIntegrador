@@ -70,7 +70,8 @@ apiApp.use('/api/subcategorias', subcategoriaRoutes);
 apiApp.use('/api/reportes', reporteRoutes);
 apiApp.use('/api/carrito', carritoRoutes);
 apiApp.use('/api/cliente', clienteRoutes);
-apiApp.use('/api/pedidos', pedidoRoutes); // Las demás rutas de pago se registran aquí.
+apiApp.use('/api/pedidos', pedidoRoutes);
+apiApp.use('/api/pagos', pagoRoutes); // ✅ Registrar las rutas de pago
 apiApp.use('/api/promociones', promocionRoutes);
 apiApp.use('/api/campanas', campañaRoutes);
 apiApp.use('/api/devoluciones', devolucionRoutes);
