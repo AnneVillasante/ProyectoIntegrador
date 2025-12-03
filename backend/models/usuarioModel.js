@@ -7,10 +7,10 @@ module.exports = {
   },
 
   create: async (data) => {
-    const { nombres, apellidos, correo, telefono, dni, contraseña, rol } = data;
+    const { nombres, apellidos, correo, telefono, dni, contrasena, rol } = data;
     const [result] = await pool.query(
-      'INSERT INTO usuario (nombres, apellidos, correo, telefono, dni, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [nombres, apellidos, correo, telefono, dni, contraseña, rol || 'Cliente']
+      'INSERT INTO usuario (nombres, apellidos, correo, telefono, dni, contrasena, rol) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [nombres, apellidos, correo, telefono, dni, contrasena, rol || 'Cliente']
     );
     return result;
   },
@@ -37,7 +37,7 @@ module.exports = {
     const setClause = fields.map(field => `${field} = ?`).join(', ');
     const sql = `UPDATE usuario SET ${setClause} WHERE idUsuario = ?`;
 
-    values.push(id); // Añadir el id al final para el WHERE
+    values.push(id); // Anadir el id al final para el WHERE
     await pool.query(sql, values);
   },
 

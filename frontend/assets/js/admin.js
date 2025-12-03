@@ -1,4 +1,4 @@
-// Panel Administrativo - Funcionalidad completa con pestañas
+// Panel Administrativo - Funcionalidad completa con pestanas
 
 // Funciones de utilidad globales para ser accesibles desde otros scripts
 async function apiCall(endpoint, options = {}) {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let subcategorias = [];
   let stockChanges = {};
 
-  // ===== SISTEMA DE PESTAÑAS =====
+  // ===== SISTEMA DE PESTAnAS =====
   function initTabs() {
     const navLinks = document.querySelectorAll('.nav-link');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.classList.add('active');
         document.getElementById(`${targetTab}-tab`).classList.add('active');
         
-        // Cargar datos según la pestaña activa
+        // Cargar datos según la pestana activa
         loadTabData(targetTab);
       });
     });
@@ -108,13 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof loadInvoices === 'function') loadInvoices();
         break;
       case 'metrics':
-        loadMetrics(); // Cargar métricas al activar la pestaña
+        loadMetrics(); // Cargar métricas al activar la pestana
         break;
       case 'logs':
         if (typeof loadLogs === 'function') loadLogs();
         break;
       default:
-        console.log(`Pestaña ${tabName} seleccionada. Sin acción de precarga.`);
+        console.log(`Pestana ${tabName} seleccionada. Sin acción de precarga.`);
     }
   }
 
@@ -694,7 +694,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== EVENT LISTENERS =====
-  // Inicializar pestañas
+  // Inicializar pestanas
   initTabs();
 
   // Usuarios
@@ -705,7 +705,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('addProductBtn').addEventListener('click', addProduct);
   document.getElementById('loadProductsBtn').addEventListener('click', loadProducts);
 
-  // Campañas (Añadido para conectar con admin_campañas.js)
+  // Campanas (Anadido para conectar con admin_campanas.js)
   const addCampaignBtn = document.getElementById('addCampaignBtn');
   if (addCampaignBtn) {
     addCampaignBtn.addEventListener('click', () => window.addCampaign && window.addCampaign());
@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       document.getElementById('productModal').hidden = true;
       await loadProducts();
-      // Recargar stocks también si estamos en esa pestaña
+      // Recargar stocks también si estamos en esa pestana
       if (stocks.length > 0) {
         await loadStocks();
       }

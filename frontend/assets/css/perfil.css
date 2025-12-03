@@ -1,4 +1,4 @@
-/* Estilos para el sistema de pestañas del perfil */
+/* Estilos para el sistema de pestanas del perfil */
 .tab-nav {
   display: flex;
   border-bottom: 2px solid var(--color-border);
@@ -133,7 +133,7 @@
   color: var(--text); /* Texto claro para contraste */
 }
 
-/* 4. Modificador de tamaño para botones de ancho completo (Editar Perfil) */
+/* 4. Modificador de tamano para botones de ancho completo (Editar Perfil) */
 .btn-block {
   width: 100%;
 }
@@ -146,7 +146,7 @@
 /* Ajustes responsivos para las filas del formulario */
 @media (max-width: 600px) {
   .form-row {
-    grid-template-columns: 1fr; /* Apila los campos en pantallas pequeñas */
+    grid-template-columns: 1fr; /* Apila los campos en pantallas pequenas */
     gap: 1rem;
   }
 }

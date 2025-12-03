@@ -148,7 +148,7 @@
   border-radius: 4px;
   background: rgba(255,255,255,0.1);
   transition: all 0.2s ease;
-  margin-right: 10px; /* ¡ESTE ES EL CAMBIO CLAVE! Añade espacio a la derecha */
+  margin-right: 10px; /* ¡ESTE ES EL CAMBIO CLAVE! Anade espacio a la derecha */
 }
 
 .filtro-grupo li input[type="checkbox"]:checked + label::before {

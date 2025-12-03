@@ -16,9 +16,9 @@ class UsuarioDao {
   }
 
   async create(user) {
-    const hashed = await bcrypt.hash(user.contraseña, 10);
+    const hashed = await bcrypt.hash(user.contrasena, 10);
     const rol = user.rol || 'Cliente';
-    const sql = 'INSERT INTO usuario (nombres, apellidos, correo, telefono, dni, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO usuario (nombres, apellidos, correo, telefono, dni, contrasena, rol) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const [result] = await db.query(sql, [
       user.nombres, 
       user.apellidos, 

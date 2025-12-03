@@ -17,7 +17,7 @@ const createClientByAdmin = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
   try {
-    // req.user es añadido por el middleware 'protect' y contiene el id del usuario del token
+    // req.user es anadido por el middleware 'protect' y contiene el id del usuario del token
     if (!req.user || !req.user.idUsuario) {
       return res.status(401).json({ message: 'No autorizado, token inválido.' });
     }

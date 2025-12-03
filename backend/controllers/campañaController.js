@@ -1,16 +1,16 @@
 /**
- * @fileoverview Controlador para las rutas de campañas.
+ * @fileoverview Controlador para las rutas de campanas.
  *
  * @version 1.0
  * @author Lunaria
  */
 
-const CampañaService = require('../services/campañaService');
+const CampanaService = require('../services/campanaService');
 
 const obtenerTodas = async (req, res, next) => {
   try {
-    const campañas = await CampañaService.obtenerTodas();
-    res.status(200).json(campañas);
+    const campanas = await CampanaService.obtenerTodas();
+    res.status(200).json(campanas);
   } catch (error) {
     next(error);
   }
@@ -19,11 +19,11 @@ const obtenerTodas = async (req, res, next) => {
 const obtenerPorId = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const campaña = await CampañaService.obtenerPorId(id);
-    if (!campaña) {
-      return res.status(404).json({ message: 'Campaña no encontrada' });
+    const campana = await CampanaService.obtenerPorId(id);
+    if (!campana) {
+      return res.status(404).json({ message: 'Campana no encontrada' });
     }
-    res.status(200).json(campaña);
+    res.status(200).json(campana);
   } catch (error) {
     next(error);
   }
@@ -31,8 +31,8 @@ const obtenerPorId = async (req, res, next) => {
 
 const crear = async (req, res, next) => {
   try {
-    const nuevaCampaña = await CampañaService.crear(req.body);
-    res.status(201).json(nuevaCampaña);
+    const nuevaCampana = await CampanaService.crear(req.body);
+    res.status(201).json(nuevaCampana);
   } catch (error) {
     error.statusCode = 400;
     next(error);
@@ -42,11 +42,11 @@ const crear = async (req, res, next) => {
 const actualizar = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const campañaActualizada = await CampañaService.actualizar(id, req.body);
-    if (!campañaActualizada) {
-      return res.status(404).json({ message: 'Campaña no encontrada' });
+    const campanaActualizada = await CampanaService.actualizar(id, req.body);
+    if (!campanaActualizada) {
+      return res.status(404).json({ message: 'Campana no encontrada' });
     }
-    res.status(200).json(campañaActualizada);
+    res.status(200).json(campanaActualizada);
   } catch (error) {
     next(error);
   }
@@ -55,9 +55,9 @@ const actualizar = async (req, res, next) => {
 const eliminar = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const resultado = await CampañaService.eliminar(id);
+    const resultado = await CampanaService.eliminar(id);
     if (!resultado) {
-      return res.status(404).json({ message: 'Campaña no encontrada' });
+      return res.status(404).json({ message: 'Campana no encontrada' });
     }
     res.status(204).send(); // 204 No Content
   } catch (error) {

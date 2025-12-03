@@ -41,7 +41,7 @@ class ProductoService {
         <p class="stock">Disponibles: ${p.stock}</p>
         <div class="acciones">
           <button class="btn-outline ver" data-id="${p.id}">Ver más</button>
-          <button class="btn-primary agregar" data-id="${p.id}">Añadir al carrito</button>
+          <button class="btn-primary agregar" data-id="${p.id}">Anadir al carrito</button>
         </div>
       </div>
     `).join('');

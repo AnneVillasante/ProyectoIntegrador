@@ -1,5 +1,5 @@
--- Insertar usuarios, a diferencia de los usuarios registrados, los usuarios insertados no tienen codificada la contraseña
-INSERT INTO Usuario (idUsuario, nombres, apellidos, correo, dni, telefono, contraseña, rol) VALUES
+-- Insertar usuarios, a diferencia de los usuarios registrados, los usuarios insertados no tienen codificada la contrasena
+INSERT INTO Usuario (idUsuario, nombres, apellidos, correo, dni, telefono, contrasena, rol) VALUES
 (1, 'Anne', 'Villasante', 'anne.villasante@gmail.com', '12345678', '912345678', 'Anne1234', 'Administrador'),
 (2, 'Laura', 'Pérez', 'laura.perez@gmail.com', '23456789', '923456789', 'clave123', 'Cliente'),
 (3, 'Carlos', 'Gómez', 'carlos.gomez@outlook.com', '34567890', '934567890', 'pass456', 'Cliente'),

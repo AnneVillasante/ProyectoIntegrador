@@ -57,14 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const identifier = document.getElementById('loginEmail').value.trim();
-    const contraseña = document.getElementById('loginPassword').value;
+    const contrasena = document.getElementById('loginPassword').value;
     const btn = loginForm.querySelector('button[type="submit"]');
     
-    if (!identifier || !contraseña) return alert('Rellena todos los campos');
+    if (!identifier || !contrasena) return alert('Rellena todos los campos');
     
     btn.disabled = true;
     try {
-      const resp = await apiPost('/login', { correo: identifier, contraseña });
+      const resp = await apiPost('/login', { correo: identifier, contrasena });
       if (resp.success) {
         localStorage.setItem('token', resp.token);
         localStorage.setItem('user', JSON.stringify(resp.user));
@@ -89,18 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const correo = document.getElementById('regEmail').value.trim();
     const telefono = document.getElementById('regTelefono').value.trim();
     const dni = document.getElementById('regDni').value.trim();
-    const contraseña = document.getElementById('regPassword').value;
-    const contraseñaConfirm = document.getElementById('regPasswordConfirm').value;
+    const contrasena = document.getElementById('regPassword').value;
+    const contrasenaConfirm = document.getElementById('regPasswordConfirm').value;
     
     const btn = registerForm.querySelector('button[type="submit"]');
     
     // Validaciones básicas
-    if (!nombres || !apellidos || !correo || !telefono || !dni || !contraseña || !contraseñaConfirm) {
+    if (!nombres || !apellidos || !correo || !telefono || !dni || !contrasena || !contrasenaConfirm) {
       return alert('Rellena todos los campos');
     }
     
-    if (contraseña !== contraseñaConfirm) {
-      return alert('Las contraseñas no coinciden');
+    if (contrasena !== contrasenaConfirm) {
+      return alert('Las contrasenas no coinciden');
     }
     
     btn.disabled = true;
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         correo,
         telefono,
         dni,
-        contraseña,
+        contrasena,
         rol: 'Cliente'
       });
       

@@ -1,18 +1,18 @@
-// Lógica para la sección de Campañas en el panel de administración
+// Lógica para la sección de Campanas en el panel de administración
 
 let allCampaigns = [];
 
 async function loadCampaigns() {
   const tbody = document.getElementById('campaignsTableBody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Cargando campañas...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Cargando campanas...</td></tr>';
   try {
     const response = await apiCall('/campanas');
     allCampaigns = Array.isArray(response) ? response : [];
     renderCampaignsTable();
   } catch (error) {
-    console.error('Error cargando campañas:', error);
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Error al cargar campañas.</td></tr>';
+    console.error('Error cargando campanas:', error);
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Error al cargar campanas.</td></tr>';
   }
 }
 
@@ -21,7 +21,7 @@ function renderCampaignsTable() {
   if (!tbody) return;
 
   if (allCampaigns.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay campañas creadas.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay campanas creadas.</td></tr>';
     return;
   }
 
@@ -44,7 +44,7 @@ function renderCampaignsTable() {
 }
 
 function addCampaign() {
-  document.getElementById('campaignModalTitle').textContent = 'Nueva Campaña';
+  document.getElementById('campaignModalTitle').textContent = 'Nueva Campana';
   document.getElementById('campaignForm').reset();
   document.getElementById('idCampana').value = '';
   document.getElementById('campaignModal').hidden = false;
@@ -54,7 +54,7 @@ function editCampaign(id) {
   const camp = allCampaigns.find(c => c.idCampana === id);
   if (!camp) return;
 
-  document.getElementById('campaignModalTitle').textContent = 'Editar Campaña';
+  document.getElementById('campaignModalTitle').textContent = 'Editar Campana';
   document.getElementById('idCampana').value = camp.idCampana;
   document.getElementById('campaignNombre').value = camp.nombre;
   document.getElementById('campaignDescripcion').value = camp.descripcion;
@@ -65,14 +65,14 @@ function editCampaign(id) {
 }
 
 async function deleteCampaign(id) {
-  if (!confirm('¿Estás seguro de eliminar esta campaña?')) return;
+  if (!confirm('¿Estás seguro de eliminar esta campana?')) return;
   try {
     await apiCall(`/campanas/${id}`, { method: 'DELETE' });
-    alert('Campaña eliminada correctamente.');
+    alert('Campana eliminada correctamente.');
     loadCampaigns();
   } catch (error) {
-    console.error('Error eliminando campaña:', error);
-    alert('Error al eliminar la campaña.');
+    console.error('Error eliminando campana:', error);
+    alert('Error al eliminar la campana.');
   }
 }
 
@@ -105,12 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const endpoint = id ? `/campanas/${id}` : '/campanas';
       try {
         await apiCall(endpoint, { method, body: JSON.stringify(data) });
-        alert(`Campaña ${id ? 'actualizada' : 'creada'} correctamente.`);
+        alert(`Campana ${id ? 'actualizada' : 'creada'} correctamente.`);
         modal.hidden = true;
         loadCampaigns();
       } catch (error) {
-        console.error('Error guardando campaña:', error);
-        alert('Error al guardar la campaña.');
+        console.error('Error guardando campana:', error);
+        alert('Error al guardar la campana.');
       }
     });
   }

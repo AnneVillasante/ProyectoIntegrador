@@ -13,7 +13,7 @@ class Promocion {
     descripcion,
     fechaInicio,
     fechaFin,
-    idCampaña,
+    idCampana,
     tipoDescuento,
     valorDescuento,
     montoMinimoCompra,
@@ -25,7 +25,7 @@ class Promocion {
     this.descripcion = descripcion;
     this.fechaInicio = fechaInicio;
     this.fechaFin = fechaFin;
-    this.idCampaña = idCampaña;
+    this.idCampana = idCampana;
     this.tipoDescuento = tipoDescuento;
     this.valorDescuento = valorDescuento;
     this.montoMinimoCompra = montoMinimoCompra;

@@ -1,13 +1,13 @@
 /**
- * @fileoverview Data Transfer Object para Campaña.
+ * @fileoverview Data Transfer Object para Campana.
  *
  * @version 1.0
  * @author Lunaria
  */
 
-class CampañaDTO {
-  constructor({ idCampaña, titulo, imagen, descripcion, fechaInicio, fechaFin }) {
-    this.id = idCampaña;
+class CampanaDTO {
+  constructor({ idCampana, titulo, imagen, descripcion, fechaInicio, fechaFin }) {
+    this.id = idCampana;
     this.titulo = titulo;
     this.imagen = imagen;
     this.descripcion = descripcion;
@@ -16,4 +16,4 @@ class CampañaDTO {
   }
 }
 
-module.exports = CampañaDTO;
+module.exports = CampanaDTO;

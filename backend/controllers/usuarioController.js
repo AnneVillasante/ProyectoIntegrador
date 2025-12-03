@@ -14,18 +14,18 @@ exports.obtenerUsuarios = async (req, res) => {
 
 exports.crearUsuario = async (req, res) => {
   try {
-    const { nombres, apellidos, correo, contraseña, telefono, dni } = req.body;
+    const { nombres, apellidos, correo, contrasena, telefono, dni } = req.body;
 
     // 1. Validación de entradas
-    if (!nombres || !correo || !contraseña) {
-      return res.status(400).json({ error: 'Nombre, correo y contraseña son requeridos.' });
+    if (!nombres || !correo || !contrasena) {
+      return res.status(400).json({ error: 'Nombre, correo y contrasena son requeridos.' });
     }
 
-    // 2. Hashear la contraseña
+    // 2. Hashear la contrasena
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(contraseña, salt);
+    const hashedPassword = await bcrypt.hash(contrasena, salt);
 
-    const nuevoUsuario = { nombres, apellidos, correo, contraseña: hashedPassword, telefono, dni };
+    const nuevoUsuario = { nombres, apellidos, correo, contrasena: hashedPassword, telefono, dni };
 
     const resultado = await usuarioModel.create(nuevoUsuario);
     res.status(201).json({ success: true, message: 'Usuario creado correctamente', id: resultado.insertId });
@@ -72,7 +72,7 @@ exports.eliminarUsuario = async (req, res) => {
 // Obtener el perfil del usuario autenticado
 exports.obtenerMiPerfil = async (req, res) => {
   try {
-    // Se asume que un middleware de autenticación añade el objeto 'user' a la request
+    // Se asume que un middleware de autenticación anade el objeto 'user' a la request
     const usuario = await usuarioModel.getById(req.user.id);
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -102,17 +102,17 @@ exports.actualizarMiPerfil = async (req, res) => {
     const { id } = req.user;
     const data = req.body;
 
-    // Prevenir la actualización de la contraseña o el rol desde este endpoint
-    delete data.contraseña;
+    // Prevenir la actualización de la contrasena o el rol desde este endpoint
+    delete data.contrasena;
     delete data.password;
     delete data.rol;
 
-    // ¡Añadido! Llamar al modelo para que guarde los datos en la BD.
+    // ¡Anadido! Llamar al modelo para que guarde los datos en la BD.
     await usuarioModel.update(id, data);
 
     // Devolver el usuario actualizado para refrescar el frontend
     const usuarioActualizado = await usuarioModel.getById(id);
-    // Usamos el DTO para asegurarnos de no enviar datos sensibles como la contraseña.
+    // Usamos el DTO para asegurarnos de no enviar datos sensibles como la contrasena.
     const usuarioDto = new UsuarioDto(usuarioActualizado);
 
     res.json({ success: true, message: 'Perfil actualizado correctamente', user: usuarioDto });
@@ -122,25 +122,25 @@ exports.actualizarMiPerfil = async (req, res) => {
   }
 };
 
-// Actualizar la contraseña del usuario autenticado
+// Actualizar la contrasena del usuario autenticado
 exports.actualizarMiPassword = async (req, res) => {
   try {
     const { id } = req.user;
-    const { contraseña } = req.body;
+    const { contrasena } = req.body;
 
-    if (!contraseña) {
-      return res.status(400).json({ error: 'La nueva contraseña es requerida.' });
+    if (!contrasena) {
+      return res.status(400).json({ error: 'La nueva contrasena es requerida.' });
     }
 
-    // Hashear la nueva contraseña
+    // Hashear la nueva contrasena
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(contraseña, salt);
+    const hashedPassword = await bcrypt.hash(contrasena, salt);
 
-    await usuarioModel.update(id, { contraseña: hashedPassword });
-    res.json({ success: true, message: 'Contraseña actualizada correctamente.' });
+    await usuarioModel.update(id, { contrasena: hashedPassword });
+    res.json({ success: true, message: 'Contrasena actualizada correctamente.' });
   } catch (err) {
     console.error('USER PASSWORD UPDATE ERROR:', err);
-    res.status(500).json({ error: 'Error al actualizar la contraseña' });
+    res.status(500).json({ error: 'Error al actualizar la contrasena' });
   }
 };
 

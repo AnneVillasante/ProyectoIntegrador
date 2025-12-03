@@ -1,12 +1,12 @@
-/*CREATE TABLE `campaña` (
-  `idCampaña` int NOT NULL AUTO_INCREMENT,
+/*CREATE TABLE `campana` (
+  `idCampana` int NOT NULL AUTO_INCREMENT,
   `titulo` varchar(100) DEFAULT NULL,
   `imagen` varchar(255) DEFAULT NULL,
   `descripcion` text,
   `fechaInicio` date NOT NULL,
   `fechaFin` date NOT NULL,
   `activo` BOOLEAN DEFAULT TRUE,
-  PRIMARY KEY (`idCampaña`)
+  PRIMARY KEY (`idCampana`)
 );
 CREATE TABLE `carrito` (
   `idCarrito` int NOT NULL AUTO_INCREMENT,
@@ -145,17 +145,17 @@ CREATE TABLE `promocion` (
   `descripcion` text,
   `fechaInicio` date DEFAULT NULL,
   `fechaFin` date DEFAULT NULL,
-  `idCampaña` int DEFAULT NULL,
+  `idCampana` int DEFAULT NULL,
   `tipoDescuento` enum('Porcentaje','MontoFijo') NOT NULL DEFAULT 'Porcentaje',
   `valorDescuento` decimal(10,2) NOT NULL DEFAULT '0.00',
   `montoMinimoCompra` decimal(10,2) DEFAULT '0.00',
   `activo` BOOLEAN DEFAULT TRUE,
   `idCategoriaAplicable` int DEFAULT NULL,
   PRIMARY KEY (`idPromocion`),
-  KEY `idCampaña` (`idCampaña`),
+  KEY `idCampana` (`idCampana`),
   KEY `fk_promocion_categoria` (`idCategoriaAplicable`),
   CONSTRAINT `fk_promocion_categoria` FOREIGN KEY (`idCategoriaAplicable`) REFERENCES `categoria` (`idCategoria`),
-  CONSTRAINT `promocion_ibfk_1` FOREIGN KEY (`idCampaña`) REFERENCES `campaña` (`idCampaña`)
+  CONSTRAINT `promocion_ibfk_1` FOREIGN KEY (`idCampana`) REFERENCES `campana` (`idCampana`)
 );
 
 CREATE TABLE `reporte` (
@@ -187,7 +187,7 @@ CREATE TABLE `usuario` (
   `dni` varchar(8) NOT NULL,
   `telefono` varchar(9) NOT NULL,
   `foto_perfil` varchar(255) DEFAULT NULL,
-  `contraseña` varchar(255) NOT NULL,
+  `contrasena` varchar(255) NOT NULL,
   `rol` enum('Administrador','Cliente') NOT NULL,
   PRIMARY KEY (`idUsuario`),
   UNIQUE KEY `correo` (`correo`),
@@ -223,7 +223,7 @@ CREATE TABLE usuario (
   dni VARCHAR(8) NOT NULL,
   telefono VARCHAR(9) NOT NULL,
   foto_perfil VARCHAR(255),
-  contraseña VARCHAR(255) NOT NULL,
+  contrasena VARCHAR(255) NOT NULL,
   rol ENUM('Administrador','Cliente') NOT NULL,
   PRIMARY KEY (idUsuario),
   UNIQUE (correo),
@@ -240,15 +240,15 @@ CREATE TABLE categoria (
   UNIQUE (nombre)
 );
 
-CREATE TABLE campaña (
-  idCampaña INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE campana (
+  idCampana INT NOT NULL AUTO_INCREMENT,
   titulo VARCHAR(100),
   imagen VARCHAR(255),
   descripcion TEXT,
   fechaInicio DATE NOT NULL,
   fechaFin DATE NOT NULL,
   activo BOOLEAN DEFAULT TRUE,
-  PRIMARY KEY (idCampaña)
+  PRIMARY KEY (idCampana)
 );
 
 CREATE TABLE reporte (
@@ -327,16 +327,16 @@ CREATE TABLE promocion (
   descripcion TEXT,
   fechaInicio DATE,
   fechaFin DATE,
-  idCampaña INT,
+  idCampana INT,
   tipoDescuento ENUM('Porcentaje','MontoFijo') NOT NULL DEFAULT 'Porcentaje',
   valorDescuento DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   montoMinimoCompra DECIMAL(10,2) DEFAULT 0.00,
   activo BOOLEAN DEFAULT TRUE,
   idCategoriaAplicable INT,
   PRIMARY KEY (idPromocion),
-  KEY (idCampaña),
+  KEY (idCampana),
   KEY (idCategoriaAplicable),
-  FOREIGN KEY (idCampaña) REFERENCES campaña(idCampaña),
+  FOREIGN KEY (idCampana) REFERENCES campana(idCampana),
   FOREIGN KEY (idCategoriaAplicable) REFERENCES categoria(idCategoria)
 );
 CREATE TABLE usuariopromocion (

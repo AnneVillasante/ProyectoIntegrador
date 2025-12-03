@@ -9,11 +9,11 @@ const db = require('../config/db');
 
 const promocionDAO = {
   async crear(promocionData) {
-    const { titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
+    const { titulo, descripcion, fechaInicio, fechaFin, idCampana, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
     const [result] = await db.execute(
-      `INSERT INTO promocion (titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable) 
+      `INSERT INTO promocion (titulo, descripcion, fechaInicio, fechaFin, idCampana, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable]
+      [titulo, descripcion, fechaInicio, fechaFin, idCampana, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable]
     );
     return result.insertId;
   },
@@ -29,21 +29,21 @@ const promocionDAO = {
   },
 
   async actualizar(id, promocionData) {
-    const { titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
+    const { titulo, descripcion, fechaInicio, fechaFin, idCampana, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable } = promocionData;
     const [result] = await db.execute(
       `UPDATE promocion SET 
         titulo = ?, 
         descripcion = ?, 
         fechaInicio = ?, 
         fechaFin = ?, 
-        idCampaña = ?, 
+        idCampana = ?, 
         tipoDescuento = ?, 
         valorDescuento = ?, 
         montoMinimoCompra = ?, 
         activo = ?, 
         idCategoriaAplicable = ? 
        WHERE idPromocion = ?`,
-      [titulo, descripcion, fechaInicio, fechaFin, idCampaña, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable, id]
+      [titulo, descripcion, fechaInicio, fechaFin, idCampana, tipoDescuento, valorDescuento, montoMinimoCompra, activo, idCategoriaAplicable, id]
     );
     return result.affectedRows;
   },

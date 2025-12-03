@@ -58,7 +58,7 @@ class CarritoModel {
             await pool.query('UPDATE carritodetalle SET cantidad = ?, precioUnitario = ?, subtotal = ? WHERE idDetalleCarrito = ?', [newQuantity, precioUnitario, newSubtotal, existingItem.idDetalleCarrito]);
             return { idDetalleCarrito: existingItem.idDetalleCarrito, idProducto, cantidad: newQuantity, precioUnitario };
         } else {
-            // Añadir nuevo ítem
+            // Anadir nuevo ítem
             const [result] = await pool.query(
                 'INSERT INTO carritodetalle (idCarrito, idProducto, cantidad, precioUnitario, subtotal) VALUES (?, ?, ?, ?, ?)', 
                 [idCarrito, idProducto, cantidad, precioUnitario, subtotal]

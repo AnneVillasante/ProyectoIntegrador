@@ -21,7 +21,7 @@ ALTER TABLE Usuario
 ALTER TABLE producto
 ADD COLUMN imagen VARCHAR(255) AFTER nombre;  -- o donde quieras colocarla
 
-ALTER TABLE campaña
+ALTER TABLE campana
 ADD COLUMN imagen VARCHAR(255) AFTER nombre;
 
 ALTER TABLE reporte

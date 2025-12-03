@@ -38,7 +38,7 @@ const PaymentHandler = (() => {
                 // En lugar de interactuar con el DOM, rechazamos la promesa con el error.
                 return Promise.reject(error);
             }
-            // Añadimos el ID del método de pago al payload del pedido.
+            // Anadimos el ID del método de pago al payload del pedido.
             orderPayload.paymentMethodId = paymentMethod.id;
         }
 

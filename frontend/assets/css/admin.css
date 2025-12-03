@@ -98,7 +98,7 @@
   overflow-y: auto;
 }
 
-/* Contenido de pestañas - sin restricciones de altura */
+/* Contenido de pestanas - sin restricciones de altura */
 .admin-content {
   position: relative;
   display: flex;

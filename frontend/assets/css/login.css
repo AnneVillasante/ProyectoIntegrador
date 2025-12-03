@@ -57,7 +57,7 @@ main {
   max-height: 85vh;
   overflow: hidden;
   margin: auto 0;
-  /* Transición suave para cambios de tamaño */
+  /* Transición suave para cambios de tamano */
   transition: all 0.3s ease;
 }
 

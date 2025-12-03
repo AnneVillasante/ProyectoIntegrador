@@ -1,14 +1,14 @@
 /**
- * @fileoverview Model class for Campaña.
+ * @fileoverview Model class for Campana.
  * Represents the structure of a campaign object.
  *
  * @version 1.0
  * @author Lunaria
  */
 
-class Campaña {
-  constructor({ idCampaña, titulo, imagen, descripcion, fechaInicio, fechaFin }) {
-    this.idCampaña = idCampaña;
+class Campana {
+  constructor({ idCampana, titulo, imagen, descripcion, fechaInicio, fechaFin }) {
+    this.idCampana = idCampana;
     this.titulo = titulo;
     this.imagen = imagen;
     this.descripcion = descripcion;
@@ -17,4 +17,4 @@ class Campaña {
   }
 }
 
-module.exports = Campaña;
+module.exports = Campana;

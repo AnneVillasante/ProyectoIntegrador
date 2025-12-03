@@ -19,7 +19,7 @@ btnRegister.addEventListener('click', () => {
   loginForm.classList.remove('active');
 });
 
-// Mostrar año en footer
+// Mostrar anio en footer
 yearSpan.textContent = new Date().getFullYear();
 
 // Ejemplo de validación básica (puedes conectarlo a backend después)

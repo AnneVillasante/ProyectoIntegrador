@@ -1,25 +1,25 @@
 /**
- * @fileoverview Lógica de negocio para campañas.
+ * @fileoverview Lógica de negocio para campanas.
  *
  * @version 1.0
  * @author Lunaria
  */
 
-const CampañaDAO = require('../dao/campañaDAO');
-const CampañaDTO = require('../dto/campañaDTO');
+const CampanaDAO = require('../dao/campanaDAO');
+const CampanaDTO = require('../dto/campanaDTO');
 
-class CampañaService {
+class CampanaService {
   static async obtenerTodas() {
-    const campañas = await CampañaDAO.obtenerTodas();
-    return campañas.map(campaña => new CampañaDTO(campaña));
+    const campanas = await CampanaDAO.obtenerTodas();
+    return campanas.map(campana => new CampanaDTO(campana));
   }
 
   static async obtenerPorId(id) {
-    const campaña = await CampañaDAO.obtenerPorId(id);
-    if (!campaña) {
+    const campana = await CampanaDAO.obtenerPorId(id);
+    if (!campana) {
       return null;
     }
-    return new CampañaDTO(campaña);
+    return new CampanaDTO(campana);
   }
 
   static async crear(data) {
@@ -29,35 +29,35 @@ class CampañaService {
       throw new Error('Título, fecha de inicio y fecha de fin son requeridos.');
     }
 
-    const nuevaCampaña = await CampañaDAO.crear({
+    const nuevaCampana = await CampanaDAO.crear({
       titulo,
       imagen,
       descripcion,
       fechaInicio,
       fechaFin,
     });
-    return new CampañaDTO(nuevaCampaña);
+    return new CampanaDTO(nuevaCampana);
   }
 
   static async actualizar(id, data) {
-    const campaña = await CampañaDAO.obtenerPorId(id);
-    if (!campaña) {
+    const campana = await CampanaDAO.obtenerPorId(id);
+    if (!campana) {
       return null;
     }
 
-    await CampañaDAO.actualizar(id, data);
-    const campañaActualizada = await CampañaDAO.obtenerPorId(id);
-    return new CampañaDTO(campañaActualizada);
+    await CampanaDAO.actualizar(id, data);
+    const campanaActualizada = await CampanaDAO.obtenerPorId(id);
+    return new CampanaDTO(campanaActualizada);
   }
 
   static async eliminar(id) {
-    const campaña = await CampañaDAO.obtenerPorId(id);
-    if (!campaña) {
+    const campana = await CampanaDAO.obtenerPorId(id);
+    if (!campana) {
       return null;
     }
-    await CampañaDAO.eliminar(id);
+    await CampanaDAO.eliminar(id);
     return { id };
   }
 }
 
-module.exports = CampañaService;
+module.exports = CampanaService;
