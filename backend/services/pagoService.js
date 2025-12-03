@@ -73,6 +73,15 @@ class PagoService {
         // Podrías manejar otros eventos como 'payment_intent.payment_failed'
         return null;
     }
+
+    /**
+     * Obtiene todos los pagos registrados en la base de datos.
+     * @returns {Promise<PagoDTO[]>} Una lista de pagos.
+     */
+    async obtenerTodos() {
+        // Llama al método correspondiente en la capa de acceso a datos (DAO).
+        return await pagoDAO.findAll();
+    }
 }
 
 module.exports = new PagoService();

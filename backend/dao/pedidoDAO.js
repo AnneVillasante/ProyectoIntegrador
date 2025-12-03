@@ -53,6 +53,26 @@ class PedidoDAO {
             connection.release();
         }
     }
+
+    async findAll() {
+        try {
+            // Se hace un JOIN con las tablas cliente y usuario para obtener el nombre y correo del cliente.
+            const sql = `
+                SELECT 
+                    p.idPedido, p.fecha, p.total, p.estado,
+                    c.idCliente, c.nombres, c.apellidos,
+                    u.correo
+                FROM pedido p
+                JOIN cliente c ON p.idCliente = c.idCliente
+                JOIN usuario u ON c.idUsuario = u.idUsuario
+                ORDER BY p.fecha DESC
+            `;
+            const [rows] = await db.query(sql);
+            return rows;
+        } catch (error) {
+            throw new Error(`Error al obtener los pedidos: ${error.message}`);
+        }
+    }
 }
 
 module.exports = new PedidoDAO();

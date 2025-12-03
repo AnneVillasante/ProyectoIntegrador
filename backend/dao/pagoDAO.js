@@ -39,6 +39,17 @@ class PagoDAO {
             throw new Error(`Error al obtener el pago por Intent ID: ${error.message}`);
         }
     }
+
+    async findAll() {
+        try {
+            const sql = 'SELECT * FROM pago ORDER BY fechaPago DESC';
+            const [rows] = await db.query(sql);
+            // Mapeamos cada resultado a un DTO para mantener la consistencia
+            return rows.map(row => new PagoDTO(row));
+        } catch (error) {
+            throw new Error(`Error al obtener todos los pagos: ${error.message}`);
+        }
+    }
 }
 
 module.exports = new PagoDAO();
