@@ -14,6 +14,7 @@ variables:
   # Variables para la aplicación Node.js
   MYSQL_USER: test_user      
   MYSQL_PASSWORD: test_password
+  MYSQL_HOST: mysql
 # AGREGA ESTA LÍNEA DEBAJO:
   STRIPE_SECRET_KEY: "sk_test_dummy_key_para_gitlab"
 
