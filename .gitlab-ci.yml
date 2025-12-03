@@ -43,6 +43,7 @@ pruebas_unitarias_integrales:
   stage: test
   script:
     - cd backend
+    - sleep 20
     # Aquí se ejecutaría Jest. Jest debe estar configurado para conectar a la DB de prueba si es necesario.
     - npm test 
   artifacts:
