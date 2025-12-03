@@ -21,6 +21,7 @@ const crearIntentoDePago = async (req, res) => {
         // Convertir a la unidad mínima de la moneda (céntimos)
         const montoEnCentimos = Math.round(monto * 100);
 
+        const idUsuario = req.user.id; // Obtenerlo del token
         const metadata = { idPedido, idUsuario };
 
         const paymentIntent = await pagoService.crearIntentoDePago(montoEnCentimos, moneda, metadata);

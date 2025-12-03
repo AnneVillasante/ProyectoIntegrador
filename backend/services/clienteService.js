@@ -29,8 +29,18 @@ const getClientByUserId = async (userId) => {
   return rows[0] || null;
 };
 
+/**
+ * Busca un cliente por su dirección de correo electrónico.
+ * @param {string} correo - El correo electrónico del cliente a buscar.
+ * @returns {Promise<object|null>} El objeto del cliente o null si no se encuentra.
+ */
+const findByCorreo = async (correo) => {
+    const [rows] = await pool.query('SELECT * FROM cliente WHERE correo = ?', [correo]);
+    return rows[0] || null;
+};
 
 module.exports = {
   createClient,
   getClientByUserId,
+  findByCorreo,
 };

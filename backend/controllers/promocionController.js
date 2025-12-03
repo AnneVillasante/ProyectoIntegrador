@@ -7,54 +7,54 @@
 
 const PromocionService = require('../services/promocionService');
 
-const crearPromocion = async (req, res, next) => {
+const crearPromocion = async (req, res) => {
   try {
     const promocion = await PromocionService.crearPromocion(req.body);
     res.status(201).json(promocion);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: 'Error al crear la promoción', error: error.message });
   }
 };
 
-const obtenerTodas = async (req, res, next) => {
+const obtenerTodas = async (req, res) => {
   try {
     const promociones = await PromocionService.obtenerTodas();
     res.status(200).json(promociones);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: 'Error al obtener las promociones', error: error.message });
   }
 };
 
-const obtenerPorId = async (req, res, next) => {
+const obtenerPorId = async (req, res) => {
   try {
     const promocion = await PromocionService.obtenerPorId(req.params.id);
     if (!promocion) {
-      return res.status(404).json({ message: 'Promotion not found' });
+      return res.status(404).json({ message: 'Promoción no encontrada' });
     }
     res.status(200).json(promocion);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: 'Error al obtener la promoción', error: error.message });
   }
 };
 
-const actualizarPromocion = async (req, res, next) => {
+const actualizarPromocion = async (req, res) => {
   try {
     const promocion = await PromocionService.actualizarPromocion(req.params.id, req.body);
     if (!promocion) {
-      return res.status(404).json({ message: 'Promotion not found' });
+      return res.status(404).json({ message: 'Promoción no encontrada' });
     }
     res.status(200).json(promocion);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: 'Error al actualizar la promoción', error: error.message });
   }
 };
 
-const eliminarPromocion = async (req, res, next) => {
+const eliminarPromocion = async (req, res) => {
   try {
     await PromocionService.eliminarPromocion(req.params.id);
     res.status(204).send(); // No Content
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: 'Error al eliminar la promoción', error: error.message });
   }
 };
 
