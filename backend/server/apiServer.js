@@ -53,7 +53,7 @@ apiApp.use(
 
 // Ruta de Webhook ANTES de express.json() para recibir el body en formato raw
 // La ruta específica del webhook debe estar aquí para recibir el body en formato raw.
-apiApp.post('/api/pagos/webhook', express.raw({type: 'application/json'}), require('../controllers/pagoController').handleWebhook);
+apiApp.post('/api/pagos/webhook', express.raw({type: 'application/json'}), require('../controllers/pagoController').stripeWebhook);
 
 // Middleware para parsear JSON para el resto de las rutas de la API
 apiApp.use(express.json()); // Este middleware debe estar ANTES de las rutas que procesan JSON.

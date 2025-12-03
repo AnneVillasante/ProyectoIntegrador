@@ -882,11 +882,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }
 
-// En la función loadTabData(tabName) de admin.js:
-case 'metrics':
-  loadMetrics();
-  break;
-
   // Funciones globales para onclick
   window.editUser = editUser;
   window.deleteUser = deleteUser;

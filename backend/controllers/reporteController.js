@@ -94,12 +94,14 @@ exports.generateVentasReport = async (req, res) => {
       res.setHeader('Content-Disposition', `attachment; filename=reporte_ventas_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
     } else if (formato.toLowerCase() === 'pdf') {
-      // 1. Generar el contenido HTML usando la plantilla
-      const htmlContent = generarPlantillaHtml('Reporte de Ventas', reportData);
+      // 1. Crear resumen de texto
+      const textoResumen = `Total de transacciones: ${ventas.length} | Ingresos Totales: S/ ${totalMonto}`;
 
-      // 2. Renderizar el HTML a PDF usando jsreport
+      // 2. Generar HTML con la plantilla personalizada, incluyendo el resumen
+      const htmlContent = generarPlantillaHtml('Reporte de Ventas', reportData, textoResumen);
+
       const render = getJsreportRenderer(req);
-      const report = await render({ content: htmlContent });
+      const report = await render(htmlContent); // Se pasa solo el HTML
 
       // 3. Enviar el PDF al cliente
       res.setHeader('Content-Type', 'application/pdf');
@@ -164,12 +166,14 @@ exports.generateProductosReport = async (req, res) => {
       res.setHeader('Content-Disposition', `attachment; filename=reporte_productos_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
     } else if (formato.toLowerCase() === 'pdf') {
-        // 1. Generar el contenido HTML usando la plantilla
-        const htmlContent = generarPlantillaHtml('Reporte de Productos', reportData);
+        // 1. Crear resumen de texto
+        const textoResumen = `Total de SKUs (productos únicos): ${productos.length} | Unidades totales en inventario: ${parametros.totalStock}`;
 
-        // 2. Renderizar el HTML a PDF usando jsreport
+        // 2. Generar HTML con la plantilla personalizada
+        const htmlContent = generarPlantillaHtml('Reporte de Productos', reportData, textoResumen);
+        
         const render = getJsreportRenderer(req);
-        const report = await render({ content: htmlContent });
+        const report = await render(htmlContent); // Se pasa solo el HTML
 
         // 3. Enviar el PDF al cliente
         res.setHeader('Content-Type', 'application/pdf');
@@ -249,12 +253,14 @@ exports.generateUsuarioReport = async (req, res) => {
       res.setHeader('Content-Disposition', `attachment; filename=reporte_usuario_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
     } else if (formato.toLowerCase() === 'pdf') {
-        // 1. Generar el contenido HTML usando la plantilla
-        const htmlContent = generarPlantillaHtml('Reporte de Usuarios', reportData);
+        // 1. Crear resumen de texto
+        const textoResumen = `Total de usuarios: ${parametros.totalUsuarios} | Administradores: ${parametros.totalAdministradores} | Clientes: ${parametros.totalClientes}`;
 
-        // 2. Renderizar el HTML a PDF usando jsreport
+        // 2. Generar HTML con la plantilla personalizada
+        const htmlContent = generarPlantillaHtml('Reporte de Usuarios', reportData, textoResumen);
+        
         const render = getJsreportRenderer(req);
-        const report = await render({ content: htmlContent });
+        const report = await render(htmlContent); // Se pasa solo el HTML
 
         // 3. Enviar el PDF al cliente
         res.setHeader('Content-Type', 'application/pdf');
