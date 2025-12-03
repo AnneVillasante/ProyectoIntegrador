@@ -3,17 +3,11 @@ const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const { protect, isAdmin } = require('../middleware/authMiddleware'); 
 const multer = require('multer');
+const { createStorage } = require('../config/cloudinaryConfig');
 
-// Configuración de Multer para guardar las imágenes de perfil
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/perfiles/'); // Asegúrate de que la carpeta 'uploads/perfiles' exista en tu backend
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
-const upload = multer({ storage: storage });
+// Configuración de Multer para guardar imágenes de perfil en Cloudinary
+const perfilStorage = createStorage('perfiles');
+const upload = multer({ storage: perfilStorage });
 
 // Rutas de perfil de usuario (protegidas)
 router.use(protect); // Aplica el middleware 'protect' a todas las rutas de abajo

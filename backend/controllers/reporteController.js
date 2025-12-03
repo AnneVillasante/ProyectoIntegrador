@@ -126,74 +126,42 @@ exports.generateVentasReport = async (req, res) => {
 };
 
 // Generar reporte de productos
+// En backend/controllers/reporteController.js
+
+// backend/controllers/reporteController.js
+
 exports.generateProductosReport = async (req, res) => {
   try {
-    const { formato = 'json', usuario } = req.body;
-    
-    // Obtener datos de productos
-    const productos = await productoDAO.getAll(); // Corregido: El método es getAll, no findAll
-    
-    // Preparar datos del reporte
-    const reportData = productos.map(producto => ({
-      'ID': producto.idProducto,
-      'Nombre': producto.nombre || 'Sin nombre',
-      'Descripción': producto.descripcion || 'Sin descripción',
-      'Categoría': producto.categoria || 'Sin categoría',
-      'Subcategoría': producto.subcategoria || 'Sin subcategoría',
-      'Precio': `S/ ${parseFloat(producto.precio || 0).toFixed(2)}`, // Asegúrate que productoDAO.findAll() devuelve precio
-      'Stock': producto.stock || 0
-    }));
+    const { formato = 'json' } = req.body;
 
-    // Guardar reporte en la base de datos
-    const parametros = {
-      formato,
-      totalProductos: productos.length,
-      totalStock: productos.reduce((sum, p) => sum + parseInt(p.stock || 0), 0)
-    };
-
-    const reporteId = await reporteDAO.create({
-      tipo: 'productos',
-      formato,
-      parametros,
-      usuario: usuario || 'Sistema',
-      exportado: false
-    });
-
-    // Convertir a formato solicitado
-    if (formato.toLowerCase() === 'csv') {
-      const csv = convertToCSV(reportData);
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', `attachment; filename=reporte_productos_${new Date().toISOString().split('T')[0]}.csv`);
-      res.send(csv);
-    } else if (formato.toLowerCase() === 'pdf') {
-        // 1. Crear resumen de texto
-        const textoResumen = `Total de SKUs (productos únicos): ${productos.length} | Unidades totales en inventario: ${parametros.totalStock}`;
-
-        // 2. Generar HTML con la plantilla personalizada
-        const htmlContent = generarPlantillaHtml('Reporte de Productos', reportData, textoResumen);
+    if (formato.toLowerCase() === 'pdf') {
+        // --- PRUEBA DE VIDA (FONDO ROJO) ---
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html>
+            <body style="background-color: red; margin: 0; padding: 20px;">
+              <h1 style="color: white; font-family: sans-serif;">SI VES ESTO, CHROME FUNCIONA</h1>
+              <div style="background: white; padding: 20px; margin-top: 20px;">
+                <p>El sistema de reportes está operativo.</p>
+              </div>
+            </body>
+          </html>
+        `;
         
         const render = getJsreportRenderer(req);
-        const report = await render(htmlContent); // Se pasa solo el HTML
+        const report = await render(htmlContent);
 
-        // 3. Enviar el PDF al cliente
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=reporte_productos_${reporteId}.pdf`);
+        res.setHeader('Content-Disposition', `attachment; filename=prueba_final.pdf`);
         res.send(report.content);
-        await reporteDAO.updateExportado(reporteId, true);
-    } else {
-      res.json({
-        success: true,
-        idReporte: reporteId,
-        tipo: 'productos',
-        formato,
-        datos: reportData,
-        totalProductos: productos.length,
-        totalStock: parametros.totalStock
-      });
+        return; 
     }
+
+    // ... aquí sigue tu código normal para CSV/JSON ...
+    // (Por ahora no se ejecutará porque el return de arriba lo corta)
   } catch (error) {
-    console.error('Error generando reporte de productos:', error);
-    res.status(500).json({ error: 'Error al generar reporte de productos' });
+    console.error("Error grave en reporte:", error);
+    res.status(500).send("Error generando reporte");
   }
 };
 
