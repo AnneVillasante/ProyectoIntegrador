@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Verificar que la configuración global exista
+  if (!window.CONFIG || !window.CONFIG.API_URL || !window.CONFIG.IMG_URL) {
+    console.error('Error de configuración: El objeto window.CONFIG no está definido o está incompleto. Asegúrate de que el archivo de configuración (ej: config.js) se cargue correctamente en el HTML antes que este script.');
+    alert('Error de configuración del sitio. Por favor, contacta al administrador.');
+    return; // Detener la ejecución para evitar más errores
+  }
+
   const token = localStorage.getItem('token');
   if (!token) {
     window.location.href = '/pages/login.html';
@@ -63,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadProfile() {
     try {
 
-      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil, {
+      const response = await fetch(`${window.CONFIG.API_URL}/usuario/perfil`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -125,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil, {
+      const response = await fetch(`${window.CONFIG.API_URL}/usuario/perfil`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil/password, {
+      const response = await fetch(`${window.CONFIG.API_URL}/usuario/perfil/password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -210,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('profileImage', file);
 
     try {
-      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil/foto, {
+      const response = await fetch(`${window.CONFIG.API_URL}/usuario/perfil/foto`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
