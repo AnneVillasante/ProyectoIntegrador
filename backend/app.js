@@ -1,22 +1,20 @@
 // backend/app.js
-require('./config/config'); // Esto carga y configura dotenv
+require('./config/config');
 
 const pool = require('./config/db');
-const { startApi } = require('./server/apiServer');
-const { startStatic } = require('./server/staticServer');
+const { startApi } = require('./server/apiServer'); // Ya no necesitamos staticServer
 
-let apiServer, staticServer;
+let apiServer;
 
 (async () => {
+  // Solo iniciamos el servidor unificado
   apiServer = await startApi();
-  staticServer = startStatic();
 })();
 
 async function shutdown() {
-  console.log('Cerrando servidores y pool MySQL...');
+  console.log('Cerrando servidor y pool MySQL...');
   try {
     if (apiServer) await new Promise(r => apiServer.close(r));
-    if (staticServer) await new Promise(r => staticServer.close(r));
     await pool.end();
   } catch (e) {
     console.error('Error durante shutdown:', e);
