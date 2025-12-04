@@ -1031,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Funciones globales para onclick
   window.editUser = editUser;
   window.deleteUser = deleteUser;
-  window.editProduct = edite = de
+  window.editProduct = editProduct;
   window.updateStockChange = updateStockChange;
   window.editCategory = editCategory;
   window.deleteCategory = deleteCategory;
