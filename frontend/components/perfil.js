@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadProfile() {
     try {
 
-      const response = await fetch('http://localhost:4000/api/usuario/perfil', {
+      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (user.foto_perfil) {
-        profileImagePreview.src = `http://localhost:4000/uploads/${user.foto_perfil}`;
+        profileImagePreview.src = `${window.CONFIG.IMG_URL}/uploads/${user.foto_perfil}`;
       }
 
 
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const response = await fetch('http://localhost:4000/api/usuario/perfil', {
+      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/usuario/perfil/password', {
+      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil/password, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('profileImage', file);
 
     try {
-      const response = await fetch('http://localhost:4000/api/usuario/perfil/foto', {
+      const response = await fetch(${window.CONFIG.API_URL}/api/usuario/perfil/foto, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
