@@ -1,13 +1,23 @@
 // backend/server/apiServer.js
 const express = require('express');
 const cors = require('cors');
-const jsreport = require('jsreport')({ // 1. Importar e inicializar jsreport
+const path = require('path'); // Traído de staticServer
+const fs = require('fs').promises; // Traído de staticServer
+// Importante: arreglamos la mayúscula de la importación
+const ProductService = require('../services/productoService'); 
+
+// 1. Configuración de jsreport para que NO inicie su propio servidor web
+const jsreport = require('jsreport')({
+  httpPort: 0, // <--- ESTO EVITA QUE INICIE EL SERVIDOR DE JSREPORT
   templatingEngines: {
     allowedModules: ['moment']
   }
 });
+
 const helmet = require('helmet');
 const pool = require('../config/db');
+
+// Importación de rutas
 const authRouter = require('../routes/authRoutes');
 const productosRouter = require('../routes/productoRoutes');
 const usuarioRouter = require('../routes/usuarioRoutes');
@@ -24,39 +34,52 @@ const devolucionRoutes = require('../routes/devolucionRoutes');
 const facturaRoutes = require('../routes/facturaRoutes');
 const logActividadRoutes = require('../routes/logActividadRoutes');
 const cuponRoutes = require('../routes/cuponRoutes');
-const dashboardRoutes = require('../routes/dashboardRoutes'); // ✅ Importar rutas del dashboard
+const dashboardRoutes = require('../routes/dashboardRoutes');
 
 const apiApp = express();
 
 // 2. Adjuntar la instancia de jsreport a la aplicación
 apiApp.set('jsreport', jsreport);
 
-// CORS configurado para permitir solicitudes desde el frontend
+// CORS
 apiApp.use(cors({ 
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: ['http://localhost:3000', 'http://localhost:3001'], // Opcional: añade tu dominio de Render aquí si es necesario
   credentials: true
 }));
 
-// Configuración de Helmet permisiva para desarrollo
+// Helmet
 apiApp.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "http://localhost:4000"], // Permite conectar al backend
-      scriptSrc: ["'self'", "https://js.stripe.com"], // Permite Stripe
-      frameSrc: ["'self'", "https://js.stripe.com"], // Permite iframes de Stripe
-      imgSrc: ["'self'", "data:", "https:", "http://localhost:4000"], // Permite imágenes locales y externas
-      fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"], // ✅ Permite fuentes
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"], // Permite estilos externos
+      connectSrc: ["'self'", "http://localhost:4000", "https:"], // Añadido https para producción
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
+      frameSrc: ["'self'", "https://js.stripe.com"],
+      imgSrc: ["'self'", "data:", "https:", "http://localhost:4000"],
+      fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
     },
   })
 );
 
-// Middleware para parsear JSON para el resto de las rutas de la API
-apiApp.use(express.json()); // Este middleware debe estar ANTES de las rutas que procesan JSON.
+// Middleware JSON
+apiApp.use(express.json());
 
-// Servir archivos estáticos desde la carpeta 'uploads'
+// ---------------------------------------------------------------------
+// 3. LOGICA DEL SERVIDOR ESTÁTICO (Fusionada aquí)
+// ---------------------------------------------------------------------
+const frontendRoot = path.join(__dirname, '../../frontend');
+
+// Servir carpetas estáticas
+apiApp.use('/assets', express.static(path.join(frontendRoot, 'assets')));
+apiApp.use('/pages', express.static(path.join(frontendRoot, 'pages')));
+apiApp.use('/components', express.static(path.join(frontendRoot, 'components')));
+apiApp.use('/js', express.static(path.join(frontendRoot, 'js')));
+apiApp.use('/frontend', express.static(frontendRoot));
+// Servir uploads del backend
 apiApp.use('/uploads', express.static('uploads'));
+
+// Rutas de API
 apiApp.get('/health', (req, res) => res.json({ status: 'ok' }));
 apiApp.use('/api/auth', authRouter);
 apiApp.use('/api/productos', productosRouter);
@@ -74,26 +97,79 @@ apiApp.use('/api/devoluciones', devolucionRoutes);
 apiApp.use('/api/facturas', facturaRoutes);
 apiApp.use('/api/logs', logActividadRoutes);
 apiApp.use('/api/cupones', cuponRoutes);
-apiApp.use('/api/dashboard', dashboardRoutes); // ✅ Registrar rutas del dashboard
+apiApp.use('/api/dashboard', dashboardRoutes);
+
+// Rutas de Vistas (HTML)
+apiApp.get('/', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'index.html'));
+});
+apiApp.get('/favicon.ico', (req, res) => res.status(204).send());
+apiApp.get('/login', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'login.html'));
+});
+apiApp.get('/perfil', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'components', 'perfil.html'));
+});
+apiApp.get('/carrito', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'carrito.html'));
+});
+apiApp.get('/compra', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'compra.html'));
+});
+apiApp.get('/admin', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'admin_panel.html'));
+});
+apiApp.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'admin_panel.html'));
+});
+apiApp.get('/admin/cupones', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'admin_panel.html'));
+});
+apiApp.get('/admin/pos', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'carrito_cliente.html'));
+});
+
+// Render de productos (SSR)
+apiApp.get('/productos', async (req, res) => {
+  try {
+    const { categoria } = req.query;
+    const products = await ProductService.getProductsForStaticRender(categoria);
+    const cardsHtml = ProductService.generateProductCards(products);
+    
+    const filePath = path.join(frontendRoot, 'pages', 'productos.html');
+    let html = await fs.readFile(filePath, 'utf-8');
+    html = html.replace('', cardsHtml)
+               .replace('<h1 class="productos-title">Colección Destacada</h1>', `<h1 class="productos-title">${categoria ? `Categoría: ${categoria}` : 'Colección Destacada'}</h1>`);
+    
+    res.send(html);
+  } catch (err) {
+    console.error('Error render productos:', err);
+    res.status(500).send('Error interno al mostrar productos');
+  }
+});
+
+// ---------------------------------------------------------------------
 
 async function startApi() {
   try {
+    // Verificar conexión DB
     const conn = await pool.getConnection();
     await conn.ping();
     conn.release();
-    const API_PORT = process.env.API_PORT || 4000;
-
-    // 3. Iniciar el servidor de jsreport
+    
+    // Iniciar JSReport (solo motor, sin servidor web)
     await jsreport.init();
-    console.log('jsreport server iniciado.');
+    console.log('jsreport engine iniciado (modo silencioso).');
 
+    // Usar el puerto que nos da Render (process.env.PORT)
+    const PORT = process.env.PORT || 4000;
 
-    const apiServer = apiApp.listen(API_PORT, () =>
-      console.log(`API escuchando en http://localhost:${API_PORT}`)
+    const apiServer = apiApp.listen(PORT, () =>
+      console.log(`Servidor unificado escuchando en puerto ${PORT}`)
     );
     return apiServer;
   } catch (err) {
-    console.error('Error conectando a MySQL:', err);
+    console.error('Error iniciando servidor:', err);
     process.exit(1);
   }
 }
