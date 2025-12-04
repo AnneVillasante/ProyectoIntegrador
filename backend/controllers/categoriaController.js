@@ -13,11 +13,15 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const categoriaData = { ...req.body };
-    // Si se subió un archivo, Multer lo pone en req.file
+    
+    // 1. Si hay archivo, usamos la URL de Cloudinary
     if (req.file) {
-      // Guardamos la URL segura que Cloudinary proporciona
       categoriaData.imagen = req.file.path;
+    } else {
+      // 2. Si no hay archivo, aseguramos que sea null (evita error 'undefined')
+      categoriaData.imagen = null; 
     }
+
     const categoria = new CategoriaDTO(categoriaData);
     const id = await categoriaDAO.create(categoria);
     res.status(201).json({ message: 'Categoría creada', id });
@@ -32,18 +36,22 @@ exports.update = async (req, res) => {
     const { id } = req.params;
     const categoriaData = { ...req.body };
 
-    // Si se sube una nueva imagen, la usamos
+    // 1. Lógica de actualización de imagen
     if (req.file) {
       categoriaData.imagen = req.file.path;
     } else {
-      // Si no se sube una nueva imagen, debemos conservar la existente.
+      // Si no suben foto nueva, NO tocamos el campo 'imagen' en el objeto data,
+      // pero debemos asegurarnos de que el DAO no reciba 'undefined' si lo espera.
+      // La mejor estrategia aquí es recuperar la vieja si es necesario, 
+      // o dejar que el DAO maneje la actualización parcial.
       const categoriaExistente = await categoriaDAO.getById(id);
-      if (categoriaExistente) {
-        categoriaData.imagen = categoriaExistente.imagen;
-      }
+      categoriaData.imagen = categoriaExistente ? categoriaExistente.imagen : null;
     }
+    // Aseguramos que nada sea undefined
+    const dto = new CategoriaDTO(categoriaData);
+    // IMPORTANTE: Verifica que tu DTO no transforme 'null' en 'undefined'
 
-    const updated = await categoriaDAO.update(id, new CategoriaDTO(categoriaData));
+    const updated = await categoriaDAO.update(id, dto);
     if (!updated) {
       return res.status(404).json({ message: 'Categoría no encontrada' });
     }

@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         summaryProductList.innerHTML = cartData.items.map(item => `
             <div class="summary-item">
-                <img src="${window.CONFIG.IMG_URL}/${item.imagenProducto.replace(/\\/g, '/')}" alt="${item.nombreProducto}" onerror="this.src='../assets/img/placeholder.png'">
+                <img src="${item.imagenProducto}" alt="${item.nombreProducto}" onerror="this.src='../assets/img/placeholder.png'">
                 <div class="item-details">
                     <h4>${item.nombreProducto}</h4>
                     <p>Cantidad: ${item.cantidad}</p>

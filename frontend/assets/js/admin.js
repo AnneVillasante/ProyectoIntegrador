@@ -505,9 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     tbody.innerHTML = categorias.map(cat => {
-      const imagenUrl = cat.imagen 
-        ? (cat.imagen.startsWith('http') ? cat.imagen : `${window.CONFIG.IMG_URL}/${cat.imagen}`)
-        : null;
+      const imagenUrl = cat.imagen; // La URL de Cloudinary ya es absoluta
       return `
       <tr>
         <td title="${cat.idCategoria}">${cat.idCategoria}</td>
@@ -536,9 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     tbody.innerHTML = subcategorias.map(sub => {
       const categoria = categorias.find(c => c.idCategoria === sub.idCategoria);
-      const imagenUrl = sub.imagen 
-        ? (sub.imagen.startsWith('http') ? sub.imagen : `${window.CONFIG.IMG_URL}/${sub.imagen}`)
-        : null;
+      const imagenUrl = sub.imagen; // La URL de Cloudinary ya es absoluta
       return `
       <tr>
         <td title="${sub.idSubcategoria}">${sub.idSubcategoria}</td>

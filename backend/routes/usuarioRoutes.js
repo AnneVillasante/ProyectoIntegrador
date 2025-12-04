@@ -19,8 +19,10 @@ router.post('/perfil/foto', upload.single('profileImage'), usuarioController.sub
 // Rutas CRUD completas (solo para administradores)
 router.get('/', isAdmin, usuarioController.obtenerUsuarios);
 router.get('/:id', isAdmin, usuarioController.obtenerUsuario);
-router.post('/', isAdmin, usuarioController.crearUsuario);
-router.put('/:id', isAdmin, usuarioController.actualizarUsuario);
+
+// El campo en el formulario debe llamarse 'foto_perfil'
+router.post('/', isAdmin, upload.single('foto_perfil'), usuarioController.crearUsuario); // Middleware añadido
+router.put('/:id', isAdmin, upload.single('foto_perfil'), usuarioController.actualizarUsuario); // Middleware añadido
 router.delete('/:id', isAdmin, usuarioController.eliminarUsuario);
 
 module.exports = router;

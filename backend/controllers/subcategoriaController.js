@@ -13,11 +13,15 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const subcategoriaData = { ...req.body };
+    
     if (req.file) {
-      // Guardamos la URL segura que Cloudinary proporciona
       subcategoriaData.imagen = req.file.path;
+    } else {
+      subcategoriaData.imagen = null; // ¡Vital para evitar el crash!
     }
+
     const subcategoria = new SubcategoriaDTO(subcategoriaData);
+    // ... resto del código ...
     const id = await subcategoriaDAO.create(subcategoria);
     res.status(201).json({ message: 'Subcategoría creada', id });
   } catch (err) {

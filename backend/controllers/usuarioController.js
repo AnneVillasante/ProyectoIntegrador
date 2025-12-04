@@ -14,7 +14,7 @@ exports.obtenerUsuarios = async (req, res) => {
 
 exports.crearUsuario = async (req, res) => {
   try {
-    const { nombres, apellidos, correo, contrasena, telefono, dni } = req.body;
+    const { nombres, apellidos, correo, contrasena, telefono, dni, rol } = req.body;
 
     // 1. Validación de entradas
     if (!nombres || !correo || !contrasena) {
@@ -25,7 +25,15 @@ exports.crearUsuario = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(contrasena, salt);
 
-    const nuevoUsuario = { nombres, apellidos, correo, contrasena: hashedPassword, telefono, dni };
+    const nuevoUsuario = { 
+      nombres, 
+      apellidos, 
+      correo, 
+      contrasena: hashedPassword, 
+      telefono, 
+      dni,
+      rol: rol || 'Cliente' // Asigna rol o 'Cliente' por defecto
+    };
 
     const resultado = await usuarioModel.create(nuevoUsuario);
     res.status(201).json({ success: true, message: 'Usuario creado correctamente', id: resultado.insertId });
@@ -50,6 +58,11 @@ exports.actualizarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
     const data = req.body;
+
+    // Si se sube una nueva foto de perfil, se añade su ruta al objeto de datos
+    if (req.file) {
+      data.foto_perfil = req.file.path;
+    }
     await usuarioModel.update(id, data);
     res.json({ success: true, message: 'Usuario actualizado' });
   } catch (err) {
