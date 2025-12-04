@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const filteredCustomers = allCustomers.filter(customer =>
                 customer.nombres.toLowerCase().includes(lowerCaseQuery) ||
                 (customer.apellidos && customer.apellidos.toLowerCase().includes(lowerCaseQuery)) ||
-                customer.email.toLowerCase().includes(lowerCaseQuery)
+                customer.correo.toLowerCase().includes(lowerCaseQuery)
             );
             renderSearchResults(filteredCustomers);
         } catch (error) {
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
             customers.forEach(customer => {
                 const item = document.createElement('div');
                 item.classList.add('search-result-item');
-                item.textContent = `${customer.nombres} ${customer.apellidos} (${customer.email})`;
+                item.textContent = `${customer.nombres} ${customer.apellidos} (${customer.correo})`;
                 item.addEventListener('click', () => selectCustomer(customer));
                 customerSearchResults.appendChild(item);
             });
@@ -225,14 +225,18 @@ document.addEventListener('DOMContentLoaded', () => {
         modalErrorMessage.style.display = 'none';
         const nombre = document.getElementById('new-customer-nombre').value;
         const apellido = document.getElementById('new-customer-apellido').value;
-        const email = document.getElementById('new-customer-email').value;
-        const password = document.getElementById('new-customer-password').value;
+        const correo = document.getElementById('new-customer-email').value;
+        const dni = document.getElementById('new-customer-dni').value;
+        const telefono = document.getElementById('new-customer-telefono').value;
 
         try {
-            const response = await fetch(`${window.CONFIG.API_URL}/auth/register`, {
+            // [CORRECCIÓN] Usar el endpoint para crear un cliente rápido, no un usuario completo.
+            // Esto es consistente con la lógica de venta física.
+            const token = localStorage.getItem('token'); // Necesario para la autorización
+            const response = await fetch(`${window.CONFIG.API_URL}/clientes/quick-create`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombres: nombre, apellidos: apellido, email, password, rol: 'Cliente' })
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ nombres: nombre, apellidos: apellido, correo: correo, dni: dni, telefono: telefono })
             });
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'No se pudo crear el cliente.');
@@ -240,7 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Cliente creado con éxito.');
             newCustomerModal.style.display = 'none';
             newCustomerForm.reset();
-            selectCustomer(result.user);
+            // El endpoint devuelve un objeto 'cliente', no 'user'.
+            selectCustomer(result.cliente);
 
         } catch (error) {
             modalErrorMessage.textContent = `Error: ${error.message}`;

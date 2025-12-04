@@ -238,6 +238,7 @@ body {
     display: flex;
     gap: 15px;
     align-items: center;
+    position: relative; /* ANADIDO: Esto ancla los resultados de búsqueda a este contenedor */
 }
 
 .customer-selector {
@@ -259,7 +260,7 @@ body {
     position: absolute;
     top: 100%;
     left: 0;
-    right: 0;
+    width: auto; /* Permitimos que el ancho se ajuste */
     background-color: var(--color-white);
     border: 1px solid #ddd;
     border-top: none;
@@ -267,7 +268,10 @@ body {
     box-shadow: var(--box-shadow);
     max-height: 200px;
     overflow-y: auto;
+    box-sizing: border-box; /* Asegura que el padding y borde no afecten el ancho total */
     z-index: 1000;
+    /* Hacemos que el ancho de los resultados coincida con el del input de búsqueda */
+    width: calc(100% - 150px); /* Ancho total menos el espacio aproximado del botón */
 }
 
 .search-result-item {
@@ -330,6 +334,11 @@ body {
     position: relative;
 }
 
+/* Centrar el título del modal */
+.modal-content h3 {
+    text-align: center;
+}
+
 .close-modal-btn {
     color: #aaa;
     position: absolute;
@@ -372,9 +381,29 @@ body {
     flex-direction: column;
     gap: 15px;
 }
+/* Centrar el título y hacer que el botón ocupe todo el ancho */
+#new-customer-form h3 {
+    text-align: center;
+    margin-bottom: 10px;
+}
 
 #new-customer-form input {
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: var(--border-radius);
+}
+
+/* Asegurar que el botón dentro del formulario ocupe todo el ancho */
+#new-customer-form .btn-primary {
+    width: 100%;
+}
+
+/* Estilo para el botón de checkout deshabilitado (usado en `a` tag) */
+.btn-checkout.disabled {
+    pointer-events: none;
+    background-color: #ccc;
+    border-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
 }

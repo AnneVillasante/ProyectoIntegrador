@@ -791,7 +791,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Error al actualizar usuario');
     }
   });
-
   // Cargar categorías cuando se abre el modal (el listener de categoría se configura dentro de addProduct y editProduct)
 
   // Formulario de categoría
@@ -1032,8 +1031,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Funciones globales para onclick
   window.editUser = editUser;
   window.deleteUser = deleteUser;
-  window.editProduct = editProduct;
-  window.deleteProduct = deleteProduct;
+  window.editProduct = edite = de
   window.updateStockChange = updateStockChange;
   window.editCategory = editCategory;
   window.deleteCategory = deleteCategory;

@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalizeSaleButton.textContent = 'Procesando...';
 
         const orderPayload = {
-            correoCliente: selectedCustomer.email, // [CRÍTICO] Enviamos el correo para que el backend asigne el cliente.
+            correoCliente: selectedCustomer.correo, // [CRÍTICO] Enviamos el correo para que el backend asigne el cliente.
             items: cartData.items,
             total: cartData.total,
             metodoEntrega: 'tienda', // Venta física es siempre recojo en tienda
@@ -227,10 +227,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (customers.length === 0) {
             customerSearchResults.innerHTML = '<div class="search-result-item">No se encontraron clientes.</div>';
         } else {
-            customers.forEach(customer => {
+            customers.forEach(customer => { // customer aquí tiene 'email'
                 const item = document.createElement('div');
                 item.classList.add('search-result-item');
-                item.textContent = `${customer.nombres} ${customer.apellidos} (${customer.email})`;
+                item.textContent = `${customer.nombres} ${customer.apellidos} (${customer.correo})`;
                 item.addEventListener('click', () => selectCustomer(customer));
                 customerSearchResults.appendChild(item);
             });
@@ -267,15 +267,16 @@ document.addEventListener('DOMContentLoaded', () => {
         modalErrorMessage.style.display = 'none';
         const nombre = document.getElementById('new-customer-nombre').value;
         const apellido = document.getElementById('new-customer-apellido').value;
-        const email = document.getElementById('new-customer-email').value;
-        const password = document.getElementById('new-customer-password').value;
+        const correo = document.getElementById('new-customer-email').value;
+        const dni = document.getElementById('new-customer-dni').value;
+        const telefono = document.getElementById('new-customer-telefono').value;
 
         try {
-            // La ruta para crear clientes es la misma que el registro público
-            const response = await fetch(`${window.CONFIG.API_URL}/auth/register`, {
+            // [CAMBIO] Usamos el nuevo endpoint para crear un cliente sin usuario
+            const response = await fetch(`${window.CONFIG.API_URL}/clientes/quick-create`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombres: nombre, apellidos: apellido, email, password, rol: 'Cliente' })
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ nombres: nombre, apellidos: apellido, correo: correo, dni: dni, telefono: telefono })
             });
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'No se pudo crear el cliente.');
@@ -283,9 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Cliente creado con éxito.');
             newCustomerModal.style.display = 'none';
             newCustomerForm.reset();
-            // Seleccionamos automáticamente al nuevo cliente
-            // El endpoint de registro debería devolver el usuario creado. Asumimos que lo hace.
-            selectCustomer(result.user);
+            // Seleccionamos automáticamente al nuevo cliente creado
+            selectCustomer(result.cliente);
 
         } catch (error) {
             modalErrorMessage.textContent = `Error: ${error.message}`;

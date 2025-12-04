@@ -1,6 +1,26 @@
 // backend/controllers/clienteController.js
 const clienteService = require('../services/clienteService');
 
+/**
+ * Crea un cliente sin un usuario asociado.
+ * Ideal para registros rápidos en punto de venta.
+ * Los datos del cliente (nombre, correo, etc.) se guardan directamente.
+ */
+const createQuickClient = async (req, res) => {
+  try {
+    // Se espera que el cuerpo de la petición contenga los datos del cliente
+    const clienteData = req.body;
+    const result = await clienteService.createClient(clienteData);
+    const nuevoCliente = await clienteService.getClientById(result.insertId);
+
+    res.status(201).json({
+      message: 'Cliente rápido creado exitosamente.',
+      cliente: nuevoCliente, // Devolvemos el cliente completo
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear el cliente rápido. ' + error.message });
+  }
+};
 // Solo para administradores
 const createClientByAdmin = async (req, res) => {
   try {
@@ -32,4 +52,4 @@ const getMyProfile = async (req, res) => {
   }
 };
 
-module.exports = { createClientByAdmin, getMyProfile };
+module.exports = { createQuickClient, createClientByAdmin, getMyProfile };

@@ -77,8 +77,9 @@
             <form id="new-customer-form">
                 <input type="text" id="new-customer-nombre" placeholder="Nombres" required>
                 <input type="text" id="new-customer-apellido" placeholder="Apellidos" required>
-                <input type="email" id="new-customer-email" placeholder="Correo Electrónico" required>
-                <input type="password" id="new-customer-password" placeholder="Contraseña (temporal)" required>
+                <input type="email" id="new-customer-email" placeholder="Correo Electrónico" required>                
+                <input type="text" id="new-customer-dni" placeholder="DNI (Opcional)">
+                <input type="tel" id="new-customer-telefono" placeholder="Teléfono (Opcional)">
                 <button type="submit" class="btn-primary">Guardar Cliente</button>
                 <p id="modal-error-message" class="error-text" style="display: none;"></p>
             </form>
@@ -89,13 +90,3 @@
     <script src="../components/navbar.js" defer></script>
     <script src="../assets/js/carrito.js"></script>
 </body>
-</html>
-<style>
-    .btn-checkout.disabled {
-        pointer-events: none;
-        background-color: #ccc;
-        border-color: #ccc;
-        color: #666;
-        cursor: not-allowed;
-    }
-</style>

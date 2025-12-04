@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             metodoEntrega: document.querySelector('input[name="deliveryMethod"]:checked').value,
             direccionEntrega: deliveryAddressInput.value,
             metodoPago: selectedPaymentMethod,
-            correo: customerEmailInput.value,
+            correoCliente: customerEmailInput.value, // Cambiado de 'correo' a 'correoCliente'
             telefono: customerPhoneInput.value
         };
 
