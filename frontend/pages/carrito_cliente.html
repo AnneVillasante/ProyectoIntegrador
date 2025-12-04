@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito de Compras - Lunaria Threads</title>
+    <title>Carrito de Venta Física - Lunaria Threads</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="../assets/css/carrito.css">
     <script src="../assets/js/config.js"></script>
-    <!-- Iconos de Font Awesome para los botones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="../components/layout.js" defer></script>
 </head>
@@ -16,11 +15,11 @@
 
     <main class="container">
         <div class="cart-page-title">
-            <h2 id="cart-title">Mi Carrito de Compras</h2>
+            <h2 id="cart-title">Carrito de Venta Física</h2>
         </div>
 
-        <!-- Sección para selección de cliente (solo para admin en modo venta) -->
-        <div id="customer-selection-container" class="customer-selection-container" style="display: none;">
+        <!-- Sección para selección de cliente -->
+        <div id="customer-selection-container" class="customer-selection-container">
             <h4>Asignar Cliente a la Venta</h4>
             <div class="customer-selector-wrapper">
                 <input type="text" id="customer-search-input" class="customer-selector" placeholder="Buscar cliente por nombre o correo...">
@@ -36,40 +35,49 @@
         <div class="cart-container">
             <!-- Sección de productos en el carrito -->
             <div class="cart-items-list">
-                <!-- Los productos se cargarán aquí dinámicamente con JS -->
                 <div id="cart-items-container"></div>
 
                 <!-- Mensaje para carrito vacío -->
                 <div id="empty-cart-message" class="empty-cart" style="display: none;">
                     <i class="fas fa-shopping-cart"></i>
-                    <p>Tu carrito está vacío.</p>
-                    <a href="productos.html" class="btn-primary">Ver productos</a>
+                    <p>El carrito de venta está vacío.</p>
+                    <a href="productos.html" class="btn-primary">Agregar productos</a>
                 </div>
             </div>
 
-            <!-- Resumen de la compra -->
+            <!-- Resumen y Finalización de la compra -->
             <div class="cart-summary">
-                <h3>Resumen de la Compra</h3>
+                <h3>Resumen de la Venta</h3>
                 <div class="summary-item">
                     <span>Subtotal</span>
-                    <span id="summary-subtotal">$0.00</span>
+                    <span id="summary-subtotal">S/ 0.00</span>
                 </div>
                 <div class="summary-item">
                     <span>Descuentos</span>
-                    <span id="summary-discounts" class="discount-text">-$0.00</span>
+                    <span id="summary-discounts" class="discount-text">-S/ 0.00</span>
                 </div>
                 <div class="summary-total">
                     <span>Total</span>
-                    <span id="summary-total">$0.00</span>
+                    <span id="summary-total">S/ 0.00</span>
                 </div>
-                <a href="compra.html" id="checkout-button" class="btn-checkout disabled">Continuar Compra</a>
+
+                <!-- Mini-checkout -->
+                <div id="mini-checkout-section" style="margin-top: 20px;">
+                    <h4>Método de Pago</h4>
+                    <select id="payment-method-selector" class="customer-selector" style="width: 100%; margin-bottom: 20px;">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="card">Tarjeta</option>
+                        <option value="yape">Yape/Plin</option>
+                    </select>
+                    <button id="finalize-sale-button" class="btn-checkout disabled">Finalizar Venta</button>
+                </div>
             </div>
         </div>
     </main>
 
     <div id="footer"></div>
 
-    <!-- Modal para Nuevo Cliente (solo para modo venta) -->
+    <!-- Modal para Nuevo Cliente -->
     <div id="new-customer-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close-modal-btn">&times;</span>
@@ -85,17 +93,6 @@
         </div>
     </div>
 
-    <!-- El script debe ir al final para asegurar que el DOM esté cargado -->
-    <script src="../components/navbar.js" defer></script>
-    <script src="../assets/js/carrito.js"></script>
+    <script src="../assets/js/carrito_cliente.js"></script>
 </body>
 </html>
-<style>
-    .btn-checkout.disabled {
-        pointer-events: none;
-        background-color: #ccc;
-        border-color: #ccc;
-        color: #666;
-        cursor: not-allowed;
-    }
-</style>

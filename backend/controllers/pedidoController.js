@@ -21,18 +21,18 @@ exports.createOrder = async (req, res) => {
         // ---------------------------------------------------------
         let idClienteFinal = null;
 
-        // CASO A: Es Administrador y quiere asignar la venta a otro cliente (por correo)
-        if (rolUsuario === 'Administrador' && req.body.correoCliente) {
-            // Buscamos al cliente a través del servicio para mantener la arquitectura de capas.
-            const clienteDestino = await clienteService.findByCorreo(req.body.correoCliente);
-            
-            if (!clienteDestino) {
-                return res.status(404).json({ error: `No se encontró ningún cliente registrado con el correo: ${req.body.correoCliente}` });
-            }
+        // CASO A: Es Administrador y está asignando la venta a un cliente específico por su ID.
+        // Esto es ideal para ventas físicas rápidas.
+        if (rolUsuario === 'Administrador' && req.body.idCliente) {
+            idClienteFinal = req.body.idCliente;
+        }
+        // CASO B: Es Administrador y asigna la venta por correo (flujo de checkout tradicional).
+        else if (rolUsuario === 'Administrador' && req.body.correoCliente) {
+            const clienteDestino = await clienteService.findByCorreo(req.body.correoCliente); // Asume que este método existe
+            if (!clienteDestino) return res.status(404).json({ error: `Cliente con correo ${req.body.correoCliente} no encontrado.` });
             idClienteFinal = clienteDestino.idCliente;
-            
         } 
-        // CASO B: Flujo normal (Cliente comprando para sí mismo o Admin comprando para su perfil personal)
+        // CASO C: Flujo normal (Cliente comprando para sí mismo o Admin para su perfil personal)
         else {
             const clientePerfil = await clienteService.getClientByUserId(idUsuarioLogueado);
             if (!clientePerfil) {

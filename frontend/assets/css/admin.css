@@ -720,3 +720,10 @@
   color: var(--text);
   margin-bottom: 20px;
 }
+/* Agrega esto al final de admin.css */
+
+.chart-wrapper {
+  position: relative; /* Necesario para Chart.js responsive */
+  height: 400px;      /* ¡CRUCIAL! Esto rompe el bucle infinito */
+  width: 100%;
+}

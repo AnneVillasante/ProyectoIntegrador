@@ -62,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isAuthenticated()) {
         const user = getUserData();
         const isAdmin = user && user.rol === 'Administrador';
-        const adminCartSwitcher = document.getElementById('adminCartSwitcher');
         
         let content = `
           <div class="account-info">
@@ -93,14 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
               </svg>
               Panel administrativo
             </a>
+            <a class="menu-item" href="/pages/carrito_cliente.html">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              &#x1F3EA; Venta Física (POS)
+            </a>
           `;
         }
 
         // Si es admin, mostrar el selector de carrito
-        if (isAdmin && adminCartSwitcher) {
+        if (isAdmin) {
           const activeCart = localStorage.getItem('activeCart') || 'personal';
-          adminCartSwitcher.style.display = 'block';
-          adminCartSwitcher.innerHTML = `
+          content += `
             <div class="menu-divider"></div>
             <div class="menu-item-static">
               <span>Modo Carrito:</span>
@@ -110,15 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
               </select>
             </div>
           `;
-          
-          // Anadir listener para el cambio de modo
-          setTimeout(() => { // Timeout para asegurar que el elemento está en el DOM
-            document.getElementById('cartModeSelector').addEventListener('change', handleCartModeChange);
-          }, 0);
         }
 
         // "Cerrar sesión" se muestra para todos los usuarios autenticados
         content += `
+          <div class="menu-divider"></div>
           <a class="menu-item logout-btn" href="#" id="logoutBtn">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -138,6 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             logout();
           });
+        }
+
+        // Agregar evento al selector de carrito si existe
+        const cartModeSelector = accountContent.querySelector('#cartModeSelector');
+        if (cartModeSelector) {
+            cartModeSelector.addEventListener('change', handleCartModeChange);
         }
       } else {
         // Usuario no autenticado - mostrar "Iniciar sesión"

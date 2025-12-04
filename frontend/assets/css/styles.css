@@ -419,6 +419,31 @@ main {
   background: rgba(255, 107, 107, 0.1);
 }
 
+.menu-item-static {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+.cart-mode-selector {
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.cart-mode-selector:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
 /* Responsive para account panel */
 @media (max-width: 480px) {
   .account-panel {

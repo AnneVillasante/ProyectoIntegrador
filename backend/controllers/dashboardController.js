@@ -71,7 +71,7 @@ exports.getMetrics = async (req, res) => {
             FROM pedido p
             ${whereClause.length > 0 ? `${whereClause} AND` : 'WHERE'} (p.estado = "pagado" OR p.estado = "entregado")
             GROUP BY ${groupBy}
-            ORDER BY MIN(p.fecha) ASC  <-- CAMBIO AQUÍ (Agregamos MIN)
+            ORDER BY MIN(p.fecha) ASC 
         `;
         const [chartDataRes] = await db.query(chartQuery, params);
 

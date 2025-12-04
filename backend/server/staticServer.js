@@ -42,6 +42,11 @@ staticApp.get('/dashboard', (req, res) => { // ✅ Ruta directa al panel de admi
 staticApp.get('/admin/cupones', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'admin_panel.html'));
 });
+// ✅ Nueva ruta para el Punto de Venta (POS) del administrador
+staticApp.get('/admin/pos', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'carrito_cliente.html'));
+});
+
 
 
 // Render de productos

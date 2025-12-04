@@ -218,3 +218,163 @@ body {
     text-decoration: none;
     border-radius: var(--border-radius);
 }
+
+/* Estilos para la selección de cliente */
+.customer-selection-container {
+    background-color: var(--color-white);
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.customer-selection-container h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--color-primary);
+}
+
+.customer-selector-wrapper {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.customer-selector {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+}
+
+.current-customer-info {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+/* --- Estilos para la nueva interfaz de carrito_cliente.html --- */
+
+/* Contenedor de resultados de búsqueda de clientes */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--color-white);
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-shadow: var(--box-shadow);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background-color: var(--color-background);
+    color: var(--color-primary);
+}
+
+/* Información del cliente seleccionado */
+.current-customer-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-background);
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+}
+
+.btn-clear-customer {
+    background: none;
+    border: none;
+    color: var(--color-danger);
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Estilos para el Modal de Nuevo Cliente */
+.modal {
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close-modal-btn {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-modal-btn:hover,
+.close-modal-btn:focus {
+    color: var(--color-text);
+}
+
+.error-text {
+    color: var(--color-danger);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+/* Estilos para botones secundarios y formularios en modal */
+.btn-secondary {
+    padding: 10px 15px;
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-primary);
+}
+
+#new-customer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#new-customer-form input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+}

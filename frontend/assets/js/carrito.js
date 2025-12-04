@@ -7,18 +7,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const summaryTotal = document.getElementById('summary-total');
     const checkoutButton = document.getElementById('checkout-button');
 
+    // --- ELEMENTOS PARA GESTIÓN DE CLIENTES (MODO VENTA) ---
+    const customerSelectionContainer = document.getElementById('customer-selection-container');
+    const customerSearchInput = document.getElementById('customer-search-input');
+    const customerSearchResults = document.getElementById('customer-search-results');
+    const currentCustomerInfo = document.getElementById('current-customer-info');
+    const currentCustomerName = document.getElementById('current-customer-name');
+    const clearCustomerBtn = document.getElementById('clear-customer-btn');
+    const openNewCustomerModalBtn = document.getElementById('open-new-customer-modal');
+    const newCustomerModal = document.getElementById('new-customer-modal');
+    const newCustomerForm = document.getElementById('new-customer-form');
+    const closeModalBtn = document.querySelector('.close-modal-btn');
+    const modalErrorMessage = document.getElementById('modal-error-message');
+
     // Determinar el modo del carrito (para administradores)
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isAdmin = user.rol === 'Administrador';
     const cartType = isAdmin ? (localStorage.getItem('activeCart') || 'personal') : 'personal';
+    let selectedCustomer = null; // Cliente seleccionado para la venta
 
     if (cartTitle) {
         cartTitle.textContent = cartType === 'venta' ? 'Carrito de Venta Física' : 'Mi Carrito de Compras';
     }
 
+    // Si es admin en modo venta, mostrar el selector de cliente
+    if (isAdmin && cartType === 'venta') {
+        customerSelectionContainer.style.display = 'block';
+        setupCustomerManagement();
+    }
+
     async function fetchCartData() {
         try {
-            const token = localStorage.getItem('token'); // Obtener el token del usuario logueado
+            const token = localStorage.getItem('token');
             if (!token) {
                 // Si no hay token, el usuario no ha iniciado sesión.
                 // Podemos mostrar el carrito vacío y redirigir o mostrar un mensaje.
@@ -27,8 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const apiUrl = `${window.CONFIG.API_URL}/carrito?type=${cartType}`;
             // La ruta GET /api/carrito obtiene el carrito del usuario autenticado por su token.
+            const apiUrl = `${window.CONFIG.API_URL}/carrito?type=${cartType}`;
             const response = await fetch(apiUrl, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -116,6 +136,124 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItemsContainer.style.display = 'block';
         emptyCartMessage.style.display = 'none';
         document.querySelector('.cart-summary').style.display = 'block'; // Mostrar resumen
+    }
+
+    // --- LÓGICA DE GESTIÓN DE CLIENTES (MODO VENTA) ---
+
+    function setupCustomerManagement() {
+        customerSearchInput.addEventListener('input', (e) => searchCustomers(e.target.value));
+        document.addEventListener('click', (e) => { // Ocultar resultados si se hace clic fuera
+            if (!customerSelectionContainer.contains(e.target)) {
+                customerSearchResults.style.display = 'none';
+            }
+        });
+        clearCustomerBtn.addEventListener('click', clearSelectedCustomer);
+        openNewCustomerModalBtn.addEventListener('click', () => { newCustomerModal.style.display = 'block'; });
+        closeModalBtn.addEventListener('click', () => { newCustomerModal.style.display = 'none'; });
+        newCustomerForm.addEventListener('submit', handleNewCustomerSubmit);
+    }
+
+    let allCustomers = []; // Caché para no llamar a la API en cada tipeo
+
+    async function searchCustomers(query) {
+        if (query.length < 3) {
+            customerSearchResults.style.display = 'none';
+            return;
+        }
+
+        try {
+            // Si la caché de clientes está vacía, la llenamos.
+            if (allCustomers.length === 0) {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${window.CONFIG.API_URL}/usuario?rol=Cliente`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('No se pudieron cargar los clientes.');
+                allCustomers = await response.json();
+            }
+
+            // Filtrar localmente en la caché de clientes.
+            const lowerCaseQuery = query.toLowerCase();
+            const filteredCustomers = allCustomers.filter(customer =>
+                customer.nombres.toLowerCase().includes(lowerCaseQuery) ||
+                (customer.apellidos && customer.apellidos.toLowerCase().includes(lowerCaseQuery)) ||
+                customer.email.toLowerCase().includes(lowerCaseQuery)
+            );
+            renderSearchResults(filteredCustomers);
+        } catch (error) {
+            console.error('Error buscando clientes:', error);
+            customerSearchResults.innerHTML = '<div class="search-result-item">Error al buscar</div>';
+            customerSearchResults.style.display = 'block';
+        }
+    }
+
+    function renderSearchResults(customers) {
+        customerSearchResults.innerHTML = '';
+        if (customers.length === 0) {
+            customerSearchResults.innerHTML = '<div class="search-result-item">No se encontraron clientes.</div>';
+        } else {
+            customers.forEach(customer => {
+                const item = document.createElement('div');
+                item.classList.add('search-result-item');
+                item.textContent = `${customer.nombres} ${customer.apellidos} (${customer.email})`;
+                item.addEventListener('click', () => selectCustomer(customer));
+                customerSearchResults.appendChild(item);
+            });
+        }
+        customerSearchResults.style.display = 'block';
+    }
+
+    function selectCustomer(customer) {
+        selectedCustomer = customer;
+        localStorage.setItem('physicalSaleCustomer', JSON.stringify(customer)); // Guardar cliente para el checkout
+        currentCustomerName.textContent = `${customer.nombres} ${customer.apellidos || ''}`.trim();
+        currentCustomerInfo.style.display = 'flex';
+        customerSearchInput.style.display = 'none';
+        customerSearchResults.style.display = 'none';
+        customerSearchInput.value = '';
+    }
+
+    function clearSelectedCustomer() {
+        selectedCustomer = null;
+        localStorage.removeItem('physicalSaleCustomer');
+        currentCustomerInfo.style.display = 'none';
+        customerSearchInput.style.display = 'block';
+    }
+
+    async function handleNewCustomerSubmit(e) {
+        e.preventDefault();
+        modalErrorMessage.style.display = 'none';
+        const nombre = document.getElementById('new-customer-nombre').value;
+        const apellido = document.getElementById('new-customer-apellido').value;
+        const email = document.getElementById('new-customer-email').value;
+        const password = document.getElementById('new-customer-password').value;
+
+        try {
+            const response = await fetch(`${window.CONFIG.API_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombres: nombre, apellidos: apellido, email, password, rol: 'Cliente' })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'No se pudo crear el cliente.');
+            
+            alert('Cliente creado con éxito.');
+            newCustomerModal.style.display = 'none';
+            newCustomerForm.reset();
+            selectCustomer(result.user);
+
+        } catch (error) {
+            modalErrorMessage.textContent = `Error: ${error.message}`;
+            modalErrorMessage.style.display = 'block';
+        }
+    }
+
+    // Al cargar la página, verificar si hay un cliente guardado (modo venta)
+    if (isAdmin && cartType === 'venta') {
+        const savedCustomer = localStorage.getItem('physicalSaleCustomer');
+        if (savedCustomer) {
+            selectCustomer(JSON.parse(savedCustomer));
+        }
     }
 
     function addEventListenersToItems() {
@@ -206,6 +344,19 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Hubo un error al actualizar la cantidad del producto.');
         }
     }
+
+    // --- LÓGICA DE CHECKOUT ---
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', (e) => {
+            if (cartType === 'venta' && !selectedCustomer) {
+                e.preventDefault(); // Detener la navegación
+                alert('Por favor, asigna un cliente a la venta antes de continuar.');
+                customerSearchInput.focus();
+            }
+            // Si es carrito personal o si ya hay un cliente, la navegación a compra.html continúa.
+        });
+    }
+
 
     // Carga inicial de los datos del carrito
     fetchCartData();

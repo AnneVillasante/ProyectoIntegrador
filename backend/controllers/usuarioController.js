@@ -1,10 +1,25 @@
 const usuarioModel = require('../models/usuarioModel');
 const UsuarioDto = require('../dto/usuarioDTO');
 const bcrypt = require('bcryptjs');
+const db = require('../config/db'); // Importar la conexión a la BD
 
 exports.obtenerUsuarios = async (req, res) => {
   try {
-    const usuarios = await usuarioModel.getAll();
+    const { rol } = req.query;
+    let usuarios;
+
+    if (rol === 'Cliente') {
+      // Si se pide solo clientes, hacemos un JOIN para obtener también el idCliente
+      const [rows] = await db.query(`
+        SELECT u.*, c.idCliente 
+        FROM usuario u 
+        LEFT JOIN cliente c ON u.idUsuario = c.fk_idUsuario 
+        WHERE u.rol = 'Cliente'
+      `);
+      usuarios = rows;
+    } else {
+      usuarios = await usuarioModel.getAll(rol); // Asumiendo que getAll puede filtrar por rol
+    }
     res.json(usuarios);
   } catch (err) {
     console.error('USUARIO LIST ERROR:', err);
@@ -176,5 +191,28 @@ exports.subirFotoPerfil = async (req, res) => {
   } catch (err) {
     console.error('USER PHOTO UPLOAD ERROR:', err);
     res.status(500).json({ error: 'Error al subir la foto de perfil' });
+  }
+};
+
+/**
+ * Busca usuarios por nombre, apellido o correo.
+ * Endpoint: GET /api/usuario/buscar?q=texto
+ */
+exports.buscarUsuarios = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) {
+      return res.status(400).json({ error: 'El término de búsqueda debe tener al menos 2 caracteres.' });
+    }
+
+    // Llama al modelo para realizar la búsqueda.
+    const usuarios = await usuarioModel.search(q);
+
+    // Mapea a DTO para no exponer datos sensibles.
+    const usuariosDto = usuarios.map(u => new UsuarioDto(u));
+    res.json(usuariosDto);
+  } catch (err) {
+    console.error('USUARIO SEARCH ERROR:', err);
+    res.status(500).json({ error: 'Error al buscar usuarios' });
   }
 };
