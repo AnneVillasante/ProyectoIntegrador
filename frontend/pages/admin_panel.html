@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="../assets/js/config.js" defer></script>
   <script src="../components/layout.js" defer></script>
+  <!-- Anadimos la librería Chart.js para los gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 </head>
 <body>
   <div id="navbar"></div>
@@ -464,36 +466,69 @@
             <h2>📊 Métricas del Negocio</h2>
             <p>Resumen en tiempo real de tu tienda.</p>
           </div>
+          <!-- NUEVO: Controles de Filtro de Tiempo -->
+          <div class="metrics-filters">
+            <div class="form-group">
+              <label for="time-filter">Filtrar por período:</label>
+              <select id="time-filter">
+                <option value="all">Todo el tiempo</option>
+                <option value="today">Hoy</option>
+                <option value="week">Esta semana</option>
+                <option value="month">Este mes</option>
+                <option value="year">Este año</option>
+                <option value="custom">Personalizado</option>
+              </select>
+            </div>
+            <div id="custom-date-range" class="custom-range" hidden>
+              <div class="form-group">
+                <label for="start-date">Desde:</label>
+                <input type="date" id="start-date">
+              </div>
+              <div class="form-group">
+                <label for="end-date">Hasta:</label>
+                <input type="date" id="end-date">
+              </div>
+            </div>
+            <button id="apply-metrics-filter" class="btn-primary">Aplicar</button>
+          </div>
           <div class="card-content">
             <div class="metrics-grid">
               <div class="metric-card blue">
                 <div class="metric-icon"><i class="fas fa-users"></i></div>
                 <div class="metric-info">
-                  <h3>Usuarios</h3>
-                  <p id="metric-users">0</p>
+                  <h3>Total Usuarios</h3>
+                  <p id="metric-total-users">0</p>
                 </div>
               </div>
               <div class="metric-card green">
                 <div class="metric-icon"><i class="fas fa-box"></i></div>
                 <div class="metric-info">
-                  <h3>Productos</h3>
-                  <p id="metric-products">0</p>
+                  <h3>Total Productos</h3>
+                  <p id="metric-total-products">0</p>
                 </div>
               </div>
               <div class="metric-card orange">
                 <div class="metric-icon"><i class="fas fa-shopping-cart"></i></div>
                 <div class="metric-info">
                   <h3>Pedidos Totales</h3>
-                  <p id="metric-orders">0</p>
+                  <p id="metric-total-orders">0</p>
                 </div>
               </div>
               <div class="metric-card purple">
                 <div class="metric-icon"><i class="fas fa-money-bill-wave"></i></div>
                 <div class="metric-info">
-                  <h3>Ingresos</h3>
-                  <p id="metric-income">S/ 0.00</p>
+                  <h3>Ingresos Totales</h3>
+                  <p id="metric-total-income">S/ 0.00</p>
                 </div>
               </div>
+            </div>
+            <!-- NUEVO: Contenedor para el Gráfico -->
+            <div class="chart-container">
+              <div class="chart-card">
+                <h3>Ingresos por Período</h3>
+                <canvas id="incomeChart"></canvas>
+              </div>
+              <!-- Aquí podrías anadir más gráficos en el futuro -->
             </div>
           </div>
         </div>

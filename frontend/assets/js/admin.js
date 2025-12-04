@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof loadInvoices === 'function') loadInvoices();
         break;
       case 'metrics':
-        loadMetrics(); // Cargar métricas al activar la pestana
+        document.getElementById('apply-metrics-filter').click(); // Simula un clic para cargar con el filtro por defecto
         break;
       case 'logs':
         if (typeof loadLogs === 'function') loadLogs();
@@ -938,19 +938,100 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ===== MÉTRICAS DEL DASHBOARD =====
-  async function loadMetrics() {
-  try {
-    const data = await apiCall('/dashboard/metricas');
-    if (data) {
-      document.getElementById('metric-users').textContent = data.usuarios;
-      document.getElementById('metric-products').textContent = data.productos;
-      document.getElementById('metric-orders').textContent = data.pedidos;
-      document.getElementById('metric-income').textContent = `S/ ${parseFloat(data.ingresos).toFixed(2)}`;
+  let incomeChart = null; // Variable para mantener la instancia del gráfico
+
+  async function loadMetrics(params = {}) {
+    try {
+      const queryString = new URLSearchParams(params).toString();
+      const data = await apiCall(`/dashboard/metricas?${queryString}`);
+      
+      if (data && data.summary) {
+        document.getElementById('metric-total-users').textContent = data.summary.usuarios;
+        document.getElementById('metric-total-products').textContent = data.summary.productos;
+        document.getElementById('metric-total-orders').textContent = data.summary.pedidos;
+        document.getElementById('metric-total-income').textContent = `S/ ${parseFloat(data.summary.ingresos).toFixed(2)}`;
+      }
+
+      if (data && data.chartData) {
+        renderIncomeChart(data.chartData);
+      }
+
+    } catch (error) {
+      console.error('Error cargando métricas:', error);
+      alert('No se pudieron cargar las métricas.');
     }
-  } catch (error) {
-    console.error('Error cargando métricas:', error);
   }
-}
+
+  function renderIncomeChart(chartData) {
+    const ctx = document.getElementById('incomeChart').getContext('2d');
+    
+    if (incomeChart) {
+      incomeChart.destroy(); // Destruir el gráfico anterior para evitar solapamientos
+    }
+
+    incomeChart = new Chart(ctx, {
+      type: 'line', // Gráfico de líneas
+      data: {
+        labels: chartData.labels, // Eje X (fechas)
+        datasets: [{
+          label: 'Ingresos',
+          data: chartData.values, // Eje Y (montos)
+          borderColor: 'rgba(154, 140, 255, 1)', // --brand
+          backgroundColor: 'rgba(154, 140, 255, 0.2)', // --brand con transparencia
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { color: 'var(--muted)' },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+          },
+          x: {
+            ticks: { color: 'var(--muted)' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: 'var(--text)' } }
+        }
+      }
+    });
+  }
+
+  // Lógica de filtros de métricas
+  const timeFilterSelect = document.getElementById('time-filter');
+  const customDateRange = document.getElementById('custom-date-range');
+  const applyMetricsFilterBtn = document.getElementById('apply-metrics-filter');
+
+  if (timeFilterSelect) {
+    timeFilterSelect.addEventListener('change', () => {
+      customDateRange.hidden = timeFilterSelect.value !== 'custom';
+    });
+  }
+
+  if (applyMetricsFilterBtn) {
+    applyMetricsFilterBtn.addEventListener('click', () => {
+      const filter = timeFilterSelect.value;
+      let params = { filter };
+
+      if (filter === 'custom') {
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        if (startDate && endDate) {
+          params.fechaInicio = startDate;
+          params.fechaFin = endDate;
+        }
+      }
+      
+      loadMetrics(params);
+    });
+  }
 
   // Funciones globales para onclick
   window.editUser = editUser;

@@ -225,7 +225,7 @@
 }
 
 .payment-method img { width: 40px; height: auto; }
-.payment-method i { font-size: 28px; color: var(--brand-2); width: 40px; text-align: center; }
+.payment-method i { font-size: 28px; color: var(--brand-2); width: 40px; text-align: center; transition: color 0.3s ease; }
 .payment-method span { font-weight: 600; }
 
 /* Contenedor para los detalles del pago en la columna derecha */
@@ -235,6 +235,12 @@
     border-radius: var(--radius);
     border: 1px solid rgba(255, 255, 255, 0.1);
     min-height: 250px; /* Altura mínima para mantener la consistencia visual */
+}
+
+.payment-details-content h4 { font-size: 1.2rem; color: var(--text); margin-bottom: 10px; }
+.payment-details-content p { color: var(--muted); line-height: 1.6; }
+.payment-method.active i {
+    color: var(--brand);
 }
 
 /* Cada vista de detalles de pago (ej. para tarjeta, para yape) */

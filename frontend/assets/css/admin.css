@@ -634,23 +634,89 @@
   gap: 20px;
   padding: 20px 0;
 }
+
 .metric-card {
-  background: white;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   padding: 20px;
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  border-left: 5px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #ccc; /* Color por defecto */
+  transition: all 0.3s ease;
 }
-.metric-card.blue { border-left-color: #3498db; }
-.metric-card.green { border-left-color: #2ecc71; }
-.metric-card.orange { border-left-color: #e67e22; }
-.metric-card.purple { border-left-color: #9b59b6; }
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.metric-card.blue { border-left-color: var(--brand); } /* #9A8CFF */
+.metric-card.green { border-left-color: #4ade80; } /* Verde brillante */
+.metric-card.orange { border-left-color: var(--accent-soft); } /* #E6CDB5 */
+.metric-card.purple { border-left-color: var(--brand-2); } /* #D6A5B5 */
+
 .metric-icon {
   font-size: 2.5rem;
   margin-right: 20px;
   opacity: 0.8;
 }
-.metric-info h3 { font-size: 0.9rem; color: #777; margin: 0; }
-.metric-info p { font-size: 1.5rem; font-weight: bold; margin: 5px 0 0 0; color: #333; }
+
+.metric-info h3 { font-size: 0.9rem; color: var(--muted); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric-info p { font-size: 1.8rem; font-weight: 600; margin: 5px 0 0 0; color: var(--text); }
+
+/* NUEVO: Estilos para Filtros de Métricas */
+.metrics-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metrics-filters .form-group {
+  margin-bottom: 0;
+}
+
+.metrics-filters label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.metrics-filters select,
+.metrics-filters input[type="date"] {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.custom-range {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+/* NUEVO: Estilos para Gráficos */
+.chart-container {
+  margin-top: 40px;
+  display: grid;
+  gap: 30px;
+}
+
+.chart-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  color: var(--text);
+  margin-bottom: 20px;
+}

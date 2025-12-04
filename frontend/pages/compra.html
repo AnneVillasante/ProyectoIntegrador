@@ -101,6 +101,10 @@
                             <i class="fas fa-credit-card"></i>
                             <span>Tarjeta de Crédito/Débito</span>
                         </div>
+                        <div class="payment-method" data-method="efectivo">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Pago en Efectivo</span>
+                        </div>
                         <div class="payment-method" data-method="yape">
                             <img src="../assets/img/yape-logo.png" alt="Yape">
                             <span>Pagar con Yape</span>
@@ -116,6 +120,12 @@
                                 <div id="card-element" class="form-control"></div>
                                 <div id="card-errors" role="alert" class="text-danger mt-2"></div>
                             </div>
+                        </div>
+                        <!-- Vista para Pago en Efectivo -->
+                        <div id="payment-view-efectivo" class="payment-details-view">
+                            <h4>Pago en Efectivo</h4>
+                            <p>Pagarás el monto total en efectivo al momento de recibir tu pedido o al recogerlo en tienda.</p>
+                            <p>Por favor, asegúrate de tener el monto exacto para facilitar la transacción.</p>
                         </div>
                         <!-- Vista para Yape -->
                         <div id="payment-view-yape" class="payment-details-view">

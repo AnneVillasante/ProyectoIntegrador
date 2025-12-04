@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Elementos de pago
     const paymentOptions = document.querySelectorAll('.payment-method');
-    const cardElementContainer = document.getElementById('card-element-container');
+    const paymentDetailViews = document.querySelectorAll('.payment-details-view');
     const cardElementDiv = document.getElementById('card-element');
     const cardErrors = document.getElementById('card-errors');
 
@@ -134,9 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
             paymentOptions.forEach(m => m.classList.remove('active'));
             method.classList.add('active');
             selectedPaymentMethod = method.dataset.method;
-
-            // Mostrar/ocultar el formulario de tarjeta
-            cardElementContainer.classList.toggle('hidden', selectedPaymentMethod !== 'card');
+    
+            // Ocultar todas las vistas de detalles de pago
+            paymentDetailViews.forEach(view => view.classList.remove('active'));
+    
+            // Mostrar la vista correspondiente al método seleccionado
+            const activeView = document.getElementById(`payment-view-${selectedPaymentMethod}`);
+            if (activeView) {
+                activeView.classList.add('active');
+            }
         });
     });
 

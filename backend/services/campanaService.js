@@ -31,8 +31,11 @@ class CampanaService {
 
     const nuevaCampana = await CampanaDAO.crear({
       titulo,
-      imagen,
-      descripcion,
+      // --- CORRECCIÓN DE SEGURIDAD ---
+      // Si imagen no existe (es undefined), pasamos null explícitamente
+      imagen: imagen || null, 
+      descripcion: descripcion || null,
+      // ------------------------------
       fechaInicio,
       fechaFin,
     });
@@ -40,12 +43,28 @@ class CampanaService {
   }
 
   static async actualizar(id, data) {
-    const campana = await CampanaDAO.obtenerPorId(id);
-    if (!campana) {
+    const campanaExistente = await CampanaDAO.obtenerPorId(id);
+    if (!campanaExistente) {
       return null;
     }
 
-    await CampanaDAO.actualizar(id, data);
+    // Lógica para mantener la imagen anterior si no se sube una nueva
+    let imagenFinal = campanaExistente.imagen; // Por defecto, mantenemos la vieja
+    if (data.imagen) {
+      imagenFinal = data.imagen; // Si viene una nueva, la usamos
+    }
+
+    const datosParaActualizar = {
+      titulo: data.titulo || campanaExistente.titulo,
+      descripcion: data.descripcion || campanaExistente.descripcion,
+      fechaInicio: data.fechaInicio || campanaExistente.fechaInicio,
+      fechaFin: data.fechaFin || campanaExistente.fechaFin,
+      imagen: imagenFinal // Usamos la variable que calculamos arriba
+    };
+
+    await CampanaDAO.actualizar(id, datosParaActualizar);
+    
+    // Recuperamos la versión actualizada para devolverla
     const campanaActualizada = await CampanaDAO.obtenerPorId(id);
     return new CampanaDTO(campanaActualizada);
   }
