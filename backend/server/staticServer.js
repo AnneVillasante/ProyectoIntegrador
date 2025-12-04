@@ -2,7 +2,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
-const ProductService = require('../services/ProductoService');
+const ProductService = require('../services/productoService');
 
 const staticApp = express();
 const frontendRoot = path.join(__dirname, '../../frontend');
