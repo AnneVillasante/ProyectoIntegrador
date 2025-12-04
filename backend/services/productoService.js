@@ -1,7 +1,6 @@
 const ProductoDao = require('../dao/productoDAO');
 const Producto = require('../models/productoModel');
 
-
 class ProductoService {
   // 🧩 1. Obtener productos desde MySQL
   async getProductsForStaticRender(category = null) {
@@ -32,16 +31,21 @@ class ProductoService {
       return '<p class="no-products">No hay productos disponibles.</p>';
     }
 
+    // DETECTAR URL BASE:
+    // Si estamos en Render, usamos la URL externa. Si no, localhost.
+    // Render nos da automáticamente la variable RENDER_EXTERNAL_URL.
+    const BASE_URL = process.env.RENDER_EXTERNAL_URL || 'http://localhost:4000';
+
     return products.map(p => `
       <div class="producto-card">
-        <img src=`${window.CONFIG.IMG_URL}${p.imagen}`alt="${p.nombre}" class="producto-img" onerror="this.src=`${window.CONFIG.IMG_URL}/uploads/default_product.png`;>
+        <img src="${BASE_URL}/uploads/${p.imagen}" alt="${p.nombre}" class="producto-img" onerror="this.src='${BASE_URL}/uploads/default_product.png'">
         <h3>${p.nombre}</h3>
         <p class="categoria">${p.categoria || ''}</p>
         <p class="precio">S/ ${Number(p.precio).toFixed(2)}</p>
         <p class="stock">Disponibles: ${p.stock}</p>
         <div class="acciones">
           <button class="btn-outline ver" data-id="${p.id}">Ver más</button>
-          <button class="btn-primary agregar" data-id="${p.id}">Anadir al carrito</button>
+          <button class="btn-primary agregar" data-id="${p.id}">Añadir al carrito</button>
         </div>
       </div>
     `).join('');
