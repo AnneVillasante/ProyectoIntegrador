@@ -51,6 +51,33 @@ class CuponService {
         }
         return { success: true, message: 'Cupón eliminado correctamente.' };
     }
+
+    /**
+     * Valida un cupón para su uso en el carrito.
+     * @param {string} codigo - El código del cupón a validar.
+     * @returns {Promise<object>} - Un objeto con el descuento y un mensaje.
+     */
+    async validateCoupon(codigo) {
+        if (!codigo) {
+            throw new Error('No se proporcionó un código de cupón.');
+        }
+
+        const cupon = await cuponDAO.findByCode(codigo.toUpperCase());
+
+        if (!cupon) {
+            throw new Error('El cupón no existe.');
+        }
+        if (!cupon.activo) {
+            throw new Error('El cupón no está activo.');
+        }
+        if (new Date(cupon.fechaExpiracion) < new Date()) {
+            throw new Error('El cupón ha expirado.');
+        }
+
+        // Si todas las validaciones pasan, devolvemos el descuento.
+        // NOTA: Por ahora, solo devolvemos montos fijos. La lógica para porcentajes se puede añadir aquí.
+        return { descuento: cupon.valorDescuento, mensaje: `Cupón "${cupon.codigo}" aplicado con éxito.` };
+    }
 }
 
 module.exports = new CuponService();

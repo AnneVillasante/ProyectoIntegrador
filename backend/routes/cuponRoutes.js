@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const cuponController = require('../controllers/cuponController');
 
+// POST /api/cupones/validar - Validar un cupón para el carrito
+router.post('/validar', cuponController.validateCoupon);
+
 // GET /api/cupones - Obtener todos los cupones
 router.get('/', cuponController.getAllCoupons);
 
@@ -18,4 +21,3 @@ router.put('/:id', cuponController.updateCoupon);
 router.delete('/:id', cuponController.deleteCoupon);
 
 module.exports = router;
-

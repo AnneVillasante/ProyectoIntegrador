@@ -48,11 +48,21 @@ const deleteCoupon = async (req, res) => {
     }
 };
 
+const validateCoupon = async (req, res) => {
+    try {
+        const { codigo_cupon } = req.body;
+        const result = await cuponService.validateCoupon(codigo_cupon);
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 module.exports = {
     getAllCoupons,
     getCouponById,
     createCoupon,
     updateCoupon,
     deleteCoupon,
+    validateCoupon,
 };
-

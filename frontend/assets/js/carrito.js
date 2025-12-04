@@ -26,6 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartType = isAdmin ? (localStorage.getItem('activeCart') || 'personal') : 'personal';
     let selectedCustomer = null; // Cliente seleccionado para la venta
 
+    // --- ELEMENTOS PARA CUPÓN DE DESCUENTO ---
+    const couponCodeInput = document.getElementById('coupon-code');
+    const applyCouponBtn = document.getElementById('apply-coupon-btn');
+    const couponFeedback = document.getElementById('coupon-feedback');
+    let appliedDiscount = 0; // Almacena el descuento aplicado
+
+
     if (cartTitle) {
         cartTitle.textContent = cartType === 'venta' ? 'Carrito de Venta Física' : 'Mi Carrito de Compras';
     }
@@ -34,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isAdmin && cartType === 'venta') {
         customerSelectionContainer.style.display = 'block';
         setupCustomerManagement();
+    } else {
+        // Configurar cupones para el carrito personal
+        setupCouponManagement();
     }
 
     async function fetchCartData() {
@@ -111,12 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSummary(cart) {
         const subtotal = cart.items.reduce((sum, item) => sum + parseFloat(item.subtotal), 0);
-        const discounts = 0; // Lógica de descuentos a implementar en el futuro
-        const total = subtotal - discounts;
+        const total = subtotal - appliedDiscount;
 
         summarySubtotal.textContent = `S/ ${subtotal.toFixed(2)}`;
-        summaryDiscounts.textContent = `-S/ ${discounts.toFixed(2)}`;
-        summaryTotal.textContent = `S/ ${total.toFixed(2)}`;
+        summaryDiscounts.textContent = `-S/ ${appliedDiscount.toFixed(2)}`;
+        summaryTotal.textContent = `S/ ${total.toFixed(2) > 0 ? total.toFixed(2) : '0.00'}`;
 
         // Habilitar o deshabilitar el botón de compra usando clases CSS
         if (cart.items.length === 0) {
@@ -136,6 +145,61 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItemsContainer.style.display = 'block';
         emptyCartMessage.style.display = 'none';
         document.querySelector('.cart-summary').style.display = 'block'; // Mostrar resumen
+    }
+
+    // --- LÓGICA DE GESTIÓN DE CUPONES ---
+    function setupCouponManagement() {
+        if (!applyCouponBtn) return;
+
+        applyCouponBtn.addEventListener('click', async () => {
+            const code = couponCodeInput.value.trim().toUpperCase();
+            if (!code) {
+                showCouponFeedback('Por favor, ingresa un código de cupón.', 'error');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                // Endpoint de ejemplo. Debes crearlo en tu backend.
+                const response = await fetch(`${window.CONFIG.API_URL}/cupones/validar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ codigo_cupon: code })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'El cupón no es válido o ha expirado.');
+                }
+
+                // El backend debería devolver el monto del descuento
+                const { descuento, mensaje } = result;
+                appliedDiscount = parseFloat(descuento);
+
+                showCouponFeedback(mensaje || '¡Cupón aplicado con éxito!', 'success');
+                
+                // Deshabilitar el input y el botón para evitar múltiples aplicaciones
+                couponCodeInput.disabled = true;
+                applyCouponBtn.disabled = true;
+                applyCouponBtn.textContent = 'Aplicado';
+
+                // Recargar datos del carrito para que el resumen se actualice
+                fetchCartData();
+
+            } catch (error) {
+                showCouponFeedback(error.message, 'error');
+            }
+        });
+    }
+
+    function showCouponFeedback(message, type) {
+        couponFeedback.textContent = message;
+        couponFeedback.className = `feedback-message ${type}`; // 'success' o 'error'
+        couponFeedback.style.display = 'block';
     }
 
     // --- LÓGICA DE GESTIÓN DE CLIENTES (MODO VENTA) ---
