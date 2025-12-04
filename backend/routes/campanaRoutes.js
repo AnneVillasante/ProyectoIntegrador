@@ -9,21 +9,20 @@ const express = require('express');
 const router = express.Router();
 const campanaController = require('../controllers/campanaController');
 const multer = require('multer');
-// Importar middleware de seguridad
 const { protect, isAdmin } = require('../middleware/authMiddleware');
 
-// Configuración de Multer para manejar la subida de archivos.
-// Por ahora, lo configuramos para que no guarde el archivo en disco,
-// solo para que procese los campos de texto del formulario.
-// Si quisieras guardar la imagen, aquí se configuraría el `diskStorage`.
-const upload = multer();
+// --- CAMBIO 1: Importar configuración de Cloudinary ---
+const { createStorage } = require('../config/cloudinary');
 
-// Obtener todas las campanas
+// --- CAMBIO 2: Crear el almacenamiento específico para campanas ---
+const storage = createStorage('campanas'); // Las imágenes irán a la carpeta 'campanas' en tu Cloudinary
+const upload = multer({ storage: storage });
+
 router.get('/', campanaController.obtenerTodas);
-
-// Obtener una campana por ID
 router.get('/:id', campanaController.obtenerPorId);
 
+// --- CAMBIO 3: Usar 'upload.single' con la configuración nueva ---
+// 'imagen' debe coincidir con el nombre que usas en el frontend (formData.append('imagen', ...))
 router.post('/', protect, isAdmin, upload.single('imagen'), campanaController.crear);
 router.put('/:id', protect, isAdmin, upload.single('imagen'), campanaController.actualizar);
 router.delete('/:id', protect, isAdmin, campanaController.eliminar);

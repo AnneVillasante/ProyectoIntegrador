@@ -31,7 +31,16 @@ const obtenerPorId = async (req, res, next) => {
 
 const crear = async (req, res, next) => {
   try {
-    const nuevaCampana = await CampanaService.crear(req.body);
+    // 1. Copiamos todos los campos de texto del cuerpo de la petición
+    const data = { ...req.body };
+
+    // 2. VERIFICACIÓN CLAVE: Si Multer subió una imagen, guardamos su URL
+    if (req.file) {
+      data.imagen = req.file.path; // Cloudinary nos devuelve la URL aquí
+    }
+
+    // 3. Enviamos el objeto completo (texto + url imagen) al servicio
+    const nuevaCampana = await CampanaService.crear(data);
     res.status(201).json(nuevaCampana);
   } catch (error) {
     error.statusCode = 400;
@@ -42,7 +51,16 @@ const crear = async (req, res, next) => {
 const actualizar = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const campanaActualizada = await CampanaService.actualizar(id, req.body);
+    const data = { ...req.body };
+
+    // Mismo proceso para actualizar
+    if (req.file) {
+      data.imagen = req.file.path;
+    }
+    // NOTA: Si no hay req.file, 'data.imagen' será undefined.
+    // El servicio debe decidir si mantiene la imagen vieja o no.
+
+    const campanaActualizada = await CampanaService.actualizar(id, data);
     if (!campanaActualizada) {
       return res.status(404).json({ message: 'Campana no encontrada' });
     }
