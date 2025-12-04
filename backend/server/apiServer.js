@@ -5,23 +5,15 @@ const path = require('path');
 const fs = require('fs').promises;
 const ProductService = require('../services/productoService');
 
-// --- INICIO DEL TRUCO PARA RENDER ---
-// Guardamos el puerto de Render y lo borramos temporalmente
-// para que jsreport NO lo vea y no intente robarlo.
-const RENDER_PORT = process.env.PORT;
-if (process.env.PORT) delete process.env.PORT;
-
+// Configuramos jsreport con puerto 0, pero el verdadero control
+// lo haremos más abajo en startApi.
 const jsreport = require('jsreport')({
-  httpPort: 0, // Ahora sí respetará esto porque no ve la variable PORT
+  httpPort: 0,
   httpsPort: 0,
   templatingEngines: {
     allowedModules: ['moment']
   }
 });
-
-// Restauramos el puerto inmediatamente para que Express sí lo pueda usar
-if (RENDER_PORT) process.env.PORT = RENDER_PORT;
-// --- FIN DEL TRUCO ---
 
 const helmet = require('helmet');
 const pool = require('../config/db');
@@ -52,7 +44,7 @@ apiApp.set('jsreport', jsreport);
 
 // CORS
 apiApp.use(cors({ 
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'https://lunaria-threads.onrender.com'], // Añade tu URL de render si la sabes, o deja el *
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'https://lunaria-threads.onrender.com'], 
   credentials: true
 }));
 
@@ -78,7 +70,6 @@ apiApp.use(express.json());
 // ---------------------------------------------------------------------
 const frontendRoot = path.join(__dirname, '../../frontend');
 
-// Servir carpetas estáticas
 apiApp.use('/assets', express.static(path.join(frontendRoot, 'assets')));
 apiApp.use('/pages', express.static(path.join(frontendRoot, 'pages')));
 apiApp.use('/components', express.static(path.join(frontendRoot, 'components')));
@@ -106,7 +97,7 @@ apiApp.use('/api/logs', logActividadRoutes);
 apiApp.use('/api/cupones', cuponRoutes);
 apiApp.use('/api/dashboard', dashboardRoutes);
 
-// Rutas de Vistas (HTML)
+// Rutas de Vistas
 apiApp.get('/', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'index.html'));
 });
@@ -161,10 +152,21 @@ async function startApi() {
     await conn.ping();
     conn.release();
     
-    await jsreport.init();
-    console.log('jsreport engine iniciado (sin servidor web).');
+    // --- CORRECCIÓN: OCULTAR PUERTO AQUÍ ---
+    // Guardamos el puerto de Render en una variable temporal
+    const RENDER_PORT = process.env.PORT;
+    // Lo borramos del entorno para que jsreport NO lo vea al iniciar
+    if (process.env.PORT) delete process.env.PORT;
 
-    // Usamos el puerto que recuperamos al principio
+    console.log('Iniciando jsreport (sin puerto)...');
+    await jsreport.init();
+    console.log('jsreport iniciado correctamente.');
+
+    // --- RESTAURAR PUERTO ---
+    // Devolvemos el puerto a su lugar para que Express lo use
+    if (RENDER_PORT) process.env.PORT = RENDER_PORT;
+
+    // Usamos el puerto restaurado
     const PORT = process.env.PORT || 4000;
 
     const apiServer = apiApp.listen(PORT, () =>
