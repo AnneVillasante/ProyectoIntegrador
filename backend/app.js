@@ -2,13 +2,19 @@
 require('./config/config');
 
 const pool = require('./config/db');
-const { startApi } = require('./server/apiServer'); // Ya no necesitamos staticServer
+// Importamos SOLO el servidor unificado (que ahora maneja todo)
+const { startApi } = require('./server/apiServer'); 
 
 let apiServer;
 
 (async () => {
-  // Solo iniciamos el servidor unificado
-  apiServer = await startApi();
+  try {
+    // Iniciamos únicamente el servidor principal
+    apiServer = await startApi();
+  } catch (error) {
+    console.error('Error fatal al iniciar la aplicación:', error);
+    process.exit(1);
+  }
 })();
 
 async function shutdown() {
