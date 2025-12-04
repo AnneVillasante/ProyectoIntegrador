@@ -9,7 +9,7 @@ const isLocalhost = window.location.hostname === 'localhost' || window.location.
 
 const API_BASE_URL = isLocalhost 
     ? 'http://localhost:4000' 
-    : 'https://TU-APP-EN-RENDER.onrender.com'; 
+    : window.location.origin; 
 
 const CONFIG = {
     API_URL: `${API_BASE_URL}/api`,
