@@ -1,18 +1,27 @@
 // backend/server/apiServer.js
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // Traído de staticServer
-const fs = require('fs').promises; // Traído de staticServer
-// Importante: arreglamos la mayúscula de la importación
-const ProductService = require('../services/productoService'); 
+const path = require('path');
+const fs = require('fs').promises;
+const ProductService = require('../services/productoService');
 
-// 1. Configuración de jsreport para que NO inicie su propio servidor web
+// --- INICIO DEL TRUCO PARA RENDER ---
+// Guardamos el puerto de Render y lo borramos temporalmente
+// para que jsreport NO lo vea y no intente robarlo.
+const RENDER_PORT = process.env.PORT;
+if (process.env.PORT) delete process.env.PORT;
+
 const jsreport = require('jsreport')({
-  httpPort: 0, // <--- ESTO EVITA QUE INICIE EL SERVIDOR DE JSREPORT
+  httpPort: 0, // Ahora sí respetará esto porque no ve la variable PORT
+  httpsPort: 0,
   templatingEngines: {
     allowedModules: ['moment']
   }
 });
+
+// Restauramos el puerto inmediatamente para que Express sí lo pueda usar
+if (RENDER_PORT) process.env.PORT = RENDER_PORT;
+// --- FIN DEL TRUCO ---
 
 const helmet = require('helmet');
 const pool = require('../config/db');
@@ -38,12 +47,12 @@ const dashboardRoutes = require('../routes/dashboardRoutes');
 
 const apiApp = express();
 
-// 2. Adjuntar la instancia de jsreport a la aplicación
+// Adjuntar jsreport
 apiApp.set('jsreport', jsreport);
 
 // CORS
 apiApp.use(cors({ 
-  origin: ['http://localhost:3000', 'http://localhost:3001'], // Opcional: añade tu dominio de Render aquí si es necesario
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'https://lunaria-threads.onrender.com'], // Añade tu URL de render si la sabes, o deja el *
   credentials: true
 }));
 
@@ -52,7 +61,7 @@ apiApp.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "http://localhost:4000", "https:"], // Añadido https para producción
+      connectSrc: ["'self'", "http://localhost:4000", "https:"],
       scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
       frameSrc: ["'self'", "https://js.stripe.com"],
       imgSrc: ["'self'", "data:", "https:", "http://localhost:4000"],
@@ -62,11 +71,10 @@ apiApp.use(
   })
 );
 
-// Middleware JSON
 apiApp.use(express.json());
 
 // ---------------------------------------------------------------------
-// 3. LOGICA DEL SERVIDOR ESTÁTICO (Fusionada aquí)
+// LOGICA DEL SERVIDOR ESTÁTICO
 // ---------------------------------------------------------------------
 const frontendRoot = path.join(__dirname, '../../frontend');
 
@@ -76,7 +84,6 @@ apiApp.use('/pages', express.static(path.join(frontendRoot, 'pages')));
 apiApp.use('/components', express.static(path.join(frontendRoot, 'components')));
 apiApp.use('/js', express.static(path.join(frontendRoot, 'js')));
 apiApp.use('/frontend', express.static(frontendRoot));
-// Servir uploads del backend
 apiApp.use('/uploads', express.static('uploads'));
 
 // Rutas de API
@@ -148,20 +155,16 @@ apiApp.get('/productos', async (req, res) => {
   }
 });
 
-// ---------------------------------------------------------------------
-
 async function startApi() {
   try {
-    // Verificar conexión DB
     const conn = await pool.getConnection();
     await conn.ping();
     conn.release();
     
-    // Iniciar JSReport (solo motor, sin servidor web)
     await jsreport.init();
-    console.log('jsreport engine iniciado (modo silencioso).');
+    console.log('jsreport engine iniciado (sin servidor web).');
 
-    // Usar el puerto que nos da Render (process.env.PORT)
+    // Usamos el puerto que recuperamos al principio
     const PORT = process.env.PORT || 4000;
 
     const apiServer = apiApp.listen(PORT, () =>
