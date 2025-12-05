@@ -4,6 +4,12 @@ INSERT INTO usuario (`idUsuario`,`nombres`,`apellidos`,`correo`,`dni`,`telefono`
 (2,'Manuel','Garcia','manuel.garcia@gmail.com','12456358','954682341',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente'),
 (3,'Administrador','Principal','admin@gmail.com','75148629','921546387',NULL,'$2b$10$LIhDuvgFv8lxxgCiPt6nIeTPvo5dciVl7TCjH3wNfjLCcijiUHRwy','Administrador'),
 (4,'Pablo','Casas','pablo.casas@gmail.com','45213678','925146895',NULL,'$2b$10$u10n1WVutKhqp99tBX8IueqnvFUaN3QBVT3b1rNeD/A/gTnYAeYi.','Cliente');
+(5,'Lucia','Fernandez','lucia.fernandez@gmail.com','87654321','987654321',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente'),
+(6,'Jorge','Martinez','jorge.martinez@gmail.com','23456789','912345678',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Administrador'),
+(7,'Ana','Torres','ana.torres@gmail.com','34567890','998877665',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente'),
+(8,'Carlos','Ruiz','carlos.ruiz@gmail.com','45678901','923456789',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente'),
+(9,'Elena','Gomez','elena.gomez@gmail.com','56789012','934567890',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente'),
+(10,'Miguel','Diaz','miguel.diaz@gmail.com','67890123','945678901',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente');
 
 INSERT INTO categoria (idCategoria, nombre, descripcion) VALUES
 (1, 'Ropa', 'Prendas de vestir para todas las edades'),

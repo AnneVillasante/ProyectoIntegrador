@@ -10,6 +10,13 @@ const ProductService = require('../services/productoService');
 const jsreport = require('jsreport')({
   httpPort: 0,
   httpsPort: 0,
+  extensions: {
+    'chrome-pdf': {
+      launchOptions: {
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      }
+    }
+  },
   sandbox: {
     allowedModules: ['moment']
   }
