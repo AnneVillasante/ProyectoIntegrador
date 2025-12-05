@@ -59,4 +59,18 @@ const getMyProfile = async (req, res) => {
   }
 };
 
-module.exports = { createQuickClient, createClientByAdmin, getMyProfile };
+const searchClients = async (req, res) => {
+  try {
+    const { q } = req.query; // Obtener el parámetro de búsqueda 'q' de la URL
+    if (!q) {
+      return res.status(400).json({ error: 'Se requiere un término de búsqueda.' });
+    }
+
+    const clientes = await clienteService.searchClients(q);
+    res.json(clientes);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al buscar clientes. ' + error.message });
+  }
+};
+
+module.exports = { createQuickClient, createClientByAdmin, getMyProfile, searchClients };

@@ -120,15 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function apiDownload(endpoint, options = {}) {
     const token = localStorage.getItem('token');
+    const fetchOptions = {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...options.headers
+      }
+    };
     try {
-      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          ...options.headers
-        }
-      });
+      const response = await fetch(`${window.CONFIG.API_URL}${endpoint}`, fetchOptions);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -239,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('orderDetailsContent').innerHTML = `
         <p><strong>ID Pedido:</strong> ${pedido.idPedido}</p>
         <p><strong>Cliente:</strong> ${pedido.clienteNombre} (${pedido.clienteCorreo})</p>
+        <p><strong>DNI/RUC:</strong> ${pedido.clienteDocumento || 'No especificado'}</p>
         <p><strong>Fecha:</strong> ${new Date(pedido.fecha).toLocaleString()}</p>
         <p><strong>Estado:</strong> ${pedido.estado}</p>
         <p><strong>Total:</strong> S/ ${parseFloat(pedido.total).toFixed(2)}</p>
@@ -260,6 +262,12 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(`Error al cargar detalles del pedido ${idPedido}:`, error);
       alert('No se pudieron cargar los detalles del pedido.');
     }
+  }
+
+  // Hacer la función accesible globalmente para los botones
+  window.showOrderDetails = showOrderDetails;
+  window.generateTicket = async (idPedido) => {
+    window.open(`${window.CONFIG.API_URL}/reportes/ticket/${idPedido}`, '_blank');
   }
 
   // ===== PRODUCTOS =====
@@ -772,6 +780,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Links del carrito en la barra lateral
+  const posLink = document.getElementById('pos-link');
+  if (posLink) {
+    posLink.addEventListener('click', (e) => {
+      localStorage.setItem('activeCart', 'venta');
+    });
+  }
   // Modales
   document.getElementById('closeEditUserModal').addEventListener('click', () => {
     document.getElementById('editUserModal').hidden = true;
@@ -793,6 +808,24 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('closeOrderDetailsModal').addEventListener('click', () => {
     document.getElementById('orderDetailsModal').hidden = true;
   });
+
+  // Añadir un botón para generar ticket en el modal de detalles de pedido
+  const orderDetailsModalBody = document.querySelector('#orderDetailsModal .modal-body');
+  if (orderDetailsModalBody) {
+      const generateTicketBtn = document.createElement('button');
+      generateTicketBtn.className = 'btn-primary';
+      generateTicketBtn.innerHTML = '<i class="fas fa-receipt"></i> Generar Ticket';
+      generateTicketBtn.onclick = () => {
+          const pedidoId = document.getElementById('orderDetailsContent').querySelector('p:first-child').textContent.split(': ')[1];
+          if (pedidoId) window.generateTicket(pedidoId);
+      };
+      // Insertar el botón después de la tabla de productos
+      const tableContainer = orderDetailsModalBody.querySelector('.table-container');
+      if (tableContainer) {
+          tableContainer.insertAdjacentElement('afterend', generateTicketBtn);
+          generateTicketBtn.style.marginTop = '20px';
+      }
+  }
 
   document.getElementById('cancelEditUser').addEventListener('click', () => {
     document.getElementById('editUserModal').hidden = true;
@@ -977,6 +1010,22 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('Error guardando producto:', error);
       alert('Error al guardar producto: ' + (error.message || 'Error desconocido'));
+    }
+  });
+
+  // ===== EVENT LISTENERS DINÁMICOS (para tablas) =====
+  document.body.addEventListener('click', function(event) {
+    // Botón para ver detalles de pedido
+    if (event.target.classList.contains('view-order-details-btn')) {
+      const idPedido = event.target.dataset.orderId;
+      if (idPedido) {
+        showOrderDetails(idPedido);
+      }
+    }
+    // Botón para generar ticket de pago
+    if (event.target.classList.contains('generate-ticket-btn')) {
+      const idPedido = event.target.dataset.orderId;
+      if (idPedido) window.generateTicket(idPedido);
     }
   });
 

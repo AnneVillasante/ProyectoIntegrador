@@ -10,7 +10,7 @@ const ProductService = require('../services/productoService');
 const jsreport = require('jsreport')({
   httpPort: 0,
   httpsPort: 0,
-  templatingEngines: {
+  sandbox: {
     allowedModules: ['moment']
   }
 });
@@ -85,8 +85,8 @@ apiApp.use('/api/usuario', usuarioRouter);
 apiApp.use('/api/categorias', categoriaRoutes);
 apiApp.use('/api/subcategorias', subcategoriaRoutes);
 apiApp.use('/api/reportes', reporteRoutes);
-apiApp.use('/api/carrito', carritoRoutes);
-apiApp.use('/api/cliente', clienteRoutes);
+apiApp.use('/api/carritos', carritoRoutes); // Corregido a plural por consistencia
+apiApp.use('/api/clientes', clienteRoutes); // Corregido a plural
 apiApp.use('/api/pedidos', pedidoRoutes);
 apiApp.use('/api/pagos', pagoRoutes);
 apiApp.use('/api/promociones', promocionRoutes);
@@ -125,6 +125,9 @@ apiApp.get('/admin/cupones', (req, res) => {
 });
 apiApp.get('/admin/pos', (req, res) => {
   res.sendFile(path.join(frontendRoot, 'pages', 'carrito_cliente.html'));
+});
+apiApp.get('/admin/pos/pago', (req, res) => {
+  res.sendFile(path.join(frontendRoot, 'pages', 'venta_fisica_pago.html'));
 });
 
 // Render de productos (SSR)

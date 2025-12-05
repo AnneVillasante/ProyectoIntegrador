@@ -33,6 +33,18 @@ const clienteDAO = {
     `;
     const [result] = await connection.query(sql, [nombres, apellidos, dni, correo, telefono, direccion_predeterminada, fk_idUsuario]);
     return result;
+  },
+
+  // 4. Buscar clientes por término de búsqueda
+  search: async (query) => {
+    const searchTerm = `%${query}%`;
+    const sql = `
+      SELECT idCliente, nombres, apellidos, correo, dni, telefono 
+      FROM cliente 
+      WHERE nombres LIKE ? OR apellidos LIKE ? OR correo LIKE ?
+    `;
+    const [rows] = await db.query(sql, [searchTerm, searchTerm, searchTerm]);
+    return rows;
   }
 };
 

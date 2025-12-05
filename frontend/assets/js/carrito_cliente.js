@@ -6,14 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryDiscounts = document.getElementById('summary-discounts');
     const summaryTotal = document.getElementById('summary-total');
-    const finalizeSaleButton = document.getElementById('finalize-sale-button');
+    const proceedToPaymentButton = document.getElementById('proceed-to-payment-button');
     const customerSelectionContainer = document.getElementById('customer-selection-container');
     const customerSearchInput = document.getElementById('customer-search-input');
     const customerSearchResults = document.getElementById('customer-search-results');
     const currentCustomerInfo = document.getElementById('current-customer-info');
     const currentCustomerName = document.getElementById('current-customer-name');
     const clearCustomerBtn = document.getElementById('clear-customer-btn');
-    const paymentMethodSelector = document.getElementById('payment-method-selector');
     const openNewCustomerModalBtn = document.getElementById('open-new-customer-modal');
     const newCustomerModal = document.getElementById('new-customer-modal');
     const newCustomerForm = document.getElementById('new-customer-form');
@@ -47,8 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * Obtiene los datos del carrito de venta desde el backend.
      */
     async function fetchCartData() {
-        try {
-            const apiUrl = `${window.CONFIG.API_URL}/carrito?type=${cartType}`;
+        try { // Ajustado a la nueva ruta plural
+            const apiUrl = `${window.CONFIG.API_URL}/carritos?type=${cartType}`;
             const response = await fetch(apiUrl, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -127,69 +126,34 @@ document.addEventListener('DOMContentLoaded', () => {
         summaryTotal.textContent = `S/ ${total.toFixed(2) > 0 ? total.toFixed(2) : '0.00'}`;
 
         if (cart.items.length === 0) {
-            finalizeSaleButton.classList.add('disabled');
+            proceedToPaymentButton.classList.add('disabled');
         } else {
-            finalizeSaleButton.classList.remove('disabled');
+            proceedToPaymentButton.classList.remove('disabled');
         }
     }
 
     /**
      * Finaliza la venta creando un pedido en el backend.
      */
-    async function finalizeSale() {
-        const selectedPaymentMethod = paymentMethodSelector.value;
-
+    function proceedToPayment() {
         if (!selectedCustomer) {
             alert('Por favor, selecciona un cliente para la venta.');
             return;
         }
         if (!cartData || cartData.items.length === 0) {
-            alert('El carrito está vacío. Agrega productos para continuar.');
+            alert('El carrito está vacío.');
             return;
         }
 
-        finalizeSaleButton.disabled = true;
-        finalizeSaleButton.textContent = 'Procesando...';
-
-        const orderPayload = {
-            correoCliente: selectedCustomer.correo, // [CRÍTICO] Enviamos el correo para que el backend asigne el cliente.
-            items: cartData.items,
-            total: parseFloat(summaryTotal.textContent.replace('S/ ', '')), // Usar el total actualizado con descuento
-            metodoEntrega: 'tienda', // Venta física es siempre recojo en tienda
-            direccionEntrega: null, // No aplica para venta en tienda
-            metodoPago: selectedPaymentMethod
+        // Guardar los datos necesarios en localStorage para la siguiente página
+        const saleData = {
+            customer: selectedCustomer,
+            cart: { ...cartData, total: parseFloat(summaryTotal.textContent.replace('S/ ', '')) }
         };
+        localStorage.setItem('physicalSaleData', JSON.stringify(saleData));
 
-        try {
-            const response = await fetch(`${window.CONFIG.API_URL}/pedidos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify(orderPayload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'No se pudo crear el pedido.');
-            }
-
-            const result = await response.json();
-            alert(`¡Venta #${result.pedido.idPedido} finalizada con éxito!`);
-
-            // ✅ [AJUSTE CRÍTICO] Limpiar el carrito del administrador después de la venta.
-            // Llama a la función que hace un DELETE a /api/carrito?type=venta
-            await clearAdminCart();
-
-            // Limpiar el resto de la UI para una nueva venta
-            resetSaleUI();
-
-        } catch (error) {
-            alert(`Error al finalizar la venta: ${error.message}`);
-            finalizeSaleButton.disabled = false;
-            finalizeSaleButton.textContent = 'Finalizar Venta';
-        }
+        // Redirigir a la nueva página de pago
+        window.location.href = '/admin/pos/pago';
     }
 
     /**
@@ -199,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function clearAdminCart() {
         try {
-            // Llama al endpoint genérico de carrito, pero con método DELETE.
+            // Llama al endpoint genérico de carritos, pero con método DELETE.
             // La función apiCallToCart ya incluye el token y el tipo de carrito.
             await apiCallToCart('', 'DELETE');
         } catch (error) {
@@ -219,15 +183,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         try {
-            const response = await fetch(`${window.CONFIG.API_URL}/usuario/buscar?q=${query}`, {
+            const response = await fetch(`${window.CONFIG.API_URL}/clientes?q=${query}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (!response.ok) throw new Error('Error en la búsqueda');
+            if (!response.ok) {
+                // Intenta obtener más detalles del error desde el backend
+                const errorData = await response.json().catch(() => null); // Intenta parsear JSON, si falla, no hay cuerpo
+                const errorMessage = errorData?.error || `Error en la búsqueda (Status: ${response.status})`;
+                throw new Error(errorMessage);
+            }
             const customers = await response.json();
             renderSearchResults(customers);
         } catch (error) {
             console.error('Error buscando clientes:', error);
-            customerSearchResults.innerHTML = '<div class="search-result-item">Error al buscar</div>';
+            customerSearchResults.innerHTML = `<div class="search-result-item">Error: ${error.message}</div>`;
             customerSearchResults.style.display = 'block';
         }
     }
@@ -278,23 +247,23 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleNewCustomerSubmit(e) {
         e.preventDefault();
         modalErrorMessage.style.display = 'none';
-        const nombre = document.getElementById('new-customer-nombre').value;
-        const apellido = document.getElementById('new-customer-apellido').value;
+        const nombres = document.getElementById('new-customer-nombres').value;
+        const apellidos = document.getElementById('new-customer-apellidos').value;
         const correo = document.getElementById('new-customer-email').value;
         const dni = document.getElementById('new-customer-dni').value;
         const telefono = document.getElementById('new-customer-telefono').value;
 
         try {
             // [CAMBIO] Usamos el nuevo endpoint para crear un cliente sin usuario
-            const response = await fetch(`${window.CONFIG.API_URL}/clientes/quick-create`, {
+            const response = await fetch(`${window.CONFIG.API_URL}/clientes/quick-create`, { // Esta ruta ahora es correcta
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ nombres: nombre, apellidos: apellido, correo: correo, dni: dni, telefono: telefono })
+                body: JSON.stringify({ nombres: nombres, apellidos: apellidos, correo: correo, dni: dni, telefono: telefono })
             });
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'No se pudo crear el cliente.');
             
-            alert('Cliente creado con éxito.');
+            // alert('Cliente creado con éxito.'); // Quitado para una mejor UX
             newCustomerModal.style.display = 'none';
             newCustomerForm.reset();
             // Seleccionamos automáticamente al nuevo cliente creado
@@ -359,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function apiCallToCart(endpoint = '', method = 'GET', body = null) {
         try {
-            const apiUrl = `${window.CONFIG.API_URL}/carrito${endpoint}?type=${cartType}`;
+            const apiUrl = `${window.CONFIG.API_URL}/carritos${endpoint}?type=${cartType}`; // Ajustado a la nueva ruta plural
             const options = {
                 method,
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -442,12 +411,18 @@ document.addEventListener('DOMContentLoaded', () => {
     clearCustomerBtn.addEventListener('click', clearSelectedCustomer);
 
     // Event Listeners del Modal
-    openNewCustomerModalBtn.addEventListener('click', () => { newCustomerModal.style.display = 'block'; });
+    openNewCustomerModalBtn.addEventListener('click', () => { newCustomerModal.style.display = 'flex'; });
     closeModalBtn.addEventListener('click', () => { newCustomerModal.style.display = 'none'; });
+    // Cierra el modal si se hace clic fuera del contenido
+    newCustomerModal.addEventListener('click', (e) => {
+        if (e.target === newCustomerModal) {
+            newCustomerModal.style.display = 'none';
+        }
+    });
     newCustomerForm.addEventListener('submit', handleNewCustomerSubmit);
 
-    // Event Listener del botón de finalizar venta
-    finalizeSaleButton.addEventListener('click', finalizeSale);
+    // Event Listener del botón para proceder al pago
+    proceedToPaymentButton.addEventListener('click', proceedToPayment);
 
     // Inicializar la gestión de cupones
     setupCouponManagement();

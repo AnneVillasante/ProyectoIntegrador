@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Venta Física - Lunaria Threads</title>
+    <!-- Tipografías -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="../assets/css/carrito.css">
     <script src="../assets/js/config.js"></script>
@@ -41,7 +45,7 @@
                 <div id="empty-cart-message" class="empty-cart" style="display: none;">
                     <i class="fas fa-shopping-cart"></i>
                     <p>El carrito de venta está vacío.</p>
-                    <a href="productos.html" class="btn-primary">Agregar productos</a>
+                    <a href="/productos" class="btn-primary">Agregar productos</a>
                 </div>
             </div>
 
@@ -70,16 +74,8 @@
                     <span id="summary-total">S/ 0.00</span>
                 </div>
 
-                <!-- Mini-checkout -->
-                <div id="mini-checkout-section" style="margin-top: 20px;">
-                    <h4>Método de Pago</h4>
-                    <select id="payment-method-selector" class="customer-selector" style="width: 100%; margin-bottom: 20px;">
-                        <option value="efectivo">Efectivo</option>
-                        <option value="card">Tarjeta</option>
-                        <option value="yape">Yape/Plin</option>
-                    </select>
-                    <button id="finalize-sale-button" class="btn-checkout disabled">Finalizar Venta</button>
-                </div>
+                <!-- Botón para ir a la página de pago -->
+                <button id="proceed-to-payment-button" class="btn-checkout disabled">Proceder al Pago</button>
             </div>
         </div>
     </main>
@@ -92,8 +88,8 @@
             <span class="close-modal-btn">&times;</span>
             <h3>Crear Nuevo Cliente</h3>
             <form id="new-customer-form">
-                <input type="text" id="new-customer-nombre" placeholder="Nombres" required>
-                <input type="text" id="new-customer-apellido" placeholder="Apellidos" required>
+                <input type="text" id="new-customer-nombres" placeholder="Nombres" required>
+                <input type="text" id="new-customer-apellidos" placeholder="Apellidos" required>
                 <input type="email" id="new-customer-email" placeholder="Correo Electrónico" required>                
                 <input type="text" id="new-customer-dni" placeholder="DNI (Opcional)">
                 <input type="tel" id="new-customer-telefono" placeholder="Teléfono (Opcional)">
@@ -104,5 +100,6 @@
     </div>
 
     <script src="../assets/js/carrito_cliente.js"></script>
+    <script src="../components/navbar.js" defer></script>
 </body>
 </html>

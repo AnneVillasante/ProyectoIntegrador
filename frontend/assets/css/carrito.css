@@ -176,27 +176,6 @@ body {
     color: var(--color-success);
 }
 
-.btn-checkout {
-    width: 100%;
-    padding: 15px;
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.btn-checkout:hover:not(:disabled) {
-    background-color: var(--color-secondary);
-}
-
-.btn-checkout:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
 /* Carrito Vacío */
 .empty-cart {
     text-align: center;
@@ -391,6 +370,15 @@ body {
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: var(--border-radius);
+    font-size: 1rem; /* Tamaño de fuente consistente */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Transición suave */
+}
+
+/* Estilo para cuando el input está enfocado (seleccionado) */
+#new-customer-form input:focus {
+    outline: none; /* Quita el borde por defecto del navegador */
+    border-color: var(--color-primary); /* Cambia el color del borde */
+    box-shadow: 0 0 0 3px rgba(74, 78, 105, 0.2); /* Añade un "resplandor" sutil */
 }
 
 /* Asegurar que el botón dentro del formulario ocupe todo el ancho */

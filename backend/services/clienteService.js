@@ -20,8 +20,14 @@ const findByCorreo = async (correo) => {
   return await clienteDAO.findByCorreo(correo);
 };
 
+const searchClients = async (query) => {
+  if (!query || query.trim() === '') return [];
+  return await clienteDAO.search(query);
+};
+
 module.exports = {
   createClient,
   getClientByUserId,
   findByCorreo,
+  searchClients,
 };

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Venta Física - Lunaria Threads</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/compra.css"> <!-- Reutilizamos estilos de compra.css -->
+    <script src="/assets/js/config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components/layout.js" defer></script>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main class="container">
+        <div class="checkout-container">
+            <section id="step-payment" class="checkout-step active">
+                <h2>Finalizar Venta Física</h2>
+
+                <!-- Resumen de la Venta -->
+                <div class="form-section">
+                    <h3>Resumen de la Venta</h3>
+                    <div id="customer-info-summary" class="summary-item" style="padding: 10px; background: var(--card); border-radius: var(--radius); margin-bottom: 15px;">
+                        <!-- Info del cliente se carga aquí -->
+                        <p>Cargando cliente...</p>
+                    </div>
+                    <div class="summary-list" id="summary-product-list">
+                        <!-- Los productos del carrito se cargarán aquí -->
+                        <p>Cargando resumen del carrito...</p>
+                    </div>
+                    <div class="summary-total-final">
+                        <h3>Total a Pagar: <span id="summary-total-amount">S/ 0.00</span></h3>
+                    </div>
+                </div>
+
+                <!-- Método de Pago -->
+                <div class="payment-step-container">
+                    <!-- Columna Izquierda: Opciones de Pago -->
+                    <div class="payment-options">
+                        <div class="payment-method active" data-method="efectivo">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Efectivo</span>
+                        </div>
+                        <div class="payment-method" data-method="card">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Tarjeta</span>
+                        </div>
+                        <div class="payment-method" data-method="yape">
+                            <img src="/assets/img/yape-logo.png" alt="Yape">
+                            <span>Yape/Plin</span>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Detalles del Pago -->
+                    <div class="payment-details-content">
+                        <!-- Vista para Pago en Efectivo -->
+                        <div id="payment-view-efectivo" class="payment-details-view active">
+                            <h4>Pago en Efectivo</h4>
+                            <p>El cliente pagará el monto total en efectivo. Confirma la recepción del dinero antes de finalizar.</p>
+                        </div>
+                        <!-- Vista para Tarjeta -->
+                        <div id="payment-view-card" class="payment-details-view">
+                            <h4>Pago con Tarjeta</h4>
+                            <p>Utiliza el terminal de punto de venta (POS) para procesar el pago con tarjeta. Confirma que la transacción fue aprobada.</p>
+                        </div>
+                        <!-- Vista para Yape -->
+                        <div id="payment-view-yape" class="payment-details-view">
+                            <h4>Pago con Yape/Plin</h4>
+                            <p>El cliente debe escanear el código QR del negocio y mostrarte la confirmación del pago en su dispositivo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-navigation">
+                    <a href="/admin/pos" class="btn-secondary">Volver al Carrito</a>
+                    <button id="btn-confirm-sale" class="btn-primary">Confirmar Venta y Pago</button>
+                </div>
+            </section>
+
+            <!-- Pantalla de Confirmación -->
+            <section id="step-confirmation" class="checkout-step">
+                <div class="confirmation-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>¡Venta Registrada!</h2>
+                    <p>El pedido <strong id="order-id-placeholder"></strong> ha sido creado exitosamente en el sistema.</p>
+                    <a href="/admin/pos" class="btn-primary">Iniciar Nueva Venta</a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script src="/assets/js/venta_fisica_pago.js"></script>
+</body>
+</html>

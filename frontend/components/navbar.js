@@ -163,12 +163,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para manejar el cambio de modo de carrito
     function handleCartModeChange(e) {
-      const newMode = e.target.value;
-      localStorage.setItem('activeCart', newMode);
-      alert(`Modo de carrito cambiado a: ${newMode === 'personal' ? 'Personal' : 'Venta Física'}. La página del carrito se recargará.`);
-      // Si estamos en la página del carrito, la recargamos para que muestre el contenido correcto
-      if (window.location.pathname.includes('/pages/carrito.html')) {
-        window.location.reload();
+      const newMode = e.target.value; // 'personal' o 'venta'
+      localStorage.setItem('activeCart', newMode); // Guardamos la preferencia
+
+      // Redirigimos a la página correcta según el modo seleccionado
+      if (newMode === 'venta') {
+        // Si se selecciona "Venta Física", vamos al Punto de Venta (POS)
+        window.location.href = '/admin/pos';
+      } else {
+        // Si se selecciona "Personal", vamos al carrito de compras normal
+        window.location.href = '/carrito';
       }
     }
     // Función para cerrar sesión

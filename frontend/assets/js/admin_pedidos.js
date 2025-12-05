@@ -35,7 +35,7 @@ function renderOrdersTable(orders) {
         <td title="${totalFormateado}">${totalFormateado}</td>
         <td title="${order.metodoPago}">${order.metodoPago}</td>
         <td>
-          <button class="btn-secondary" onclick="window.showOrderDetails(${order.idPedido})">Ver Detalles</button>
+          <button class="btn-secondary view-order-details-btn" data-order-id="${order.idPedido}">Ver Detalles</button>
         </td>
       </tr>
     `;
