@@ -5,7 +5,7 @@
  * @author Lunaria
  */
 
-const CampanaService = require('../config/cloudinary');
+const { isProduction } = require('../config/cloudinary');
 const CampanaService = require('../services/campanaService');
 
 const obtenerTodas = async (req, res, next) => {
