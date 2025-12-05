@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderUsersTable() {
     const tbody = document.getElementById('usersTableBody');
     tbody.innerHTML = users.map(user => `
-      <tr>
+      <tr data-user-id="${user.idUsuario}">
         <td title="${user.idUsuario}">${user.idUsuario}</td>
         <td title="${user.nombres} ${user.apellidos}">${user.nombres} ${user.apellidos}</td>
         <td title="${user.correo}">${user.correo}</td>
@@ -165,11 +165,19 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${user.telefono || 'N/A'}</td>
         <td>${user.dni || 'N/A'}</td>
         <td>
-          <button class="btn-secondary" onclick="window.editUser(${user.idUsuario})">Editar Rol</button>
-          <button class="btn-danger" onclick="deleteUser(${user.idUsuario})">Eliminar</button>
+          <button class="btn-secondary edit-user-btn">Editar Rol</button>
+          <button class="btn-danger delete-user-btn">Eliminar</button>
         </td>
       </tr>
     `).join('');
+
+    // Añadir Event Listeners después de renderizar
+    tbody.querySelectorAll('.edit-user-btn').forEach(button => {
+      button.addEventListener('click', (e) => editUser(e.target.closest('tr').dataset.userId));
+    });
+    tbody.querySelectorAll('.delete-user-btn').forEach(button => {
+      button.addEventListener('click', (e) => deleteUser(e.target.closest('tr').dataset.userId));
+    });
   }
 
   async function editUser(id) {
@@ -326,18 +334,30 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     tbody.innerHTML = products.map(product => `
-      <tr>
+      <tr data-product-id="${product.idProducto}">
         <td title="${product.idProducto}">${product.idProducto}</td>
         <td title="${product.nombre}">${product.nombre}</td>
         <td title="${product.categoria || 'Sin categoría'}">${product.categoria || 'Sin categoría'}</td>
         <td title="S/ ${parseFloat(product.precio).toFixed(2)}">S/ ${parseFloat(product.precio).toFixed(2)}</td>
         <td title="${product.stock}">${product.stock}</td>
         <td>
-          <button class="btn-secondary" onclick="window.editProduct(${product.idProducto})">Editar</button>
-          <button class="btn-danger" onclick="deleteProduct(${product.idProducto})">Eliminar</button>
+          <button class="btn-secondary edit-product-btn">Editar</button>
+          <button class="btn-danger delete-product-btn">Eliminar</button>
         </td>
       </tr>
     `).join('');
+
+    // Añadir Event Listeners
+    tbody.querySelectorAll('.edit-product-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        editProduct(e.target.closest('tr').dataset.productId);
+      });
+    });
+    tbody.querySelectorAll('.delete-product-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        deleteProduct(e.target.closest('tr').dataset.productId);
+      });
+    });
   }
 
   async function addProduct() {
@@ -429,12 +449,16 @@ document.addEventListener('DOMContentLoaded', () => {
         <td title="${product.stock}">${product.stock}</td>
         <td>
           <input type="number" class="stock-input" 
+                 data-product-id="${product.idProducto}"
                  value="${product.stock}" 
-                 min="0" 
-                 onchange="updateStockChange(${product.idProducto}, this.value)">
+                 min="0">
         </td>
       </tr>
     `).join('');
+
+    tbody.querySelectorAll('.stock-input').forEach(input => {
+      input.addEventListener('change', (e) => updateStockChange(e.target.dataset.productId, e.target.value));
+    });
   }
 
   function updateStockChange(id, value) {
@@ -507,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = categorias.map(cat => {
       const imagenUrl = cat.imagen; // La URL de Cloudinary ya es absoluta
       return `
-      <tr>
+      <tr data-category-id="${cat.idCategoria}">
         <td title="${cat.idCategoria}">${cat.idCategoria}</td>
         <td title="${cat.nombre || 'Sin nombre'}">${cat.nombre || 'Sin nombre'}</td>
         <td title="${cat.descripcion || 'Sin descripción'}">${cat.descripcion || 'Sin descripción'}</td>
@@ -515,12 +539,24 @@ document.addEventListener('DOMContentLoaded', () => {
           ${imagenUrl ? `<img src="${imagenUrl}" alt="${cat.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
         </td>
         <td>
-          <button class="btn-secondary" onclick="window.editCategory(${cat.idCategoria})">Editar</button>
-          <button class="btn-danger" onclick="deleteCategory(${cat.idCategoria})">Eliminar</button>
+          <button class="btn-secondary edit-category-btn">Editar</button>
+          <button class="btn-danger delete-category-btn">Eliminar</button>
         </td>
       </tr>
     `;
     }).join('');
+
+    // Añadir Event Listeners
+    tbody.querySelectorAll('.edit-category-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        editCategory(e.target.closest('tr').dataset.categoryId);
+      });
+    });
+    tbody.querySelectorAll('.delete-category-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        deleteCategory(e.target.closest('tr').dataset.categoryId);
+      });
+    });
   }
 
   function renderSubcategoriesTable() {
@@ -536,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const categoria = categorias.find(c => c.idCategoria === sub.idCategoria);
       const imagenUrl = sub.imagen; // La URL de Cloudinary ya es absoluta
       return `
-      <tr>
+      <tr data-subcategory-id="${sub.idSubcategoria}">
         <td title="${sub.idSubcategoria}">${sub.idSubcategoria}</td>
         <td title="${sub.nombre || 'Sin nombre'}">${sub.nombre || 'Sin nombre'}</td>
         <td title="${sub.descripcion || 'Sin descripción'}">${sub.descripcion || 'Sin descripción'}</td>
@@ -546,12 +582,24 @@ document.addEventListener('DOMContentLoaded', () => {
           ${imagenUrl ? `<img src="${imagenUrl}" alt="${sub.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
         </td>
         <td>
-          <button class="btn-secondary" onclick="window.editSubcategory(${sub.idSubcategoria})">Editar</button>
-          <button class="btn-danger" onclick="deleteSubcategory(${sub.idSubcategoria})">Eliminar</button>
+          <button class="btn-secondary edit-subcategory-btn">Editar</button>
+          <button class="btn-danger delete-subcategory-btn">Eliminar</button>
         </td>
       </tr>
     `;
     }).join('');
+
+    // Añadir Event Listeners
+    tbody.querySelectorAll('.edit-subcategory-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        editSubcategory(e.target.closest('tr').dataset.subcategoryId);
+      });
+    });
+    tbody.querySelectorAll('.delete-subcategory-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        deleteSubcategory(e.target.closest('tr').dataset.subcategoryId);
+      });
+    });
   }
 
   function addCategory() {
@@ -1027,18 +1075,6 @@ document.addEventListener('DOMContentLoaded', () => {
       loadMetrics(params);
     });
   }
-
-  // Funciones globales para onclick
-  window.editUser = editUser;
-  window.deleteUser = deleteUser;
-  window.editProduct = editProduct;
-  window.updateStockChange = updateStockChange;
-  window.editCategory = editCategory;
-  window.deleteCategory = deleteCategory;
-  window.editSubcategory = editSubcategory;
-  window.deleteSubcategory = deleteSubcategory;
-  window.showOrderDetails = showOrderDetails; // Exponer la función globalmente
-  window.loadLogs = loadLogs;
 
   // Cargar datos iniciales (solo usuarios por defecto)
   loadUsers();

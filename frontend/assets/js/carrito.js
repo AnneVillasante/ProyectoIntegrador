@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             cartItemElement.innerHTML = `
                 <div class="cart-item-image">
-                    <img src="${window.CONFIG.IMG_URL}/${item.imagenProducto}" alt="${item.nombreProducto}" onerror="this.onerror=null;this.src='https://via.placeholder.com/100';">
+                    <img src="${window.CONFIG.IMG_URL}/${item.imagenProducto}" alt="${item.nombreProducto}">
                 </div>
                 <div class="cart-item-details">
                     <h4>${item.nombreProducto}</h4>
@@ -113,6 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             cartItemsContainer.appendChild(cartItemElement);
+
+            // Solución para el error de CSP y 404: Asignar onerror desde JS
+            const imgElement = cartItemElement.querySelector('img');
+            imgElement.onerror = () => {
+                imgElement.src = 'https://via.placeholder.com/100';
+            };
         });
 
         updateSummary(cart);

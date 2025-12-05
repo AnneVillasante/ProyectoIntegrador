@@ -8,17 +8,24 @@ const clienteService = require('../services/clienteService');
  */
 const createQuickClient = async (req, res) => {
   try {
-    // Se espera que el cuerpo de la petición contenga los datos del cliente
     const clienteData = req.body;
+
+    // Validar que el correo no exista ya
+    const existingClient = await clienteService.findByCorreo(clienteData.correo);
+    if (existingClient) {
+      return res.status(409).json({ error: 'El correo electrónico ya está registrado.' });
+    }
+
     const result = await clienteService.createClient(clienteData);
-    const nuevoCliente = await clienteService.getClientById(result.insertId);
+    // Después de crear, lo buscamos por su correo para devolver el objeto completo
+    const nuevoCliente = await clienteService.findByCorreo(clienteData.correo);
 
     res.status(201).json({
       message: 'Cliente rápido creado exitosamente.',
       cliente: nuevoCliente, // Devolvemos el cliente completo
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error al crear el cliente rápido. ' + error.message });
+    res.status(500).json({ error: 'Error al crear el cliente rápido. ' + error.message });
   }
 };
 // Solo para administradores

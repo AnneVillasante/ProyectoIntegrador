@@ -25,4 +25,7 @@ router.post('/', isAdmin, upload.single('foto_perfil'), usuarioController.crearU
 router.put('/:id', isAdmin, upload.single('foto_perfil'), usuarioController.actualizarUsuario); // Middleware añadido
 router.delete('/:id', isAdmin, usuarioController.eliminarUsuario);
 
+// Ruta para buscar usuarios (para el carrito de venta física)
+router.get('/buscar', isAdmin, usuarioController.buscarUsuarios);
+
 module.exports = router;
