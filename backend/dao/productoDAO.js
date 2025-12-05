@@ -3,10 +3,10 @@ const db = require('../config/db');
 const productoDAO = {
   getAll: async () => {
     const [rows] = await db.query(`
-      SELECT p.*, c.nombre AS categoria, s.nombre AS subcategoria
+      SELECT p.*, s.nombre AS subcategoria, c.nombre AS categoria
       FROM producto p
-      LEFT JOIN categoria c ON p.idCategoria = c.idCategoria
       LEFT JOIN subcategoria s ON p.idSubcategoria = s.idSubcategoria
+      LEFT JOIN categoria c ON s.idCategoria = c.idCategoria -- ¡Aquí está el cambio! Unimos categoria usando la subcategoría, no el producto directly
     `);
     return rows;
   },
@@ -15,8 +15,8 @@ const productoDAO = {
     const [rows] = await db.query(`
       SELECT p.*, c.nombre AS categoria, s.nombre AS subcategoria
       FROM producto p
-      LEFT JOIN categoria c ON p.idCategoria = c.idCategoria
       LEFT JOIN subcategoria s ON p.idSubcategoria = s.idSubcategoria
+      LEFT JOIN categoria c ON s.idCategoria = c.idCategoria -- Igual aquí, la categoría viene de la subcategoría
       WHERE p.idProducto = ?`, [id]
     );
     return rows[0];
@@ -25,20 +25,20 @@ const productoDAO = {
   create: async (producto) => {
     const { nombre, descripcion, imagen, precio, stock, idCategoria, idSubcategoria } = producto;
     const [result] = await db.query(`
-      INSERT INTO producto (nombre, descripcion, imagen, precio, stock, idCategoria, idSubcategoria)
-      VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [nombre, descripcion, imagen, precio, stock, idCategoria || null, idSubcategoria || null]
+      INSERT INTO producto (nombre, descripcion, imagen, precio, stock, idSubcategoria)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [nombre, descripcion, imagen, precio, stock, idSubcategoria || null]
     );
     return result.insertId;
   },
 
   update: async (id, producto) => {
-    const { nombre, descripcion, imagen, precio, stock, idCategoria, idSubcategoria } = producto;
+    const { nombre, descripcion, imagen, precio, stock,  idSubcategoria } = producto;
     await db.query(`
       UPDATE producto
-      SET nombre=?, descripcion=?, imagen=?, precio=?, stock=?, idCategoria=?, idSubcategoria=?
+      SET nombre=?, descripcion=?, imagen=?, precio=?, stock=?, idSubcategoria=?
       WHERE idProducto=?`,
-      [nombre, descripcion, imagen, precio, stock, idCategoria || null, idSubcategoria || null, id]
+      [nombre, descripcion, imagen, precio, stock, idSubcategoria || null, id]
     );
   },
 
