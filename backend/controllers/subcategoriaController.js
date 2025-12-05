@@ -1,3 +1,4 @@
+const { isProduction } = require('../config/cloudinary');
 const subcategoriaDAO = require('../dao/subcategoriaDAO');
 const SubcategoriaDTO = require('../dto/subcategoriaDTO');
 
@@ -15,7 +16,12 @@ exports.create = async (req, res) => {
     const subcategoriaData = { ...req.body };
     
     if (req.file) {
-      subcategoriaData.imagen = req.file.path;
+      // ⭐ Corrección
+      if (isProduction()) {
+        subcategoriaData.imagen = req.file.path;
+      } else {
+        subcategoriaData.imagen = `/uploads/subcategorias/${req.file.filename}`;
+      }
     } else {
       subcategoriaData.imagen = null; // ¡Vital para evitar el crash!
     }
@@ -35,8 +41,12 @@ exports.update = async (req, res) => {
     const subcategoriaData = { ...req.body };
 
     if (req.file) {
-      // Si se sube un nuevo archivo, guardamos la nueva URL de Cloudinary
-      subcategoriaData.imagen = req.file.path;
+      // ⭐ Corrección
+      if (isProduction()) {
+        subcategoriaData.imagen = req.file.path;
+      } else {
+        subcategoriaData.imagen = `/uploads/subcategorias/${req.file.filename}`;
+      }
     } else {
       // Conservar la imagen existente si no se sube una nueva
       const subcategoriaExistente = await subcategoriaDAO.getById(id);

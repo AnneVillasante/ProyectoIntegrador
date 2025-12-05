@@ -1,3 +1,4 @@
+const { isProduction } = require('../config/cloudinary');
 const usuarioModel = require('../models/usuarioModel');
 const UsuarioDto = require('../dto/usuarioDTO');
 const bcrypt = require('bcryptjs');
@@ -76,7 +77,12 @@ exports.actualizarUsuario = async (req, res) => {
 
     // Si se sube una nueva foto de perfil, se añade su ruta al objeto de datos
     if (req.file) {
-      data.foto_perfil = req.file.path;
+      // ⭐ Corrección
+      if (isProduction()) {
+        data.foto_perfil = req.file.path;
+      } else {
+        data.foto_perfil = `/uploads/perfiles/${req.file.filename}`;
+      }
     }
     await usuarioModel.update(id, data);
     res.json({ success: true, message: 'Usuario actualizado' });
@@ -182,7 +188,13 @@ exports.subirFotoPerfil = async (req, res) => {
     }
 
     // La URL segura de la imagen subida a Cloudinary
-    const imageUrl = req.file.path;
+    let imageUrl;
+    // ⭐ Corrección
+    if (isProduction()) {
+        imageUrl = req.file.path;
+    } else {
+        imageUrl = `/uploads/perfiles/${req.file.filename}`;
+    }
 
     // Actualizar la base de datos con la nueva ruta de la foto
     await usuarioModel.update(id, { foto_perfil: imageUrl });

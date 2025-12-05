@@ -5,6 +5,7 @@
  * @author Lunaria
  */
 
+const CampanaService = require('../config/cloudinary');
 const CampanaService = require('../services/campanaService');
 
 const obtenerTodas = async (req, res, next) => {
@@ -36,7 +37,12 @@ const crear = async (req, res, next) => {
 
     // 2. VERIFICACIÓN CLAVE: Si Multer subió una imagen, guardamos su URL
     if (req.file) {
-      data.imagen = req.file.path; // Cloudinary nos devuelve la URL aquí
+      // ⭐ Corrección
+      if (isProduction()) {
+        data.imagen = req.file.path;
+      } else {
+        data.imagen = `/uploads/campanas/${req.file.filename}`;
+      }
     }
 
     // 3. Enviamos el objeto completo (texto + url imagen) al servicio
@@ -55,7 +61,11 @@ const actualizar = async (req, res, next) => {
 
     // Mismo proceso para actualizar
     if (req.file) {
-      data.imagen = req.file.path;
+      if (isProduction()) {
+        data.imagen = req.file.path;
+      } else {
+        data.imagen = `/uploads/campanas/${req.file.filename}`;
+      }
     }
     // NOTA: Si no hay req.file, 'data.imagen' será undefined.
     // El servicio debe decidir si mantiene la imagen vieja o no.

@@ -1,3 +1,4 @@
+const { isProduction } = require('../config/cloudinary');
 const categoriaDAO = require('../dao/categoriaDAO');
 const CategoriaDTO = require('../dto/categoriaDTO');
 
@@ -16,10 +17,14 @@ exports.create = async (req, res) => {
     
     // 1. Si hay archivo, usamos la URL de Cloudinary
     if (req.file) {
-      categoriaData.imagen = req.file.path;
+      // ⭐ Corrección
+      if (isProduction()) {
+        categoriaData.imagen = req.file.path;
+      } else {
+        categoriaData.imagen = `/uploads/categorias/${req.file.filename}`;
+      }
     } else {
-      // 2. Si no hay archivo, aseguramos que sea null (evita error 'undefined')
-      categoriaData.imagen = null; 
+      categoriaData.imagen = null;
     }
 
     const categoria = new CategoriaDTO(categoriaData);
@@ -38,7 +43,11 @@ exports.update = async (req, res) => {
 
     // 1. Lógica de actualización de imagen
     if (req.file) {
-      categoriaData.imagen = req.file.path;
+      if (isProduction()) {
+        categoriaData.imagen = req.file.path;
+      } else {
+        categoriaData.imagen = `/uploads/categorias/${req.file.filename}`;
+      }
     } else {
       // Si no suben foto nueva, NO tocamos el campo 'imagen' en el objeto data,
       // pero debemos asegurarnos de que el DAO no reciba 'undefined' si lo espera.

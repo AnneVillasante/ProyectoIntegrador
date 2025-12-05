@@ -32,10 +32,8 @@ exports.create = async (req, res) => {
         // ENTORNO REMOTO (Cloudinary): La ruta es la URL completa.
         productData.imagen = req.file.path;
       } else {
-        // ENTORNO LOCAL (Disco): Construimos la ruta relativa para el frontend.
-        const nombreArchivo = req.file.filename;
-        const carpeta = 'productos'; // Coincide con la configuración en productoRoutes.js
-        productData.imagen = `/uploads/${carpeta}/${nombreArchivo}`;
+        // Ruta local relativa accesible por el frontend
+        productData.imagen = `/uploads/productos/${req.file.filename}`;
       }
     }
 
@@ -57,9 +55,7 @@ exports.update = async (req, res) => {
         // ENTORNO REMOTO (Cloudinary): La ruta es la URL completa.
         productData.imagen = req.file.path;
       } else {
-        // ENTORNO LOCAL (Disco): Construimos la ruta relativa para el frontend.
-        const nombreArchivo = req.file.filename;
-        productData.imagen = `/uploads/productos/${nombreArchivo}`;
+        productData.imagen = `/uploads/productos/${req.file.filename}`;
       }
     } else {
       // Conservar la imagen existente si no se sube una nueva
