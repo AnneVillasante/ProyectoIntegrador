@@ -5,7 +5,7 @@ const multer = require('multer');
 const { createStorage } = require('../config/cloudinary');
 
 // Configuración de Multer para guardar imágenes de productos en Cloudinary
-const productoStorage = createStorage('productos');
+const productoStorage = createStorage({ folderName: 'productos' }); // Se recomienda pasar un objeto
 const upload = multer({ storage: productoStorage });
 
 // CRUD completo

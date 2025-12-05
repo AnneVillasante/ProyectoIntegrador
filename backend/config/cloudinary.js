@@ -1,3 +1,5 @@
+// annevillasante/proyectointegrador/ProyectoIntegrador-mant-progreso/backend/config/cloudinary.js
+
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
@@ -33,12 +35,18 @@ const diskStorage = ({ folderName = 'perfiles' }) => multer.diskStorage({
     }
 });
 
+// ⭐ FUNCIÓN DE INTUICIÓN DE ENTORNO ⭐
+const isProduction = () => {
+    // Es producción si NODE_ENV está en 'production' Y se ha configurado Cloudinary
+    return process.env.NODE_ENV === 'production' && process.env.CLOUDINARY_CLOUD_NAME;
+};
+
 
 // 3. SELECCIÓN DE ALMACENAMIENTO DINÁMICO
 const getStorage = (options) => {
     // Si la aplicación NO está en modo 'production', usa el disco local.
-    // Usamos el entorno de Render como proxy para 'production'
-    if (process.env.NODE_ENV !== 'production' || !process.env.CLOUDINARY_CLOUD_NAME) {
+    // Usamos la función isProduction para la lógica
+    if (!isProduction()) {
         console.log("🛠️ Usando almacenamiento local (DEV)");
         return diskStorage(options);
     } else {
@@ -47,10 +55,11 @@ const getStorage = (options) => {
     }
 };
 
-// 4. FUNCIÓN EXPORTADA QUE CREA EL MIDDLEWARE
-const upload = (options) => multer({ storage: getStorage(options) });
-
+// 4. EXPORTACIONES CORREGIDAS
 module.exports = {
     cloudinary,
-    upload,
+    // Renombramos 'getStorage' a 'createStorage' para solucionar el TypeError.
+    createStorage: getStorage,
+    // Exportamos la función de chequeo de entorno para usarla en los controladores.
+    isProduction, 
 };

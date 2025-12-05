@@ -1,5 +1,6 @@
 const ProductoDao = require('../dao/productoDAO');
 const ProductoDto = require('../dto/productoDTO');
+const { isProduction } = require('../config/cloudinary');
 
 exports.list = async (req, res) => {
   try {
@@ -25,9 +26,17 @@ exports.get = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const productData = { ...req.body };
+
     if (req.file) {
-      // Guardamos la URL segura que Cloudinary proporciona
-      productData.imagen = req.file.path;
+      if (isProduction()) {
+        // ENTORNO REMOTO (Cloudinary): La ruta es la URL completa.
+        productData.imagen = req.file.path;
+      } else {
+        // ENTORNO LOCAL (Disco): Construimos la ruta relativa para el frontend.
+        const nombreArchivo = req.file.filename;
+        const carpeta = 'productos'; // Coincide con la configuración en productoRoutes.js
+        productData.imagen = `/uploads/${carpeta}/${nombreArchivo}`;
+      }
     }
 
     const id = await ProductoDao.create(productData);
@@ -44,8 +53,14 @@ exports.update = async (req, res) => {
     const productData = { ...req.body };
 
     if (req.file) {
-      // Si se sube un nuevo archivo, guardamos la nueva URL de Cloudinary
-      productData.imagen = req.file.path;
+      if (isProduction()) {
+        // ENTORNO REMOTO (Cloudinary): La ruta es la URL completa.
+        productData.imagen = req.file.path;
+      } else {
+        // ENTORNO LOCAL (Disco): Construimos la ruta relativa para el frontend.
+        const nombreArchivo = req.file.filename;
+        productData.imagen = `/uploads/productos/${nombreArchivo}`;
+      }
     } else {
       // Conservar la imagen existente si no se sube una nueva
       const productoExistente = await ProductoDao.getById(id);
