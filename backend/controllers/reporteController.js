@@ -2,9 +2,7 @@ const reporteDAO = require('../dao/reporteDAO');
 const productoDAO = require('../dao/productoDAO');
 const db = require('../config/db');
 const ReporteDTO = require('../dto/reporteDTO');
-// Se importa la función para generar plantillas HTML.
-const { generarPlantillaHtml } = require('../utils/template');
-
+// Se importa el servicio de renderizado de jsreport
 // Se asume que jsreport se inicializa en app.js y se pasa a través de req
 const getJsreportRenderer = (req) => require('../services/jsreportService')(req.app.get('jsreport'));
 
@@ -94,14 +92,18 @@ exports.generateVentasReport = async (req, res) => {
       res.setHeader('Content-Disposition', `attachment; filename=reporte_ventas_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
     } else if (formato.toLowerCase() === 'pdf') {
-      // 1. Crear resumen de texto
-      const textoResumen = `Total de transacciones: ${ventas.length} | Ingresos Totales: S/ ${totalMonto}`;
-
-      // 2. Generar HTML con la plantilla personalizada, incluyendo el resumen
-      const htmlContent = generarPlantillaHtml('Reporte de Ventas', reportData, textoResumen);
-
+      // 1. Preparar los datos para la plantilla 'ventas' de Handlebars
+      const pdfData = {
+        items: ventas.map(venta => ({
+          'ID Pedido': venta.idPedido,
+          'Fecha': new Date(venta.fecha).toLocaleDateString('es-PE'),
+          'Cliente': `${venta.nombres || ''} ${venta.apellidos || ''}`.trim() || 'Sin cliente',
+          'Total': `S/ ${parseFloat(venta.total || 0).toFixed(2)}`,
+        })),
+        totalMonto: parseFloat(totalMonto).toFixed(2)
+      };
       const render = getJsreportRenderer(req);
-      const report = await render(htmlContent); // Se pasa solo el HTML
+      const report = await render('ventas', pdfData);
 
       // 3. Enviar el PDF al cliente
       res.setHeader('Content-Type', 'application/pdf');
@@ -126,39 +128,58 @@ exports.generateVentasReport = async (req, res) => {
 };
 
 // Generar reporte de productos
-// En backend/controllers/reporteController.js
-
-// backend/controllers/reporteController.js
-
 exports.generateProductosReport = async (req, res) => {
   try {
-    const { formato = 'json' } = req.body;
+    const { formato = 'json', usuario } = req.body;
 
-    if (formato.toLowerCase() === 'pdf') {
-        // --- PRUEBA DE VIDA (FONDO ROJO) ---
-        const htmlContent = `
-          <!DOCTYPE html>
-          <html>
-            <body style="background-color: red; margin: 0; padding: 20px;">
-              <h1 style="color: white; font-family: sans-serif;">SI VES ESTO, CHROME FUNCIONA</h1>
-              <div style="background: white; padding: 20px; margin-top: 20px;">
-                <p>El sistema de reportes está operativo.</p>
-              </div>
-            </body>
-          </html>
-        `;
-        
-        const render = getJsreportRenderer(req);
-        const report = await render(htmlContent);
+    const productos = await productoDAO.getAll();
 
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=prueba_final.pdf`);
-        res.send(report.content);
-        return; 
+    const reportData = productos.map(p => ({
+      'ID': p.idProducto,
+      'Nombre': p.nombre,
+      'Categoría': p.categoria,
+      'Precio': p.precio,
+      'Stock': p.stock,
+      'Descripción': p.descripcion
+    }));
+
+    const reporteId = await reporteDAO.create({
+      tipo: 'productos',
+      formato,
+      parametros: { totalProductos: productos.length },
+      usuario: usuario || 'Sistema',
+      exportado: false
+    });
+
+    if (formato.toLowerCase() === 'csv') {
+      const csv = convertToCSV(reportData);
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename=reporte_productos_${new Date().toISOString().split('T')[0]}.csv`);
+      res.send(csv);
+    } else if (formato.toLowerCase() === 'pdf') {
+      const pdfData = {
+        items: productos.map(p => ({
+          ID: p.idProducto,
+          Nombre: p.nombre,
+          Categoría: p.categoria,
+          Precio: `S/ ${parseFloat(p.precio).toFixed(2)}`,
+          Stock: p.stock
+        }))
+      };
+      const render = getJsreportRenderer(req);
+      const report = await render('productos', pdfData);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=reporte_productos_${reporteId}.pdf`);
+      res.send(report.content);
+      await reporteDAO.updateExportado(reporteId, true);
+    } else {
+      res.json({
+        success: true,
+        idReporte: reporteId,
+        datos: reportData
+      });
     }
-
-    // ... aquí sigue tu código normal para CSV/JSON ...
-    // (Por ahora no se ejecutará porque el return de arriba lo corta)
   } catch (error) {
     console.error("Error grave en reporte:", error);
     res.status(500).send("Error generando reporte");
@@ -221,14 +242,19 @@ exports.generateUsuarioReport = async (req, res) => {
       res.setHeader('Content-Disposition', `attachment; filename=reporte_usuario_${new Date().toISOString().split('T')[0]}.csv`);
       res.send(csv);
     } else if (formato.toLowerCase() === 'pdf') {
-        // 1. Crear resumen de texto
-        const textoResumen = `Total de usuarios: ${parametros.totalUsuarios} | Administradores: ${parametros.totalAdministradores} | Clientes: ${parametros.totalClientes}`;
-
-        // 2. Generar HTML con la plantilla personalizada
-        const htmlContent = generarPlantillaHtml('Reporte de Usuarios', reportData, textoResumen);
-        
+        // 1. Preparar datos para la plantilla 'usuarios' de Handlebars
+        const pdfData = {
+          items: usuarios.map(user => ({
+            ID: user.idUsuario,
+            Nombres: user.nombres,
+            Apellidos: user.apellidos,
+            Correo: user.correo,
+            Rol: user.rol
+          })),
+          totalUsuarios: usuarios.length
+        };
         const render = getJsreportRenderer(req);
-        const report = await render(htmlContent); // Se pasa solo el HTML
+        const report = await render('usuarios', pdfData);
 
         // 3. Enviar el PDF al cliente
         res.setHeader('Content-Type', 'application/pdf');
@@ -250,6 +276,62 @@ exports.generateUsuarioReport = async (req, res) => {
   } catch (error) {
     console.error('Error generando reporte de usuarios:', error);
     res.status(500).json({ error: 'Error al generar reporte de usuarios' });
+  }
+};
+
+// Generar ticket de venta por ID de pedido
+exports.generateTicket = async (req, res) => {
+  try {
+    const { idPedido } = req.params;
+    const render = getJsreportRenderer(req);
+
+    // 1. Obtener datos del pedido
+    const [pedido] = await db.query(`
+      SELECT p.idPedido, p.fecha, p.total, u.nombres, u.apellidos
+      FROM pedido p
+      JOIN cliente c ON p.idCliente = c.idCliente
+      JOIN usuario u ON c.fk_idUsuario = u.idUsuario
+      WHERE p.idPedido = ?
+    `, [idPedido]);
+
+    if (!pedido || pedido.length === 0) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+
+    // 2. Obtener detalles del pedido (productos)
+    const [detalles] = await db.query(`
+      SELECT pr.nombre, dp.cantidad, dp.precioUnitario
+      FROM detallepedido dp
+      JOIN producto pr ON dp.idProducto = pr.idProducto
+      WHERE dp.idPedido = ?
+    `, [idPedido]);
+
+    // 3. Preparar datos para la plantilla 'ticket'
+    const ticketData = {
+      numeroPedido: pedido[0].idPedido,
+      fecha: pedido[0].fecha,
+      clienteNombre: `${pedido[0].nombres} ${pedido[0].apellidos}`,
+      items: detalles.map(item => ({
+        nombre: item.nombre,
+        cantidad: item.cantidad,
+        precioUnitario: parseFloat(item.precioUnitario).toFixed(2),
+        subtotal: (item.cantidad * item.precioUnitario).toFixed(2)
+      })),
+      totalVenta: parseFloat(pedido[0].total).toFixed(2)
+    };
+
+    // 4. Renderizar el PDF
+    const report = await render('ticket', ticketData);
+
+    // 5. Enviar el PDF al cliente
+    res.setHeader('Content-Type', 'application/pdf');
+    // El 'inline' sugiere al navegador mostrarlo en vez de descargarlo
+    res.setHeader('Content-Disposition', `inline; filename=ticket_${idPedido}.pdf`);
+    res.send(report.content);
+
+  } catch (error) {
+    console.error('Error generando ticket:', error);
+    res.status(500).json({ error: 'Error al generar el ticket' });
   }
 };
 

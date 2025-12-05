@@ -8,6 +8,9 @@ router.post('/usuarios', reporteController.generateUsuarioReport);
 router.post('/productos', reporteController.generateProductosReport);
 router.post('/ventas', reporteController.generateVentasReport);
 
+// Ruta para generar un ticket de venta específico
+router.get('/ticket/:idPedido', reporteController.generateTicket);
+
 // Rutas para gestionar el historial de reportes
 router.get('/', reporteController.listAll);
 router.get('/:id', reporteController.getById);
