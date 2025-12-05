@@ -42,6 +42,15 @@ const apiApp = express();
 // Adjuntar jsreport
 apiApp.set('jsreport', jsreport);
 
+const PORT = process.env.PORT || 4000; // Capturamos el puerto temprano para usarlo en configuraciones
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000', 
+  'http://localhost:3001', 
+  `http://localhost:${PORT}`, // Dinámico según tu .env
+  process.env.CLIENT_URL, // Agrega esto a tus variables de entorno en Render (ej: tu url https)
+  'https://lunaria-threads.onrender.com' // Puedes mantener este como fallback
+];
+
 // CORS
 apiApp.use(cors({ 
   origin: ['http://localhost:3000', 'http://localhost:3001', 'https://lunaria-threads.onrender.com'], 
@@ -53,10 +62,10 @@ apiApp.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "http://localhost:4000", "https:"],
+      connectSrc: ["'self'", `http://localhost:${PORT}`, "https:"],
       scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
       frameSrc: ["'self'", "https://js.stripe.com"],
-      imgSrc: ["'self'", "data:", "https:", "http://localhost:4000"],
+      imgSrc: ["'self'", "data:", "https:", `http://localhost:${PORT}`],
       fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
     },
