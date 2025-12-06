@@ -143,6 +143,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ===== NAVEGACIÓN DESDE TARJETAS DE MÉTRICAS =====
+  function initMetricCardNavigation() {
+    const metricsGrid = document.querySelector('.metrics-grid');
+    if (!metricsGrid) return;
+
+    metricsGrid.addEventListener('click', (e) => {
+      const card = e.target.closest('.metric-card');
+      if (!card) return;
+
+      const tabTarget = card.dataset.tabTarget;
+      if (tabTarget && tabTarget !== 'metrics') { // Si el target es 'metrics', no hacemos nada
+        const navLink = document.querySelector(`.nav-link[data-tab='${tabTarget}']`);
+        if (navLink) {
+          navLink.click(); // Simula un clic en el enlace de la barra lateral para cambiar de pestaña
+          window.scrollTo({ top: 0, behavior: 'smooth' }); // Opcional: lleva al usuario al inicio de la página
+        }
+      }
+    });
+  }
+
 
   // ===== USUARIOS =====
   async function loadUsers() {
@@ -748,6 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== EVENT LISTENERS =====
   // Inicializar pestanas
   initTabs();
+  initMetricCardNavigation(); // Inicializar la navegación desde las tarjetas
 
   // Usuarios
   document.getElementById('loadUsersBtn').addEventListener('click', loadUsers);

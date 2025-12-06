@@ -54,14 +54,48 @@ exports.getMetrics = async (req, res) => {
         const { whereClause, groupBy, selectDate, params } = getDateClauses(filter, fechaInicio, fechaFin);
 
         // 1. Consultas de resumen (tarjetas)
-        const [usuariosRes] = await db.query('SELECT COUNT(*) as total FROM usuario');
-        const [productosRes] = await db.query('SELECT COUNT(*) as total FROM producto');
+        const summaryPromises = [
+            db.query('SELECT COUNT(*) as total FROM usuario'), // Total Usuarios
+            db.query('SELECT COUNT(*) as total FROM producto'), // Total Productos
+            db.query(`SELECT COUNT(*) as total FROM pedido p ${whereClause}`, params), // Total Pedidos (filtrado)
+            db.query(`SELECT SUM(total) as total, COUNT(p.idPedido) as count FROM pedido p ${whereClause.length > 0 ? `${whereClause} AND` : 'WHERE'} (p.estado = "pagado" OR p.estado = "entregado")`, params), // Ingresos y conteo de pedidos pagados (filtrado)
+            db.query(`SELECT estado, COUNT(*) as count FROM pedido p ${whereClause} GROUP BY estado`, params), // Pedidos por estado
+            db.query(`
+                SELECT pr.nombre, SUM(dp.cantidad) as totalVendido
+                FROM detallepedido dp
+                JOIN producto pr ON dp.idProducto = pr.idProducto
+                JOIN pedido p ON dp.idPedido = p.idPedido
+                ${whereClause.length > 0 ? `${whereClause} AND` : 'WHERE'} (p.estado = "pagado" OR p.estado = "entregado")
+                GROUP BY pr.idProducto, pr.nombre
+                ORDER BY totalVendido DESC
+                LIMIT 5
+            `, params), // Top 5 productos más vendidos - CORREGIDO: Se añaden los params
+            db.query('SELECT nombre, stock FROM producto WHERE stock <= 5 ORDER BY stock ASC LIMIT 5'), // Productos con bajo stock
+            db.query(`
+                SELECT u.nombres, u.apellidos, SUM(p.total) as totalComprado
+                FROM pedido p
+                JOIN cliente c ON p.idCliente = c.idCliente
+                JOIN usuario u ON c.fk_idUsuario = u.idUsuario
+                ${whereClause.length > 0 ? `${whereClause} AND` : 'WHERE'} (p.estado = "pagado" OR p.estado = "entregado")
+                GROUP BY u.idUsuario, u.nombres, u.apellidos
+                ORDER BY totalComprado DESC
+                LIMIT 5
+            `, params) // Top 5 clientes - CORREGIDO: Se añaden los params
+        ];
 
-        const pedidosQuery = `SELECT COUNT(*) as total FROM pedido p ${whereClause}`;
-        const [pedidosRes] = await db.query(pedidosQuery, params);
+        const [
+            [usuariosRes],
+            [productosRes],
+            [pedidosRes],
+            [ingresosRes],
+            [pedidosPorEstadoRes],
+            [topProductosRes],
+            [bajoStockRes],
+            [topClientesRes]
+        ] = await Promise.all(summaryPromises);
 
-        const ingresosQuery = `SELECT SUM(total) as total FROM pedido p ${whereClause.length > 0 ? `${whereClause} AND` : 'WHERE'} (p.estado = "pagado" OR p.estado = "entregado")`;
-        const [ingresosRes] = await db.query(ingresosQuery, params);
+        const ingresos = ingresosRes[0].total || 0;
+        const pedidosPagadosCount = ingresosRes[0].count || 0;
 
         // 2. Consulta para el gráfico de ingresos
         const chartQuery = `
@@ -70,7 +104,7 @@ exports.getMetrics = async (req, res) => {
                 SUM(p.total) as value
             FROM pedido p
             ${whereClause.length > 0 ? `${whereClause} AND` : 'WHERE'} (p.estado = "pagado" OR p.estado = "entregado")
-            GROUP BY ${groupBy}
+            GROUP BY ${groupBy}, label
             ORDER BY MIN(p.fecha) ASC 
         `;
         const [chartDataRes] = await db.query(chartQuery, params);
@@ -86,9 +120,19 @@ exports.getMetrics = async (req, res) => {
                 usuarios: usuariosRes[0].total,
                 productos: productosRes[0].total,
                 pedidos: pedidosRes[0].total,
-                ingresos: ingresosRes[0].total || 0.00,
+                ingresos: parseFloat(ingresos).toFixed(2),
+                ticketPromedio: (pedidosPagadosCount > 0 ? (ingresos / pedidosPagadosCount) : 0).toFixed(2)
             },
-            chartData: chartData
+            chartData: chartData,
+            details: {
+                pedidosPorEstado: pedidosPorEstadoRes.reduce((acc, item) => {
+                    acc[item.estado] = item.count;
+                    return acc;
+                }, {}),
+                topProductos: topProductosRes,
+                productosBajoStock: bajoStockRes,
+                topClientes: topClientesRes
+            }
         });
 
     } catch (error) {

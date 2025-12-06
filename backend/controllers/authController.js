@@ -1,4 +1,5 @@
 const UsuarioDao = require('../dao/usuarioDAO');
+const ClienteService = require('../services/clienteService');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UsuarioDto = require('../dto/usuarioDTO');
@@ -49,6 +50,14 @@ exports.register = async (req, res) => {
       dni, 
       contrasena: hashedContrasena, // Usar la contrasena hasheada
       rol: rol || 'Cliente' 
+    });
+    await ClienteService.createClient({
+        nombres,
+        apellidos,
+        correo,
+        dni,
+        telefono,
+        fk_idUsuario: idUsuarioCreado // Vinculamos con la llave foránea
     });
     
     res.status(201).json({ success: true, id });

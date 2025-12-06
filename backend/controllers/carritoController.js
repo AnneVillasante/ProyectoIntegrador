@@ -1,17 +1,30 @@
 const carritoService = require('../services/carritoService');
-const clienteService = require('../services/clienteService'); // Importar el servicio de cliente
+const clienteService = require('../services/clienteService');
+
+/**
+ * Middleware para determinar el identificador del carrito.
+ * Un carrito puede pertenecer a un cliente (personal) o a un vendedor (venta física).
+ */
+const getCartIdentifier = async (req) => {
+    const idUsuario = req.user.id;
+    const userRole = req.user.rol; // 'Administrador' o 'Cliente'
+    const cartType = req.query.type || 'personal'; // 'personal' o 'venta'. Por defecto 'personal'.
+
+    if (cartType === 'venta' && (userRole === 'Administrador' || userRole === 'Vendedor')) {
+        // Carrito de venta física, identificado por el ID del vendedor (admin)
+        return { idVendedor: idUsuario };
+    }
+
+    // Carrito personal, identificado por el ID del cliente
+    const cliente = await clienteService.getClientByUserId(idUsuario);
+    if (!cliente) throw new Error('Perfil de cliente no encontrado para este usuario.');
+    return { idCliente: cliente.idCliente };
+};
 
 exports.getCart = async (req, res) => {
     try {
-        const idUsuario = req.user.id; // Este es el idUsuario del token
-        const cliente = await clienteService.getClientByUserId(idUsuario);
-
-        if (!cliente) {
-            return res.status(404).json({ error: 'Perfil de cliente no encontrado para este usuario.' });
-        }
-
-        const idCliente = cliente.idCliente;
-        const cart = await carritoService.getCart(idCliente);
+        const identifier = await getCartIdentifier(req);
+        const cart = await carritoService.getCart(identifier);
         res.status(200).json(cart);
     } catch (error) {
         console.error('Error al obtener el carrito:', error);
@@ -21,20 +34,14 @@ exports.getCart = async (req, res) => {
 
 exports.addItemToCart = async (req, res) => {
     try {
-        const idUsuario = req.user.id;
-        const cliente = await clienteService.getClientByUserId(idUsuario);
-        if (!cliente) {
-            return res.status(404).json({ error: 'Perfil de cliente no encontrado.' });
-        }
-        const idCliente = cliente.idCliente;
-
+        const identifier = await getCartIdentifier(req);
         const { idProducto, cantidad } = req.body;
 
         if (!idProducto || !cantidad) {
             return res.status(400).json({ error: 'idProducto y cantidad son requeridos.' });
         }
 
-        const updatedCart = await carritoService.addItem(idCliente, idProducto, cantidad);
+        const updatedCart = await carritoService.addItem(identifier, idProducto, cantidad);
         res.status(200).json(updatedCart);
     } catch (error) {
         console.error('Error al agregar producto al carrito:', error);
@@ -44,12 +51,7 @@ exports.addItemToCart = async (req, res) => {
 
 exports.updateCartItem = async (req, res) => {
     try {
-        const idUsuario = req.user.id;
-        const cliente = await clienteService.getClientByUserId(idUsuario);
-        if (!cliente) {
-            return res.status(404).json({ error: 'Perfil de cliente no encontrado.' });
-        }
-        const idCliente = cliente.idCliente;
+        const identifier = await getCartIdentifier(req);
 
         const { idProducto } = req.params; // idProducto en la URL
         const { cantidad } = req.body;
@@ -58,7 +60,7 @@ exports.updateCartItem = async (req, res) => {
             return res.status(400).json({ error: 'La cantidad es requerida.' });
         }
 
-        const updatedCart = await carritoService.updateItem(idCliente, parseInt(idProducto), cantidad);
+        const updatedCart = await carritoService.updateItem(identifier, parseInt(idProducto), cantidad);
         res.status(200).json(updatedCart);
     } catch (error) {
         console.error('Error al actualizar la cantidad del producto en el carrito:', error);
@@ -68,16 +70,11 @@ exports.updateCartItem = async (req, res) => {
 
 exports.removeItemFromCart = async (req, res) => {
     try {
-        const idUsuario = req.user.id;
-        const cliente = await clienteService.getClientByUserId(idUsuario);
-        if (!cliente) {
-            return res.status(404).json({ error: 'Perfil de cliente no encontrado.' });
-        }
-        const idCliente = cliente.idCliente;
+        const identifier = await getCartIdentifier(req);
 
         const { idProducto } = req.params; // idProducto en la URL
 
-        const updatedCart = await carritoService.removeItem(idCliente, parseInt(idProducto));
+        const updatedCart = await carritoService.removeItem(identifier, parseInt(idProducto));
         res.status(200).json(updatedCart);
     } catch (error) {
         console.error('Error al eliminar producto del carrito:', error);
@@ -87,14 +84,8 @@ exports.removeItemFromCart = async (req, res) => {
 
 exports.clearCart = async (req, res) => {
     try {
-        const idUsuario = req.user.id;
-        const cliente = await clienteService.getClientByUserId(idUsuario);
-        if (!cliente) {
-            return res.status(404).json({ error: 'Perfil de cliente no encontrado.' });
-        }
-        const idCliente = cliente.idCliente;
-
-        const clearedCart = await carritoService.clearCart(idCliente);
+        const identifier = await getCartIdentifier(req);
+        const clearedCart = await carritoService.clearCart(identifier);
         res.status(200).json(clearedCart);
     } catch (error) {
         console.error('Error al vaciar el carrito:', error);

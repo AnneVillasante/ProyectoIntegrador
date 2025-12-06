@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const apiUrl = `${window.CONFIG.API_URL}/carritos?type=${cartType}`;
+            const apiUrl = `${window.CONFIG.API_URL}/carritos?type=personal`;
             const response = await fetch(apiUrl, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -220,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const apiUrl = `${window.CONFIG.API_URL}/carritos/${productId}?type=${cartType}`;
+                const apiUrl = `${window.CONFIG.API_URL}/carritos/${productId}?type=personal`;
                 const response = await fetch(apiUrl, {
                     method: 'DELETE',
                     headers: {
@@ -250,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const apiUrl = `${window.CONFIG.API_URL}/carritos/${productId}?type=${cartType}`;
+            const apiUrl = `${window.CONFIG.API_URL}/carritos/${productId}?type=personal`;
             const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
