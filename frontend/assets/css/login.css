@@ -40,13 +40,13 @@ main {
 }
 
 .auth-card {
-  background: rgba(27, 38, 59, 0.9);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(var(--card-rgb), 0.9);
+  border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 
-    0 20px 60px rgba(0,0,0,0.3),
-    0 8px 32px rgba(0,0,0,0.2),
-    inset 0 1px 0 rgba(255,255,255,0.1);
+    0 20px 60px rgba(var(--black-rgb), 0.3),
+    0 8px 32px rgba(var(--black-rgb), 0.2),
+    inset 0 1px 0 rgba(var(--white-rgb), 0.1);
   max-width: 600px;
   width: 100%;
   padding: 35px 40px;
@@ -65,7 +65,7 @@ main {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(var(--white-rgb), 0.05);
   border-radius: 12px;
   padding: 4px;
 }
@@ -85,8 +85,8 @@ main {
 
 .tab.active {
   color: var(--text);
-  background: rgba(154, 140, 255, 0.2);
-  box-shadow: 0 2px 8px rgba(154, 140, 255, 0.3);
+  background: rgba(var(--brand-rgb), 0.2);
+  box-shadow: 0 2px 8px rgba(var(--brand-rgb), 0.3);
 }
 
 .form {
@@ -139,8 +139,8 @@ main {
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  background: rgba(var(--white-rgb), 0.08);
   color: var(--text);
   font-family: 'Lora', serif;
   font-size: 0.9rem;
@@ -150,8 +150,8 @@ main {
 
 .form-group input:focus {
   border-color: var(--brand);
-  box-shadow: 0 0 0 2px rgba(154, 140, 255, 0.2);
-  background: rgba(255,255,255,0.12);
+  box-shadow: 0 0 0 2px rgba(var(--brand-rgb), 0.2);
+  background: rgba(var(--white-rgb), 0.12);
   transform: translateY(-1px);
 }
 
@@ -168,7 +168,7 @@ main {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(154, 140, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(var(--brand-rgb), 0.4);
 }
 
 /* Responsive para doble columna */
