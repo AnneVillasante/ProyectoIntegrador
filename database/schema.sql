@@ -53,10 +53,11 @@ CREATE TABLE cupon (
   tipoDescuento ENUM('Porcentaje', 'MontoFijo') NOT NULL,
   valorDescuento DECIMAL(10,2) NOT NULL,
   montoMinimoCompra DECIMAL(10,2) DEFAULT 0.00,
-  limiteUsos INT DEFAULT NULL COMMENT 'NULL significa usos ilimitados',
+  limiteUsos INT DEFAULT NULL,
   activo BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (idCupon)
 );
+
 CREATE TABLE subcategoria (
   idSubcategoria INT NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(100) NOT NULL,
@@ -70,6 +71,7 @@ CREATE TABLE subcategoria (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
 CREATE TABLE cliente (
   idCliente INT NOT NULL AUTO_INCREMENT,
   nombres VARCHAR(100) NOT NULL,
@@ -87,6 +89,7 @@ CREATE TABLE cliente (
   FOREIGN KEY (fk_idUsuario) REFERENCES usuario(idUsuario)
     ON DELETE SET NULL
 );
+
 CREATE TABLE producto (
   idProducto INT NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(100) NOT NULL,
@@ -106,6 +109,7 @@ CREATE TABLE producto (
     ON DELETE SET NULL
     ON UPDATE CASCADE
 );
+
 CREATE TABLE promocion (
   idPromocion INT NOT NULL AUTO_INCREMENT,
   titulo VARCHAR(100),
@@ -117,7 +121,6 @@ CREATE TABLE promocion (
   valorDescuento DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   montoMinimoCompra DECIMAL(10,2) DEFAULT 0.00,
   activo BOOLEAN DEFAULT TRUE,
-  -- Claves foráneas para el alcance de la promoción
   idCategoriaAplicable INT DEFAULT NULL,
   idSubcategoria INT DEFAULT NULL,
   idProducto INT DEFAULT NULL,
@@ -131,6 +134,7 @@ CREATE TABLE promocion (
   FOREIGN KEY (idSubcategoria) REFERENCES subcategoria(idSubcategoria),
   FOREIGN KEY (idProducto) REFERENCES producto(idProducto)
 );
+
 CREATE TABLE usuariopromocion (
   idUsuario INT NOT NULL,
   idPromocion INT NOT NULL,
@@ -141,15 +145,21 @@ CREATE TABLE usuariopromocion (
   FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
   FOREIGN KEY (idPromocion) REFERENCES promocion(idPromocion)
 );
+
 CREATE TABLE carrito (
   idCarrito INT NOT NULL AUTO_INCREMENT,
-  idCliente INT NOT NULL,
+  idCliente INT NULL,
+  idSesionTemporal VARCHAR(255) NULL,
+  idVendedor INT NULL,
   fechaCreacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   fechaActualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (idCarrito),
   KEY (idCliente),
-  FOREIGN KEY (idCliente) REFERENCES cliente(idCliente)
+  KEY (idVendedor),
+  FOREIGN KEY (idCliente) REFERENCES cliente(idCliente),
+  FOREIGN KEY (idVendedor) REFERENCES usuario(idUsuario)
 );
+
 CREATE TABLE carritodetalle (
   idDetalleCarrito INT NOT NULL AUTO_INCREMENT,
   idCarrito INT NOT NULL,
@@ -163,19 +173,26 @@ CREATE TABLE carritodetalle (
   FOREIGN KEY (idCarrito) REFERENCES carrito(idCarrito),
   FOREIGN KEY (idProducto) REFERENCES producto(idProducto)
 );
+
 CREATE TABLE pedido (
   idPedido INT NOT NULL AUTO_INCREMENT,
-  idCliente INT NOT NULL,
+  idCliente INT NULL,
   fecha DATE NOT NULL,
   estado ENUM('Procesando','pendiente','pagado','fallido','entregado','cancelado') NOT NULL,
   total DECIMAL(10,2) NOT NULL,
   metodoEntrega VARCHAR(50),
-  direccionEntrega VARCHAR(255),
+  direccionEntrega VARCHAR(255) NULL,
   metodoPago VARCHAR(50),
+  idVendedor INT NULL,
+  idCupon INT DEFAULT NULL,
   PRIMARY KEY (idPedido),
   KEY (idCliente),
-  FOREIGN KEY (idCliente) REFERENCES cliente(idCliente)
+  KEY (idVendedor),
+  FOREIGN KEY (idCliente) REFERENCES cliente(idCliente),
+  FOREIGN KEY (idVendedor) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (idCupon) REFERENCES cupon(idCupon)
 );
+
 CREATE TABLE detallepedido (
   idDetallePedido INT NOT NULL AUTO_INCREMENT,
   idPedido INT NOT NULL,
@@ -189,6 +206,7 @@ CREATE TABLE detallepedido (
   FOREIGN KEY (idPedido) REFERENCES pedido(idPedido),
   FOREIGN KEY (idProducto) REFERENCES producto(idProducto)
 );
+
 CREATE TABLE devolucion (
   idDevolucion INT NOT NULL AUTO_INCREMENT,
   idPedido INT NOT NULL,
@@ -200,6 +218,7 @@ CREATE TABLE devolucion (
   KEY (idPedido),
   FOREIGN KEY (idPedido) REFERENCES pedido(idPedido)
 );
+
 CREATE TABLE factura (
   idFactura INT NOT NULL AUTO_INCREMENT,
   idPedido INT NOT NULL,
@@ -207,10 +226,13 @@ CREATE TABLE factura (
   total DECIMAL(10,2) NOT NULL,
   numeroFactura VARCHAR(50),
   urlDocumento VARCHAR(255),
+  nombreCliente VARCHAR(255) NULL,
+  ruc_dni_cliente VARCHAR(20) NULL,
   PRIMARY KEY (idFactura),
   UNIQUE (idPedido),
   FOREIGN KEY (idPedido) REFERENCES pedido(idPedido)
 );
+
 CREATE TABLE pago (
   idPago INT NOT NULL AUTO_INCREMENT,
   idPedido INT NOT NULL,
@@ -218,11 +240,13 @@ CREATE TABLE pago (
   monto INT NOT NULL,
   fechaPago DATE NOT NULL,
   estadoTransaccion VARCHAR(50),
-  stripe_payment_intent_id VARCHAR(255),
+  stripe_payment_intent_id VARCHAR(255) NULL,
+  codigoOperacion VARCHAR(100) NULL,
   PRIMARY KEY (idPago),
   UNIQUE (idPedido),
   FOREIGN KEY (idPedido) REFERENCES pedido(idPedido)
 );
+
 CREATE TABLE logactividad (
   idLog INT NOT NULL AUTO_INCREMENT,
   idUsuario INT NOT NULL,
