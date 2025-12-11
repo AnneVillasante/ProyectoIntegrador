@@ -280,17 +280,24 @@ exports.generateUsuarioReport = async (req, res) => {
 };
 
 // Generar ticket de venta por ID de pedido
+// Generar ticket de venta por ID de pedido
 exports.generateTicket = async (req, res) => {
   try {
     const { idPedido } = req.params;
     const render = getJsreportRenderer(req);
 
-    // 1. Obtener datos del pedido
+    // 1. Obtener datos del pedido (CORREGIDO con LEFT JOIN)
+    // Usamos COALESCE para preferir el nombre del usuario, pero si no existe, usamos el del cliente.
     const [pedido] = await db.query(`
-      SELECT p.idPedido, p.fecha, p.total, u.nombres, u.apellidos
+      SELECT 
+        p.idPedido, 
+        p.fecha, 
+        p.total, 
+        COALESCE(u.nombres, c.nombres) as nombres, 
+        COALESCE(u.apellidos, c.apellidos) as apellidos
       FROM pedido p
       JOIN cliente c ON p.idCliente = c.idCliente
-      JOIN usuario u ON c.fk_idUsuario = u.idUsuario
+      LEFT JOIN usuario u ON c.fk_idUsuario = u.idUsuario
       WHERE p.idPedido = ?
     `, [idPedido]);
 
@@ -309,8 +316,8 @@ exports.generateTicket = async (req, res) => {
     // 3. Preparar datos para la plantilla 'ticket'
     const ticketData = {
       numeroPedido: pedido[0].idPedido,
-      fecha: pedido[0].fecha,
-      clienteNombre: `${pedido[0].nombres} ${pedido[0].apellidos}`,
+      fecha: new Date(pedido[0].fecha).toLocaleDateString('es-PE'), // Formateamos la fecha para que se vea bien
+      clienteNombre: `${pedido[0].nombres || 'Cliente'} ${pedido[0].apellidos || ''}`.trim(),
       items: detalles.map(item => ({
         nombre: item.nombre,
         cantidad: item.cantidad,
@@ -325,13 +332,12 @@ exports.generateTicket = async (req, res) => {
 
     // 5. Enviar el PDF al cliente
     res.setHeader('Content-Type', 'application/pdf');
-    // El 'inline' sugiere al navegador mostrarlo en vez de descargarlo
     res.setHeader('Content-Disposition', `inline; filename=ticket_${idPedido}.pdf`);
     res.send(report.content);
 
   } catch (error) {
     console.error('Error generando ticket:', error);
-    res.status(500).json({ error: 'Error al generar el ticket' });
+    res.status(500).json({ error: 'Error al generar el ticket', details: error.message });
   }
 };
 

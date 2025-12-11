@@ -2,11 +2,21 @@
 const express = require('express');
 const router = express.Router();
 const pedidoController = require('../controllers/pedidoController');
-const { protect } = require('../middleware/authMiddleware'); // Importamos solo la función 'protect'
+const { protect } = require('../middleware/authMiddleware');
 
-router.post('/', protect, pedidoController.createOrder); // Usamos 'protect' como middleware
+// 1. Crear un pedido
+router.post('/', protect, pedidoController.createOrder);
 
-// Ruta para obtener todos los pedidos (para el panel de administración)
+// 2. Obtener todos los pedidos
 router.get('/', protect, pedidoController.getAllOrders);
+
+// 3. Obtener un pedido por ID (¡Esta es la que te falta!)
+router.get('/:id', protect, pedidoController.getOrderById);
+
+// 4. Actualizar estado de un pedido (Para el botón "Actualizar Estado" del modal)
+router.put('/:id', protect, pedidoController.updateOrderStatus);
+
+// 5. Eliminar un pedido
+router.delete('/:id', protect, pedidoController.deleteOrder);
 
 module.exports = router;
