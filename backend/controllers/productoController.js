@@ -29,10 +29,8 @@ exports.create = async (req, res) => {
 
     if (req.file) {
       if (isProduction()) {
-        // ENTORNO REMOTO (Cloudinary): La ruta es la URL completa.
         productData.imagen = req.file.path;
       } else {
-        // Ruta local relativa accesible por el frontend
         productData.imagen = `/uploads/productos/${req.file.filename}`;
       }
     }
@@ -52,7 +50,6 @@ exports.update = async (req, res) => {
 
     if (req.file) {
       if (isProduction()) {
-        // ENTORNO REMOTO (Cloudinary): La ruta es la URL completa.
         productData.imagen = req.file.path;
       } else {
         productData.imagen = `/uploads/productos/${req.file.filename}`;

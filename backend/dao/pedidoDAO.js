@@ -77,6 +77,61 @@ class PedidoDAO {
             throw new Error(`Error al obtener los pedidos: ${error.message}`);
         }
     }
-}
+// ... (código anterior create y findAll)
 
+    // ✅ NUEVO: Obtener pedido por ID con sus detalles
+    async findById(idPedido) {
+        const sql = `
+            SELECT p.*, c.nombres, c.apellidos, c.correo, c.dni, c.telefono
+            FROM pedido p
+            JOIN cliente c ON p.idCliente = c.idCliente
+            WHERE p.idPedido = ?
+        `;
+        const [rows] = await db.query(sql, [idPedido]);
+        
+        if (rows.length === 0) return null;
+        
+        const pedido = rows[0];
+
+        // Obtener los productos del pedido
+        const [detalles] = await db.query(`
+            SELECT dp.*, pr.nombre as nombreProducto, pr.imagen
+            FROM detallepedido dp
+            JOIN producto pr ON dp.idProducto = pr.idProducto
+            WHERE dp.idPedido = ?
+        `, [idPedido]);
+
+        pedido.items = detalles;
+        return pedido;
+    }
+
+    // ✅ NUEVO: Actualizar estado del pedido
+    async updateStatus(idPedido, estado) {
+        const sql = 'UPDATE pedido SET estado = ? WHERE idPedido = ?';
+        const [result] = await db.query(sql, [estado, idPedido]);
+        return result.affectedRows > 0;
+    }
+
+    // ✅ NUEVO: Eliminar pedido (Cuidado: esto elimina historial)
+    async delete(idPedido) {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+            // Primero eliminar detalles por la FK
+            await connection.query('DELETE FROM detallepedido WHERE idPedido = ?', [idPedido]);
+            // Luego eliminar pagos asociados si existen (opcional, depende de tu lógica)
+            await connection.query('DELETE FROM pago WHERE idPedido = ?', [idPedido]);
+            // Finalmente eliminar el pedido
+            const [result] = await connection.query('DELETE FROM pedido WHERE idPedido = ?', [idPedido]);
+            await connection.commit();
+            return result.affectedRows > 0;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+}
+// ...
 module.exports = new PedidoDAO();

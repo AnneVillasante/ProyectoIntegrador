@@ -77,7 +77,6 @@ exports.actualizarUsuario = async (req, res) => {
 
     // Si se sube una nueva foto de perfil, se añade su ruta al objeto de datos
     if (req.file) {
-      // ⭐ Corrección
       if (isProduction()) {
         data.foto_perfil = req.file.path;
       } else {
@@ -189,7 +188,6 @@ exports.subirFotoPerfil = async (req, res) => {
 
     // La URL segura de la imagen subida a Cloudinary
     let imageUrl;
-    // ⭐ Corrección
     if (isProduction()) {
         imageUrl = req.file.path;
     } else {

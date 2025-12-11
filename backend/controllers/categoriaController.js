@@ -17,7 +17,6 @@ exports.create = async (req, res) => {
     
     // 1. Si hay archivo, usamos la URL de Cloudinary
     if (req.file) {
-      // ⭐ Corrección
       if (isProduction()) {
         categoriaData.imagen = req.file.path;
       } else {

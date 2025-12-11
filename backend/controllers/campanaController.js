@@ -37,7 +37,6 @@ const crear = async (req, res, next) => {
 
     // 2. VERIFICACIÓN CLAVE: Si Multer subió una imagen, guardamos su URL
     if (req.file) {
-      // ⭐ Corrección
       if (isProduction()) {
         data.imagen = req.file.path;
       } else {

@@ -78,3 +78,39 @@ exports.createOrder = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor al crear el pedido.' });
     }
 };
+exports.getOrderById = async (req, res) => {
+    try {
+        const pedido = await pedidoDAO.findById(req.params.id);
+        if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
+        res.json(pedido);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener el pedido' });
+    }
+};
+
+exports.updateOrderStatus = async (req, res) => {
+    try {
+        const { estado } = req.body;
+        // Validar estados permitidos
+        const estadosValidos = ['Procesando', 'pendiente', 'pagado', 'fallido', 'entregado', 'cancelado'];
+        if (!estadosValidos.includes(estado)) {
+            return res.status(400).json({ error: 'Estado no válido' });
+        }
+
+        const actualizado = await pedidoDAO.updateStatus(req.params.id, estado);
+        if (!actualizado) return res.status(404).json({ error: 'Pedido no encontrado' });
+        
+        res.json({ success: true, message: 'Estado del pedido actualizado' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar el estado' });
+    }
+};
+
+exports.deleteOrder = async (req, res) => {
+    try {
+        await pedidoDAO.delete(req.params.id);
+        res.json({ success: true, message: 'Pedido eliminado correctamente' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al eliminar el pedido' });
+    }
+};

@@ -16,7 +16,6 @@ exports.create = async (req, res) => {
     const subcategoriaData = { ...req.body };
     
     if (req.file) {
-      // ⭐ Corrección
       if (isProduction()) {
         subcategoriaData.imagen = req.file.path;
       } else {
@@ -41,7 +40,6 @@ exports.update = async (req, res) => {
     const subcategoriaData = { ...req.body };
 
     if (req.file) {
-      // ⭐ Corrección
       if (isProduction()) {
         subcategoriaData.imagen = req.file.path;
       } else {
