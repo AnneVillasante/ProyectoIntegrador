@@ -1051,68 +1051,141 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ===== MÉTRICAS DEL DASHBOARD =====
-  let incomeChart = null; // Variable para mantener la instancia del gráfico
+let chartInstances = {
+  income: null,
+  status: null,
+  products: null,
+  payments: null
+};
 
-  async function loadMetrics(params = {}) {
-    try {
-      const queryString = new URLSearchParams(params).toString();
-      const data = await apiCall(`/dashboard/metricas?${queryString}`);
-      
-      if (data && data.summary) {
-        document.getElementById('metric-total-users').textContent = data.summary.usuarios;
-        document.getElementById('metric-total-products').textContent = data.summary.productos;
-        document.getElementById('metric-total-orders').textContent = data.summary.pedidos;
-        document.getElementById('metric-total-income').textContent = `S/ ${parseFloat(data.summary.ingresos).toFixed(2)}`;
+async function loadMetrics(params = {}) {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await apiCall(`/dashboard/metricas?${queryString}`);
+
+    // 1. Actualizar Tarjetas de Resumen
+    if (response.summary) {
+      const totalUsersEl = document.getElementById('metric-total-users');
+      if (totalUsersEl) totalUsersEl.textContent = response.summary.usuarios;
+
+      // El HTML tiene Ticket Promedio, calculamos el valor
+      const avgTicketEl = document.getElementById('metric-average-ticket');
+      if (avgTicketEl) {
+        const ingresos = parseFloat(response.summary.ingresos) || 0;
+        const pedidos = parseInt(response.summary.pedidos) || 0;
+        const promedio = pedidos > 0 ? (ingresos / pedidos) : 0;
+        avgTicketEl.textContent = `S/ ${promedio.toFixed(2)}`;
       }
 
-      if (data && data.chartData) {
-        renderIncomeChart(data.chartData);
-      }
+      const totalOrdersEl = document.getElementById('metric-total-orders');
+      if (totalOrdersEl) totalOrdersEl.textContent = response.summary.pedidos;
 
-    } catch (error) {
-      console.error('Error cargando métricas:', error);
-      alert('No se pudieron cargar las métricas.');
+      const totalIncomeEl = document.getElementById('metric-total-income');
+      if (totalIncomeEl) totalIncomeEl.textContent = `S/ ${parseFloat(response.summary.ingresos).toFixed(2)}`;
     }
+
+    // 2. Renderizar Gráficos
+    if (response.charts) {
+      renderChart('income', 'incomeChart', 'line', response.charts.income, 'Ingresos', '#9A8CFF');
+      renderChart('status', 'statusChart', 'doughnut', response.charts.status, 'Pedidos', ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']);
+      renderChart('products', 'productsChart', 'bar', response.charts.products, 'Unidades', '#36A2EB');
+      renderChart('payments', 'paymentsChart', 'pie', response.charts.payments, 'Pagos', ['#4BC0C0', '#FF9F40', '#FF6384']);
+    }
+
+  } catch (error) {
+    console.error('Error cargando métricas:', error);
+    // No mostrar alerta intrusiva en carga inicial, solo log
+  }
+}
+
+// Función genérica para renderizar gráficos
+function renderChart(key, canvasId, type, data, label, colors) {
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+
+  // Destruir instancia anterior si existe
+  if (chartInstances[key]) {
+    chartInstances[key].destroy();
   }
 
-  function renderIncomeChart(chartData) {
-    const ctx = document.getElementById('incomeChart').getContext('2d');
-    
-    if (incomeChart) {
-      incomeChart.destroy(); // Destruir el gráfico anterior para evitar solapamientos
-    }
+  // Configuración de colores
+  const bgColors = Array.isArray(colors) ? colors : (type === 'line' ? `${colors}33` : colors); // Transparencia para line area
+  const borderColors = Array.isArray(colors) ? colors : colors;
 
-    incomeChart = new Chart(ctx, {
-      type: 'line', // Gráfico de líneas
+  chartInstances[key] = new Chart(ctx, {
+    type: type,
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: label,
+        data: data.data,
+        backgroundColor: bgColors,
+        borderColor: borderColors,
+        borderWidth: 1,
+        fill: type === 'line', // Rellenar área bajo la línea
+        tension: 0.4 // Suavizar curvas
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: (key === 'products') ? 'y' : 'x', // Barras horizontales para productos
+      plugins: {
+        legend: {
+          display: type !== 'bar', // Ocultar leyenda en barras si solo hay una serie
+          position: 'bottom',
+          labels: { boxWidth: 12 }
+        }
+      },
+      scales: (type === 'doughnut' || type === 'pie') ? {} : {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+  function renderPaymentMethodsChart(data) {
+    const ctx = document.getElementById('paymentMethodsChart').getContext('2d');
+    if (paymentMethodsChart) paymentMethodsChart.destroy();
+
+    paymentMethodsChart = new Chart(ctx, {
+      type: 'pie',
       data: {
-        labels: chartData.labels, // Eje X (fechas)
+        labels: data.map(item => item.metodoPago),
         datasets: [{
-          label: 'Ingresos',
-          data: chartData.values, // Eje Y (montos)
-          borderColor: 'rgba(154, 140, 255, 1)', // --brand
-          backgroundColor: 'rgba(154, 140, 255, 0.2)', // --brand con transparencia
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4
+          data: data.map(item => item.count),
+          backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+          hoverOffset: 4
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  }
+
+  function renderTopProductsChart(data) {
+    const ctx = document.getElementById('topProductsChart').getContext('2d');
+    if (topProductsChart) topProductsChart.destroy();
+
+    topProductsChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: data.map(item => item.nombre),
+        datasets: [{
+          label: 'Unidades Vendidas',
+          data: data.map(item => item.totalVendido),
+          backgroundColor: 'rgba(78, 115, 223, 0.8)',
+          borderColor: 'rgba(78, 115, 223, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
         maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { color: 'var(--muted)' },
-            grid: { color: 'rgba(255, 255, 255, 0.1)' }
-          },
-          x: {
-            ticks: { color: 'var(--muted)' },
-            grid: { color: 'rgba(255, 255, 255, 0.05)' }
-          }
-        },
-        plugins: {
-          legend: { labels: { color: 'var(--text)' } }
-        }
+        scales: { x: { beginAtZero: true } }
       }
     });
   }
