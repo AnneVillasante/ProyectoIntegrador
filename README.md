@@ -1,256 +1,178 @@
-/lunaria-threads/
+````markdown
+# 🌙 Lunaria Threads - Sistema de Gestión Comercial
 
-│
+![Node.js](https://img.shields.io/badge/Node.js-v20+-green.svg)
+![Express](https://img.shields.io/badge/Express-v4.21-blue.svg)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)
+![Build Status](https://img.shields.io/badge/GitLab%20CI-Passing-brightgreen)
 
-├── README.md
+**Lunaria Threads** es un Sistema Integrado de Gestión Comercial diseñado para tiendas de ropa, calzado y accesorios. Esta solución web automatiza el control de inventarios, la gestión de ventas, promociones y reportes, centralizando la operación del negocio en una plataforma robusta y escalable.
 
-├── backend
+---
 
-│   ├── app.js
+## 🚀 Características Principales
 
-│   ├── config
+### 🛒 Módulo de Tienda (Cliente)
+* **Catálogo Interactivo:** Filtrado dinámico por categorías, precio y tallas.
+* **Carrito de Compras:** Gestión de estado persistente y validación de stock en tiempo real.
+* **Pasarela de Pagos:** Integración segura con **Stripe** para procesar tarjetas.
+* **Perfil de Usuario:** Historial de pedidos y gestión de datos personales.
 
-│   │   ├── config.js
+### 🛠 Panel Administrativo
+* **Gestión de Inventario:** CRUD completo de productos con subida de imágenes (**Cloudinary**).
+* **Marketing:** Creación de campañas, cupones de descuento y reglas de promoción.
+* **Gestión de Pedidos:** Flujo de estados (Procesando, Enviado, Entregado, Devoluciones).
+* **Reportes Inteligentes:** Generación de PDFs (**JsReport/Puppeteer**) para ventas e inventarios.
+* **Dashboard:** Métricas clave (KPIs) e ingresos en tiempo real.
 
-│   │   └── db.js
+### 🛡️ Seguridad y Monitoreo
+* **Autenticación:** JWT (JSON Web Tokens) y Hash de contraseñas con Bcrypt.
+* **Protección:** Uso de `Helmet` para cabeceras HTTP seguras.
+* **Auditoría:** Sistema de Logs (`logActividad`) que registra acciones críticas de usuarios.
+* **Health Checks:** Endpoint `/health` para monitoreo de disponibilidad.
 
-│   ├── controllers
+---
 
-│   │   ├── AuthController.js
+## 🛠️ Stack Tecnológico
 
-│   │   ├── carritoController.js
+* **Backend:** Node.js, Express.js.
+* **Base de Datos:** MySQL (con `mysql2`).
+* **Frontend:** HTML5, CSS3, JavaScript (Vanilla ES6+).
+* **Servicios Externos:**
+    * **Stripe:** Procesamiento de pagos.
+    * **Cloudinary:** Almacenamiento de imágenes en la nube.
+* **Testing:** Jest, Supertest, Fuzzing.
+* **DevOps:** GitLab CI/CD (Pipelines de prueba y seguridad).
 
-│   │   ├── categoriaController.js
+---
 
-│   │   ├── clienteController.js
+## 📋 Pre-requisitos
 
-│   │   ├── pagoController.js
+Asegúrate de tener instalado lo siguiente:
+* [Node.js](https://nodejs.org/) (v20 o superior recomendado)
+* [MySQL](https://www.mysql.com/) (v8.0)
+* Git
 
-│   │   ├── pedidoController.js
+---
 
-│   │   ├── productoController.js
+## 🔧 Instalación y Configuración
 
-│   │   ├── reporteController.js
+### 1. Clonar el repositorio
+```bash
+git clone <url-de-tu-repo>
+cd proyectointegrador-lunaria-threads
+````
 
-│   │   ├── subcategoriaController.js
+### 2\. Configurar Base de Datos
 
-│   │   └── usuarioController.js
+1.  Ingresa a tu cliente MySQL (Workbench o terminal).
+2.  Crea la base de datos:
+    ```sql
+    CREATE DATABASE lunariathreadsdb;
+    ```
+3.  Ejecuta los scripts ubicados en la carpeta `database/`:
+      * Primero: `database/schema.sql` (Crea las tablas).
+      * Segundo: `database/seed.sql` (Inserta datos de prueba).
 
-│   ├── dao
+### 3\. Configurar Backend
 
-│   │   ├── carritoDAO.js
+Ve a la carpeta del servidor e instala las dependencias:
 
-│   │   ├── categoriaDAO.js
+```bash
+cd backend
+npm install --legacy-peer-deps
+```
 
-│   │   ├── pagoDAO.js
+### 4\. Variables de Entorno
 
-│   │   ├── pedidoDAO.js
+Crea un archivo `.env` en la carpeta `backend/` con las siguientes variables:
 
-│   │   ├── productoDao.js
+```env
+# Configuración del Servidor
+PORT=4000
+NODE_ENV=development
 
-│   │   ├── reporteDAO.js
+# Base de Datos
+DB_HOST=localhost
+DB_USER=tu_usuario_mysql
+DB_PASSWORD=tu_password_mysql
+DB_NAME=lunariathreadsdb
 
-│   │   ├── subcategoriaDAO.js
-│   │   ├── usuarioDAO.js
+# Seguridad
+JWT_SECRET=tu_secreto_super_seguro
+JWT_EXPIRES_IN=1d
 
-│   │   └── ventaDao.js
+# Servicios Externos
+CLOUDINARY_CLOUD_NAME=tu_cloud_name
+CLOUDINARY_API_KEY=tu_api_key
+CLOUDINARY_API_SECRET=tu_api_secret
 
-│   ├── dto
+STRIPE_SECRET_KEY=sk_test_...
+```
 
-│   │   ├── carritoDTO.js
+-----
 
-│   │   ├── categoriaDTO.js
+## ▶️ Ejecución
 
-│   │   ├── pagoDTO.js
+Para iniciar el servidor en modo desarrollo (con recarga automática):
 
-│   │   ├── productoDto.js
+```bash
+# Desde la carpeta /backend
+npm run dev
+```
 
-│   │   ├── reporteDTO.js
+El servidor iniciará en: `http://localhost:4000`
 
-│   │   ├── subcategoriaDTO.js
+  * **Frontend:** Accesible en la ruta raíz `/`
+  * **API:** Accesible en `/api/...`
 
-│   │   └── usuarioDTO.js
+-----
 
-│   ├── middleware
+## 🧪 Pruebas (Testing)
 
-│   │   └── authMiddleware.js
+El proyecto cuenta con una suite de pruebas automatizadas (Unitarias, Integración y Seguridad).
 
-│   ├── models
+```bash
+# Ejecutar todas las pruebas
+npm test
 
-│   │   ├── carritoModel.js
+# Ejecutar pruebas unitarias
+npm run test:unit
 
-│   │   ├── categoriaModel.js
+# Ejecutar pruebas de seguridad (Fuzzing)
+npm run test:security
+```
 
-│   │   ├── pagoModel.js
+-----
 
-│   │   ├── productoModel.js
+## 📂 Estructura del Proyecto
 
-│   │   ├── reporteModel.js
+```
+/
+├── backend/            # Lógica del servidor (Node/Express)
+│   ├── config/         # Configuración de DB y servicios
+│   ├── controllers/    # Lógica de negocio
+│   ├── dao/            # Acceso a datos (SQL queries)
+│   ├── models/         # Definiciones de tipos/modelos
+│   ├── routes/         # Definición de endpoints API
+│   ├── server/         # Configuración de Express
+│   ├── services/       # Lógica compleja y servicios externos
+│   └── tests/          # Tests con Jest
+├── database/           # Scripts SQL (Schema y Seeds)
+└── frontend/           # Interfaz de usuario
+    ├── assets/         # CSS, JS, Imágenes
+    ├── components/     # Fragmentos HTML reutilizables (Navbar, Footer)
+    └── pages/          # Vistas principales (HTML)
+```
 
-│   │   ├── subcategoriaModel.js
+-----
 
-│   │   └── usuarioModel.js
+## 👥 Autores
 
-│   ├── package-lock.json
+  * **Anne Villasante** - *Desarrollo Full Stack & Gestión del Proyecto* - [GitLab/GitHub Profile]
 
-│   ├── package.json
+-----
 
-│   ├── routes
+*Proyecto desarrollado para el Curso Integrador I - Sistemas Software, UTP 2025.*
 
-│   │   ├── authRoutes.js
-
-│   │   ├── carritoRoutes.js
-
-│   │   ├── categoriaRoutes.js
-
-│   │   ├── clienteRoutes.js
-
-│   │   ├── pagoRoutes.js
-
-│   │   ├── pedidoRoutes.js
-
-│   │   ├── productoRoutes.js
-
-│   │   ├── reporteRoutes.js
-
-│   │   ├── subcategoriaRoutes.js
-
-│   │   └── usuarioRoutes.js
-
-│   ├── server
-
-│   │   ├── apiServer.js
-
-│   │   └── staticServer.js
-
-│   ├── services
-
-│   │   ├── AuthService.js
-
-│   │   ├── ProductoService.js
-
-│   │   ├── carritoService.js
-
-│   │   ├── clienteService.js
-
-│   │   ├── jsreportService.js
-
-│   │   └── pagoService.js
-
-│   ├── tests
-
-│   │   └── example.test.js
-
-│   └── uploads
-
-│       ├── perfiles
-
-│       │   └── 1763600783058-gurugurugg.gif
-
-│       └── placeholder.png
-
-├── database
-
-│   ├── schema.sql
-
-│   ├── seed.sql
-
-│   └── updates_schema.sql
-
-├── frontend
-
-│   ├── assets
-
-│   │   ├── css
-
-│   │   │   ├── admin.css
-
-│   │   │   ├── carrito.css
-
-│   │   │   ├── compra.css
-
-│   │   │   ├── login.css
-
-│   │   │   ├── perfil.css
-
-│   │   │   ├── productos.css
-
-│   │   │   ├── reportes.css
-
-│   │   │   └── styles.css
-
-│   │   ├── img
-
-│   │   │   ├── Logo-000.png
-
-│   │   │   ├── Logo-001.png
-
-│   │   │   ├── Navbar-000.png
-
-│   │   │   ├── Navbar-001.png
-
-│   │   │   ├── Navbar-001.svg
-
-│   │   │   ├── Planes_Proyecto_Web.docx
-
-│   │   │   ├── Planes_Proyecto_Web_Completado.docx
-
-│   │   │   ├── default-avatar.png
-
-│   │   │   ├── index001.png
-
-│   │   │   └── placeholder.png
-
-│   │   └── js
-
-│   │       ├── admin.js
-
-│   │       ├── auth.js
-
-│   │       ├── carrito.js
-
-│   │       ├── categoria.js
-
-│   │       ├── checkout.js
-
-│   │       ├── compra.js
-
-│   │       ├── config.js
-
-│   │       ├── login.js
-
-│   │       ├── productos.js
-
-│   │       ├── reportes.js
-
-│   │       └── subcategorias.js
-
-│   ├── components
-
-│   │   ├── footer.html
-
-│   │   ├── layout.js
-
-│   │   ├── navbar.html
-
-│   │   ├── navbar.js
-
-│   │   ├── perfil.html
-
-│   │   └── perfil.js
-
-│   └── pages
-
-│       ├── admin_panel.html
-
-│       ├── carrito.html
-
-│       ├── compra.html
-
-│       ├── index.html
-
-│       ├── login.html
-
-│       └── productos.html
-
-└── start.sh
+```
