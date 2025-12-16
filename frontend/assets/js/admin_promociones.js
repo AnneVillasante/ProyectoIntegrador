@@ -9,7 +9,7 @@ async function loadPromotions() {
     allPromotions = Array.isArray(response) ? response : [];
     renderPromotionsTable();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     alert('No se pudieron cargar las promociones.');
   }
 }
@@ -77,7 +77,7 @@ async function deletePromotion(id) {
     alert('Promoción eliminada correctamente.');
     loadPromotions();
   } catch (error) {
-    console.error('Error eliminando promoción:', error);
+    logger.error('Error eliminando promoción:', error);
     alert('Error al eliminar la promoción.');
   }
 }
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.hidden = true;
         loadPromotions();
       } catch (error) {
-        console.error('Error guardando promoción:', error);
+        logger.error('Error guardando promoción:', error);
         alert('Error al guardar la promoción.');
       }
     });

@@ -1,7 +1,6 @@
 // Lógica para la sección de Campanas en el panel de administración
 
 let allCampaigns = [];
-
 async function loadCampaigns() {
   const tbody = document.getElementById('campaignsTableBody');
   if (!tbody) return;
@@ -11,7 +10,7 @@ async function loadCampaigns() {
     allCampaigns = Array.isArray(response) ? response : [];
     renderCampaignsTable();
   } catch (error) {
-    console.error('Error cargando campanas:', error);
+    logger.error('Error cargando campanas:', error);
     tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Error al cargar campanas.</td></tr>';
   }
 }
@@ -72,7 +71,7 @@ async function deleteCampaign(id) {
     alert('Campana eliminada correctamente.');
     loadCampaigns();
   } catch (error) {
-    console.error('Error eliminando campana:', error);
+    logger.error('Error eliminando campana:', error);
     alert('Error al eliminar la campana.');
   }
 }
@@ -116,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.hidden = true;
         loadCampaigns();
       } catch (error) {
-        console.error('Error guardando campana:', error);
+        logger.error('Error guardando campana:', error);
         alert('Error al guardar la campana.');
       }
     });

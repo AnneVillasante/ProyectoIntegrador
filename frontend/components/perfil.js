@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar que la configuración global exista
   if (!window.CONFIG || !window.CONFIG.API_URL || !window.CONFIG.IMG_URL) {
-    console.error('Error de configuración: El objeto window.CONFIG no está definido o está incompleto. Asegúrate de que el archivo de configuración (ej: config.js) se cargue correctamente en el HTML antes que este script.');
+    logger.error('Error de configuración: El objeto window.CONFIG no está definido o está incompleto. Asegúrate de que el archivo de configuración (ej: config.js) se cargue correctamente en el HTML antes que este script.');
     alert('Error de configuración del sitio. Por favor, contacta al administrador.');
     return; // Detener la ejecución para evitar más errores
   }
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     } catch (error) {
-      console.error('Error al cargar el perfil:', error);
+      logger.error('Error al cargar el perfil:', error);
             alert(error.message);
     }
   }
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.dispatchEvent(new CustomEvent('profile:updated'));
 
     } catch (error) {
-      console.error('Error en la actualización:', error);
+      logger.error('Error en la actualización:', error);
       alert(error.message);
     }
   });

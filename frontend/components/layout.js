@@ -9,7 +9,7 @@
       target.innerHTML = await res.text();
       return true;
     } catch (err) {
-      console.error('Error incluyendo componente', id, file, err);
+      logger.error('Error incluyendo componente', id, file, err);
       return false;
     }
   }

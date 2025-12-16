@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cartData = await response.json();
             renderCart(cartData);
         } catch (error) {
-            console.error('Error al obtener los datos del carrito:', error);
+            logger.error('Error al obtener los datos del carrito:', error);
             showEmptyCart();
         }
     }
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // La función apiCallToCart ya incluye el token y el tipo de carrito.
             await apiCallToCart('', 'DELETE');
         } catch (error) {
-            console.error('No se pudo limpiar el carrito del administrador:', error);
+            logger.error('No se pudo limpiar el carrito del administrador:', error);
             // Aunque falle, la venta fue exitosa. Se puede recargar para forzar la limpieza.
             window.location.reload();
         }
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const customers = await response.json();
             renderSearchResults(customers);
         } catch (error) {
-            console.error('Error buscando clientes:', error);
+            logger.error('Error buscando clientes:', error);
             customerSearchResults.innerHTML = `<div class="search-result-item">Error: ${error.message}</div>`;
             customerSearchResults.style.display = 'block';
         }
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Error en la operación del carrito.');
             fetchCartData(); // Recargar todo el carrito para mantener la consistencia
         } catch (error) {
-            console.error(`Error en API call (${method}) al carrito:`, error);
+            logger.error(`Error en API call (${method}) al carrito:`, error);
             alert('Hubo un error al actualizar el carrito.');
         }
     }

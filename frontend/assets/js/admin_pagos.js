@@ -9,7 +9,7 @@ async function loadPayments() {
     const payments = await apiCall('/pagos');
     renderPaymentsTable(Array.isArray(payments) ? payments : []);
   } catch (error) {
-    console.error('Error cargando pagos:', error);
+    logger.error('Error cargando pagos:', error);
     tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error al cargar los pagos. Por favor, verifica que el endpoint `/pagos` exista en el backend.</td></tr>';
   }
 }

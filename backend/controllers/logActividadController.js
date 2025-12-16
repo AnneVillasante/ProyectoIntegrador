@@ -6,6 +6,7 @@
  */
 
 const LogActividadService = require('../services/logActividadService');
+const logger = require('../config/logger');
 
 /**
  * Handles the request to get all activity logs.
@@ -18,6 +19,7 @@ const obtenerTodos = async (req, res, next) => {
     const logs = await LogActividadService.obtenerTodos();
     res.status(200).json(logs);
   } catch (error) {
+    logger.error('Error obteniendo logs de actividad:', error);
     next(error);
   }
 };

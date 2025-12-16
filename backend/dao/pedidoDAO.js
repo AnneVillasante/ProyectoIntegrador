@@ -1,6 +1,7 @@
 // backend/dao/pedidoDAO.js
 const db = require('../config/db');
 const carritoDAO = require('./carritoDAO');
+const logger = require('../config/logger');
 
 class PedidoDAO {
     async create(pedidoData) {
@@ -47,7 +48,7 @@ class PedidoDAO {
 
         } catch (error) {
             await connection.rollback();
-            console.error("Error en la transacción de creación de pedido:", error);
+            logger.error("Error en la transacción de creación de pedido:", error);
             throw error; // Re-lanzar para que el controlador lo maneje
         } finally {
             connection.release();

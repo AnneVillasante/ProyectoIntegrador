@@ -18,3 +18,11 @@ const CONFIG = {
 };
 
 window.CONFIG = CONFIG;
+
+// Definir logger global para el frontend (wrapper de console)
+window.logger = {
+    log: (...args) => logger.log(...args),
+    info: (...args) => logger.info(...args),
+    warn: (...args) => logger.warn(...args),
+    error: (...args) => logger.error(...args)
+};

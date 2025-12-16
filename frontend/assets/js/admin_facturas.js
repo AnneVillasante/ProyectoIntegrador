@@ -9,7 +9,7 @@ async function loadInvoices() {
     const invoices = await apiCall('/facturas');
     renderInvoicesTable(Array.isArray(invoices) ? invoices : []);
   } catch (error) {
-    console.error('Error cargando facturas:', error);
+    logger.error('Error cargando facturas:', error);
     tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Error al cargar las facturas.</td></tr>';
   }
 }

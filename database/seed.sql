@@ -1,6 +1,6 @@
 -- Insertar usuarios, a diferencia de los usuarios registrados, los usuarios insertados no tienen codificada la contrasena
 INSERT INTO usuario (`idUsuario`,`nombres`,`apellidos`,`correo`,`dni`,`telefono`,`foto_perfil`,`contrasena`,`rol`) VALUES
-(1,'Suemy','Villasante Villasante','anne.villasante@gmail.com','72076000','922512124','perfiles/1763600783058-gurugurugg.gif','$2b$10$9wYyDyl.N3.Uh8cYPwddmu/n9grE0fwbIfnG6/mlId/h8pxMD.vfy','Administrador'),
+(1,'Suemy','Villasante Villasante','anne.villasante@gmail.com','72076000','922512124',NULL,'$2b$10$9wYyDyl.N3.Uh8cYPwddmu/n9grE0fwbIfnG6/mlId/h8pxMD.vfy','Administrador'),
 (2,'Manuel','Garcia','manuel.garcia@gmail.com','12456358','954682341',NULL,'$2b$10$FHefPOuKO5tuSsIVQCesyuki4iWcXYWa/PXqYX65CJQ/T6PNk7vgK','Cliente'),
 (3,'Administrador','Principal','admin@gmail.com','75148629','921546387',NULL,'$2b$10$LIhDuvgFv8lxxgCiPt6nIeTPvo5dciVl7TCjH3wNfjLCcijiUHRwy','Administrador'),
 (4,'Pablo','Casas','pablo.casas@gmail.com','45213678','925146895',NULL,'$2b$10$u10n1WVutKhqp99tBX8IueqnvFUaN3QBVT3b1rNeD/A/gTnYAeYi.','Cliente');
@@ -83,3 +83,4 @@ INSERT INTO producto (nombre, descripcion, idCategoria, imagen, precio, stock, i
 ('Disfraz de Superhéroe', 'Traje completo basado en un conocido personaje de cómic, incluye máscara.', 4, 'img/disfraz_superheroe.jpg', 95.00, 40, 19),
 ('Disfraz de Astronauta', 'Réplica de traje espacial con casco suave, para ninos.', 4, 'img/disfraz_astronauta.jpg', 59.99, 30, 20),
 ('Disfraz de León Bebé', 'Traje de cuerpo completo con capucha de melena suave para bebés.', 4, 'img/disfraz_leon.jpg', 45.00, 25, 21);
+

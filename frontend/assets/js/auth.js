@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const authContainer = document.querySelector('.auth-container');
 
   if (!loginForm || !registerForm || !btnLogin || !btnRegister || !authContainer) {
-    console.error('Faltan elementos en login.html');
+    logger.error('Faltan elementos en login.html');
     return;
   }
 
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(resp.error || 'Error en login');
       }
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       alert('Error de conexión');
     } finally { 
       btn.disabled = false; 
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(resp.error || 'Error al registrar');
       }
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       alert('Error de conexión');
     } finally { 
       btn.disabled = false; 

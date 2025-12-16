@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             populateUserData(userData);
 
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             summaryProductList.innerHTML = `<p style="color: #ff6b6b;">${error.message}. No se pudo cargar el resumen.</p>`;
         }
     };

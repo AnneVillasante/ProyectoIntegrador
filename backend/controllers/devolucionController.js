@@ -6,12 +6,14 @@
  */
 
 const DevolucionService = require('../services/devolucionService');
+const logger = require('../config/logger');
 
 const obtenerTodas = async (req, res, next) => {
   try {
     const devoluciones = await DevolucionService.obtenerTodas();
     res.status(200).json(devoluciones);
   } catch (error) {
+    logger.error('Error obteniendo todas las devoluciones:', error);
     next(error);
   }
 };
@@ -25,6 +27,7 @@ const obtenerPorId = async (req, res, next) => {
     }
     res.status(200).json(devolucion);
   } catch (error) {
+    logger.error('Error obteniendo devolución por ID:', error);
     next(error);
   }
 };
@@ -34,6 +37,7 @@ const solicitarDevolucion = async (req, res, next) => {
     const nuevaDevolucion = await DevolucionService.solicitarDevolucion(req.body);
     res.status(201).json(nuevaDevolucion);
   } catch (error) {
+    logger.error('Error solicitando devolución:', error);
     error.statusCode = 400;
     next(error);
   }
@@ -48,6 +52,7 @@ const actualizarEstado = async (req, res, next) => {
     }
     res.status(200).json(devolucionActualizada);
   } catch (error) {
+    logger.error('Error actualizando estado de devolución:', error);
     next(error);
   }
 };

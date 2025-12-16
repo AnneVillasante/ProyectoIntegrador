@@ -3,6 +3,7 @@ const usuarioModel = require('../models/usuarioModel');
 const UsuarioDto = require('../dto/usuarioDTO');
 const bcrypt = require('bcryptjs');
 const db = require('../config/db'); // Importar la conexión a la BD
+const logger = require('../config/logger');
 
 exports.obtenerUsuarios = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ exports.obtenerUsuarios = async (req, res) => {
     }
     res.json(usuarios);
   } catch (err) {
-    console.error('USUARIO LIST ERROR:', err);
+    logger.error('USUARIO LIST ERROR:', err);
     res.status(500).json({ error: 'Error al obtener usuarios' });
   }
 };
@@ -54,7 +55,7 @@ exports.crearUsuario = async (req, res) => {
     const resultado = await usuarioModel.create(nuevoUsuario);
     res.status(201).json({ success: true, message: 'Usuario creado correctamente', id: resultado.insertId });
   } catch (err) {
-    console.error('USUARIO CREATE ERROR:', err);
+    logger.error('USUARIO CREATE ERROR:', err);
     res.status(500).json({ error: 'Error al crear usuario' });
   }
 };
@@ -65,7 +66,7 @@ exports.obtenerUsuario = async (req, res) => {
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.json(usuario);
   } catch (err) {
-    console.error('USUARIO GET ERROR:', err);
+    logger.error('USUARIO GET ERROR:', err);
     res.status(500).json({ error: 'Error al obtener usuario' });
   }
 };
@@ -86,7 +87,7 @@ exports.actualizarUsuario = async (req, res) => {
     await usuarioModel.update(id, data);
     res.json({ success: true, message: 'Usuario actualizado' });
   } catch (err) {
-    console.error('USUARIO UPDATE ERROR:', err);
+    logger.error('USUARIO UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar usuario' });
   }
 };
@@ -97,7 +98,7 @@ exports.eliminarUsuario = async (req, res) => {
     await usuarioModel.delete(id);
     res.json({ success: true, message: 'Usuario eliminado' });
   } catch (err) {
-    console.error('USUARIO DELETE ERROR:', err);
+    logger.error('USUARIO DELETE ERROR:', err);
     res.status(500).json({ error: 'Error al eliminar usuario' });
   }
 };
@@ -124,7 +125,7 @@ exports.obtenerMiPerfil = async (req, res) => {
 
     res.json(usuarioDto);
   } catch (err) {
-    console.error('USER PROFILE GET ERROR:', err);
+    logger.error('USER PROFILE GET ERROR:', err);
     res.status(500).json({ error: 'Error al obtener el perfil del usuario' });
   }
 };
@@ -150,7 +151,7 @@ exports.actualizarMiPerfil = async (req, res) => {
 
     res.json({ success: true, message: 'Perfil actualizado correctamente', user: usuarioDto });
   } catch (err) {
-    console.error('USER PROFILE UPDATE ERROR:', err);
+    logger.error('USER PROFILE UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar el perfil' });
   }
 };
@@ -172,7 +173,7 @@ exports.actualizarMiPassword = async (req, res) => {
     await usuarioModel.update(id, { contrasena: hashedPassword });
     res.json({ success: true, message: 'Contrasena actualizada correctamente.' });
   } catch (err) {
-    console.error('USER PASSWORD UPDATE ERROR:', err);
+    logger.error('USER PASSWORD UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar la contrasena' });
   }
 };
@@ -199,7 +200,7 @@ exports.subirFotoPerfil = async (req, res) => {
 
     res.json({ success: true, message: 'Foto de perfil actualizada correctamente', filePath: imageUrl });
   } catch (err) {
-    console.error('USER PHOTO UPLOAD ERROR:', err);
+    logger.error('USER PHOTO UPLOAD ERROR:', err);
     res.status(500).json({ error: 'Error al subir la foto de perfil' });
   }
 };
@@ -222,7 +223,7 @@ exports.buscarUsuarios = async (req, res) => {
     const usuariosDto = usuarios.map(u => new UsuarioDto(u));
     res.json(usuariosDto);
   } catch (err) {
-    console.error('USUARIO SEARCH ERROR:', err);
+    logger.error('USUARIO SEARCH ERROR:', err);
     res.status(500).json({ error: 'Error al buscar usuarios' });
   }
 };

@@ -7,12 +7,14 @@
 
 const { isProduction } = require('../config/cloudinary');
 const CampanaService = require('../services/campanaService');
+const logger = require('../config/logger');
 
 const obtenerTodas = async (req, res, next) => {
   try {
     const campanas = await CampanaService.obtenerTodas();
     res.status(200).json(campanas);
   } catch (error) {
+    logger.error('Error obteniendo todas las campañas:', error);
     next(error);
   }
 };
@@ -26,6 +28,7 @@ const obtenerPorId = async (req, res, next) => {
     }
     res.status(200).json(campana);
   } catch (error) {
+    logger.error('Error obteniendo campaña por ID:', error);
     next(error);
   }
 };
@@ -48,6 +51,7 @@ const crear = async (req, res, next) => {
     const nuevaCampana = await CampanaService.crear(data);
     res.status(201).json(nuevaCampana);
   } catch (error) {
+    logger.error('Error creando campaña:', error);
     error.statusCode = 400;
     next(error);
   }
@@ -75,6 +79,7 @@ const actualizar = async (req, res, next) => {
     }
     res.status(200).json(campanaActualizada);
   } catch (error) {
+    logger.error('Error actualizando campaña:', error);
     next(error);
   }
 };
@@ -88,6 +93,7 @@ const eliminar = async (req, res, next) => {
     }
     res.status(204).send(); // 204 No Content
   } catch (error) {
+    logger.error('Error eliminando campaña:', error);
     next(error);
   }
 };

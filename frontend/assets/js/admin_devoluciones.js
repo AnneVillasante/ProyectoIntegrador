@@ -11,7 +11,7 @@ async function loadReturns() {
     allReturns = Array.isArray(response) ? response : [];
     renderReturnsTable();
   } catch (error) {
-    console.error('Error cargando devoluciones:', error);
+    logger.error('Error cargando devoluciones:', error);
     tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error al cargar devoluciones.</td></tr>';
   }
 }
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.hidden = true;
         loadReturns();
       } catch (error) {
-        console.error('Error actualizando devolución:', error);
+        logger.error('Error actualizando devolución:', error);
         alert('Error al actualizar la devolución.');
       }
     });

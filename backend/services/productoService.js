@@ -1,5 +1,6 @@
 const ProductoDao = require('../dao/productoDAO');
 const Producto = require('../models/productoModel');
+const logger = require('../config/logger');
 
 class ProductoService {
   // 🧩 1. Obtener productos desde MySQL
@@ -20,7 +21,7 @@ class ProductoService {
         imagen: p.imagen || 'placeholder.png' // evita errores si no hay imagen
       }));
     } catch (error) {
-      console.error('Error en ProductoService:', error);
+      logger.error('Error en ProductoService:', error);
       throw error;
     }
   }

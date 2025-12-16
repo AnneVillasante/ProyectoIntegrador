@@ -1,13 +1,14 @@
 const ProductoDao = require('../dao/productoDAO');
 const ProductoDto = require('../dto/productoDTO');
 const { isProduction } = require('../config/cloudinary');
+const logger = require('../config/logger');
 
 exports.list = async (req, res) => {
   try {
     const products = await ProductoDao.getAll();
     res.json(products.map(p => new ProductoDto(p)));
   } catch (err) {
-    console.error('PRODUCT LIST ERROR:', err);
+    logger.error('PRODUCT LIST ERROR:', err);
     res.status(500).json({ error: 'Error al obtener productos' });
   }
 };
@@ -18,7 +19,7 @@ exports.get = async (req, res) => {
     if (!product) return res.status(404).json({ error: 'Producto no encontrado' });
     res.json(new ProductoDto(product));
   } catch (err) {
-    console.error('PRODUCT GET ERROR:', err);
+    logger.error('PRODUCT GET ERROR:', err);
     res.status(500).json({ error: 'Error al obtener producto' });
   }
 };
@@ -38,7 +39,7 @@ exports.create = async (req, res) => {
     const id = await ProductoDao.create(productData);
     res.json({ success: true, id });
   } catch (err) {
-    console.error('PRODUCT CREATE ERROR:', err);
+    logger.error('PRODUCT CREATE ERROR:', err);
     res.status(500).json({ error: 'Error al crear producto' });
   }
 };
@@ -66,7 +67,7 @@ exports.update = async (req, res) => {
     if (!updated) return res.status(404).json({ message: 'Producto no encontrado' });
     res.json({ success: true, message: 'Producto actualizado correctamente' });
   } catch (err) {
-    console.error('PRODUCT UPDATE ERROR:', err);
+    logger.error('PRODUCT UPDATE ERROR:', err);
     res.status(500).json({ error: 'Error al actualizar producto' });
   }
 };
@@ -77,7 +78,7 @@ exports.delete = async (req, res) => {
     await ProductoDao.delete(id);
     res.json({ success: true, message: 'Producto eliminado' });
   } catch (err) {
-    console.error('PRODUCT DELETE ERROR:', err);
+    logger.error('PRODUCT DELETE ERROR:', err);
     res.status(500).json({ error: 'Error al eliminar producto' });
   }
 };

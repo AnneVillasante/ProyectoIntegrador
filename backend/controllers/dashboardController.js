@@ -1,5 +1,6 @@
 // backend/controllers/dashboardController.js
 const db = require('../config/db');
+const logger = require('../config/logger');
 
 // Función auxiliar para filtros de fecha
 const getDateClauses = (filter, fechaInicio, fechaFin, tableAlias = 'p', dateField = 'fecha') => {
@@ -115,7 +116,7 @@ exports.getMetrics = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error metrics:', error);
+        logger.error('Error metrics:', error);
         res.status(500).json({ error: 'Error al obtener métricas', details: error.message });
     }
 };

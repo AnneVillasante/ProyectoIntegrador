@@ -2,6 +2,7 @@ require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const pagoDAO = require('../dao/pagoDAO');
 const PagoDTO = require('../dto/pagoDTO');
+const logger = require('../config/logger');
 
 class PagoService {
 
@@ -21,7 +22,7 @@ class PagoService {
             });
             return paymentIntent;
         } catch (error) {
-            console.error("Error al crear el intento de pago en Stripe:", error);
+            logger.error("Error al crear el intento de pago en Stripe:", error);
             throw new Error(`Stripe Error: ${error.message}`);
         }
     }
@@ -45,7 +46,7 @@ class PagoService {
             });
             return paymentIntent;
         } catch (error) {
-            console.error("Error al crear y confirmar el intento de pago en Stripe:", error);
+            logger.error("Error al crear y confirmar el intento de pago en Stripe:", error);
             throw new Error(`Stripe Error: ${error.message}`);
         }
     }

@@ -11,7 +11,7 @@ async function loadCoupons() {
     allCoupons = Array.isArray(response) ? response : [];
     renderCouponsTable();
   } catch (error) {
-    console.error('Error cargando cupones:', error);
+    logger.error('Error cargando cupones:', error);
     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Error al cargar cupones.</td></tr>';
   }
 }
@@ -73,7 +73,7 @@ async function deleteCoupon(id) {
     alert('Cupón eliminado correctamente.');
     loadCoupons();
   } catch (error) {
-    console.error('Error eliminando cupón:', error);
+    logger.error('Error eliminando cupón:', error);
     alert('Error al eliminar el cupón.');
   }
 }
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.hidden = true;
         loadCoupons();
       } catch (error) {
-        console.error('Error guardando cupón:', error);
+        logger.error('Error guardando cupón:', error);
         alert('Error al guardar el cupón.');
       }
     });

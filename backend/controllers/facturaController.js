@@ -6,12 +6,14 @@
  */
 
 const FacturaService = require('../services/facturaService');
+const logger = require('../config/logger');
 
 const obtenerTodas = async (req, res, next) => {
   try {
     const facturas = await FacturaService.obtenerTodas();
     res.status(200).json(facturas);
   } catch (error) {
+    logger.error('Error obteniendo todas las facturas:', error);
     next(error);
   }
 };
@@ -25,6 +27,7 @@ const obtenerPorId = async (req, res, next) => {
     }
     res.status(200).json(factura);
   } catch (error) {
+    logger.error('Error obteniendo factura por ID:', error);
     next(error);
   }
 };
@@ -34,6 +37,7 @@ const generarFactura = async (req, res, next) => {
     const nuevaFactura = await FacturaService.generarFactura(req.body);
     res.status(201).json(nuevaFactura);
   } catch (error) {
+    logger.error('Error generando factura:', error);
     error.statusCode = 400;
     next(error);
   }
@@ -48,6 +52,7 @@ const eliminar = async (req, res, next) => {
     }
     res.status(204).send(); // 204 No Content
   } catch (error) {
+    logger.error('Error eliminando factura:', error);
     next(error);
   }
 };

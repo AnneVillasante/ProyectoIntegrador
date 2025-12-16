@@ -1,5 +1,6 @@
 const pagoService = require('../services/pagoService');
 const db = require('../config/db');
+const logger = require('../config/logger');
 // Se importa el servicio de renderizado de jsreport
 const getJsreportRenderer = (req) => require('../services/jsreportService')(req.app.get('jsreport'));
 
@@ -8,6 +9,7 @@ const obtenerTodos = async (req, res) => {
         const pagos = await pagoService.obtenerTodos();
         res.status(200).json(pagos);
     } catch (error) {
+        logger.error('Error al obtener los pagos:', error);
         res.status(500).json({ message: 'Error al obtener los pagos', error: error.message });
     }
 };
@@ -33,6 +35,7 @@ const crearIntentoDePago = async (req, res) => {
             clientSecret: paymentIntent.client_secret,
         });
     } catch (error) {
+        logger.error('Error al procesar el pago:', error);
         res.status(500).json({ message: 'Error al procesar el pago', error: error.message });
     }
 };
@@ -46,7 +49,7 @@ const stripeWebhook = async (req, res) => {
         const pagoGuardado = await pagoService.confirmarYGuardarPago(event);
 
         if (pagoGuardado) {
-            console.log('Pago confirmado y guardado:', pagoGuardado);
+            logger.info('Pago confirmado y guardado:', pagoGuardado);
             // --- GENERACIÓN DE BOLETA PDF ---
             try {
                 const { idPedido } = event.data.object.metadata;
@@ -90,19 +93,19 @@ const stripeWebhook = async (req, res) => {
 
                     // 3. Renderizar el PDF
                     const pdfBuffer = await render('boleta', boletaData);
-                    console.log(`Boleta para pedido ${idPedido} generada.`);
+                    logger.info(`Boleta para pedido ${idPedido} generada.`);
 
                     // TODO: Implementar servicio de envío de correo y adjuntar el `pdfBuffer.content`
                     // await emailService.sendInvoice(boletaData.clienteCorreo, pdfBuffer.content);
                 }
             } catch (pdfError) {
-                console.error(`Error generando boleta PDF para el pedido:`, pdfError);
+                logger.error(`Error generando boleta PDF para el pedido:`, pdfError);
             }
         }
 
         res.status(200).json({ received: true });
     } catch (error) {
-        console.error("Error en el webhook de Stripe:", error);
+        logger.error("Error en el webhook de Stripe:", error);
         res.status(400).send(`Webhook Error: ${error.message}`);
     }
 };

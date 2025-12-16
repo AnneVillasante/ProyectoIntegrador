@@ -2,6 +2,7 @@ const reporteDAO = require('../dao/reporteDAO');
 const productoDAO = require('../dao/productoDAO');
 const db = require('../config/db');
 const ReporteDTO = require('../dto/reporteDTO');
+const logger = require('../config/logger');
 // Se importa el servicio de renderizado de jsreport
 // Se asume que jsreport se inicializa en app.js y se pasa a través de req
 const getJsreportRenderer = (req) => require('../services/jsreportService')(req.app.get('jsreport'));
@@ -122,7 +123,7 @@ exports.generateVentasReport = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error generando reporte de ventas:', error);
+    logger.error('Error generando reporte de ventas:', error);
     res.status(500).json({ error: 'Error al generar reporte de ventas' });
   }
 };
@@ -181,7 +182,7 @@ exports.generateProductosReport = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error grave en reporte:", error);
+    logger.error("Error grave en reporte:", error);
     res.status(500).send("Error generando reporte");
   }
 };
@@ -274,7 +275,7 @@ exports.generateUsuarioReport = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error generando reporte de usuarios:', error);
+    logger.error('Error generando reporte de usuarios:', error);
     res.status(500).json({ error: 'Error al generar reporte de usuarios' });
   }
 };
@@ -336,7 +337,7 @@ exports.generateTicket = async (req, res) => {
     res.send(report.content);
 
   } catch (error) {
-    console.error('Error generando ticket:', error);
+    logger.error('Error generando ticket:', error);
     res.status(500).json({ error: 'Error al generar el ticket', details: error.message });
   }
 };
@@ -347,7 +348,7 @@ exports.listAll = async (req, res) => {
     const reportes = await reporteDAO.getAll();
     res.json(reportes.map(r => new ReporteDTO(r)));
   } catch (error) {
-    console.error('Error listando reportes:', error);
+    logger.error('Error listando reportes:', error);
     res.status(500).json({ error: 'Error al listar reportes' });
   }
 };
@@ -362,7 +363,7 @@ exports.getById = async (req, res) => {
     }
     res.json(new ReporteDTO(reporte));
   } catch (error) {
-    console.error('Error obteniendo reporte:', error);
+    logger.error('Error obteniendo reporte:', error);
     res.status(500).json({ error: 'Error al obtener reporte' });
   }
 };
@@ -374,7 +375,7 @@ exports.getByTipo = async (req, res) => {
     const reportes = await reporteDAO.getByTipo(tipo);
     res.json(reportes.map(r => new ReporteDTO(r)));
   } catch (error) {
-    console.error('Error obteniendo reportes por tipo:', error);
+    logger.error('Error obteniendo reportes por tipo:', error);
     res.status(500).json({ error: 'Error al obtener reportes por tipo' });
   }
 };
@@ -386,7 +387,7 @@ exports.delete = async (req, res) => {
     await reporteDAO.delete(id);
     res.json({ success: true, message: 'Reporte eliminado correctamente' });
   } catch (error) {
-    console.error('Error eliminando reporte:', error);
+    logger.error('Error eliminando reporte:', error);
     res.status(500).json({ error: 'Error al eliminar reporte' });
   }
 };

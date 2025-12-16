@@ -1,12 +1,14 @@
 const { isProduction } = require('../config/cloudinary');
 const subcategoriaDAO = require('../dao/subcategoriaDAO');
 const SubcategoriaDTO = require('../dto/subcategoriaDTO');
+const logger = require('../config/logger');
 
 exports.getAll = async (req, res) => {
   try {
     const subcategorias = await subcategoriaDAO.getAll();
     res.json(subcategorias);
   } catch (err) {
+    logger.error('Error obteniendo subcategorías:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -30,6 +32,7 @@ exports.create = async (req, res) => {
     const id = await subcategoriaDAO.create(subcategoria);
     res.status(201).json({ message: 'Subcategoría creada', id });
   } catch (err) {
+    logger.error('Error creando subcategoría:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -58,6 +61,7 @@ exports.update = async (req, res) => {
 
     res.json({ message: 'Subcategoría actualizada' });
   } catch (err) {
+    logger.error('Error actualizando subcategoría:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -67,6 +71,7 @@ exports.delete = async (req, res) => {
     await subcategoriaDAO.delete(req.params.id);
     res.json({ message: 'Subcategoría eliminada' });
   } catch (err) {
+    logger.error('Error eliminando subcategoría:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -76,6 +81,7 @@ exports.getById = async (req, res) => {
     const subcategoria = await subcategoriaDAO.getById(req.params.id);
     res.json(subcategoria);
   } catch (err) {
+    logger.error('Error obteniendo subcategoría por ID:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -86,6 +92,7 @@ exports.getByCategoria = async (req, res) => {
     const subcategorias = await subcategoriaDAO.getByCategoria(idCategoria);
     res.json(subcategorias);
   } catch (err) {
+    logger.error('Error obteniendo subcategorías por categoría:', err);
     res.status(500).json({ error: err.message });
   }
 };

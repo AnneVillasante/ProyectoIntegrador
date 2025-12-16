@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UsuarioDto = require('../dto/usuarioDTO');
 const { JWT_SECRET } = require('../config/config');
+const logger = require('../config/logger');
 
 const JWT_EXPIRES = '7d';
 
@@ -23,7 +24,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user.idUsuario, rol: user.rol }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
     res.json({ success: true, user: dto, token });
   } catch (err) {
-    console.error('LOGIN ERROR:', err);
+    logger.error('LOGIN ERROR:', err);
     res.status(500).json({ error: 'Error en login' });
   }
 };
@@ -62,7 +63,7 @@ exports.register = async (req, res) => {
     
     res.status(201).json({ success: true, id });
   } catch (err) {
-    console.error('REGISTER ERROR:', err);
+    logger.error('REGISTER ERROR:', err);
     if (err && err.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Usuario ya existe' });
     res.status(500).json({ error: 'Error registrando usuario' });
   }

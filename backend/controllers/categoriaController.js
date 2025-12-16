@@ -1,12 +1,14 @@
 const { isProduction } = require('../config/cloudinary');
 const categoriaDAO = require('../dao/categoriaDAO');
 const CategoriaDTO = require('../dto/categoriaDTO');
+const logger = require('../config/logger');
 
 exports.getAll = async (req, res) => {
   try {
     const categorias = await categoriaDAO.getAll();
     res.json(categorias);
   } catch (err) {
+    logger.error('Error obteniendo categorías:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -30,6 +32,7 @@ exports.create = async (req, res) => {
     const id = await categoriaDAO.create(categoria);
     res.status(201).json({ message: 'Categoría creada', id });
   } catch (err) {
+    logger.error('Error creando categoría:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -66,6 +69,7 @@ exports.update = async (req, res) => {
 
     res.json({ message: 'Categoría actualizada correctamente' });
   } catch (err) {
+    logger.error('Error actualizando categoría:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -83,6 +87,7 @@ exports.delete = async (req, res) => {
 
     res.json({ message: 'Categoría eliminada correctamente' });
   } catch (err) {
+    logger.error('Error eliminando categoría:', err);
     res.status(500).json({ error: err.message });
   }
 };

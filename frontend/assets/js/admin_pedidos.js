@@ -9,7 +9,7 @@ async function loadOrders() {
     const orders = await apiCall('/pedidos');
     renderOrdersTable(Array.isArray(orders) ? orders : []);
   } catch (error) {
-    console.error('Error cargando pedidos:', error);
+    logger.error('Error cargando pedidos:', error);
     tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error al cargar los pedidos. Por favor, verifica que el endpoint `/pedidos` exista en el backend.</td></tr>';
   }
 }

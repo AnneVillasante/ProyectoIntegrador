@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const cartData = await response.json(); // cartData se declara aquí
             renderCart(cartData);
         } catch (error) {
-            console.error('Error al obtener los datos del carrito:', error);
+            logger.error('Error al obtener los datos del carrito:', error);
             showEmptyCart();
         }
     }
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Recargar los datos del carrito para reflejar el cambio
                 fetchCartData();
             } catch (error) {
-                console.error('Error al eliminar el producto:', error);
+                logger.error('Error al eliminar el producto:', error);
                 alert('Hubo un error al eliminar el producto del carrito.');
             }
         }
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Recargar los datos del carrito para reflejar el cambio
             fetchCartData();
         } catch (error) {
-            console.error('Error al actualizar la cantidad:', error);
+            logger.error('Error al actualizar la cantidad:', error);
             alert('Hubo un error al actualizar la cantidad del producto.');
         }
     }

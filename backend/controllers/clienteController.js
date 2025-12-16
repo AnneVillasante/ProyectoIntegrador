@@ -1,5 +1,6 @@
 // backend/controllers/clienteController.js
 const clienteService = require('../services/clienteService');
+const logger = require('../config/logger');
 
 /**
  * Crea un cliente sin un usuario asociado.
@@ -25,6 +26,7 @@ const createQuickClient = async (req, res) => {
       cliente: nuevoCliente, // Devolvemos el cliente completo
     });
   } catch (error) {
+    logger.error('Error al crear el cliente rápido:', error);
     res.status(500).json({ error: 'Error al crear el cliente rápido. ' + error.message });
   }
 };
@@ -38,6 +40,7 @@ const createClientByAdmin = async (req, res) => {
       clienteId: result.insertId,
     });
   } catch (error) {
+    logger.error('Error al crear el cliente por admin:', error);
     res.status(500).json({ message: 'Error al crear el cliente. ' + error.message });
   }
 };
@@ -55,6 +58,7 @@ const getMyProfile = async (req, res) => {
     }
     res.json(cliente);
   } catch (error) {
+    logger.error('Error al obtener el perfil del cliente:', error);
     res.status(500).json({ message: 'Error al obtener el perfil del cliente. ' + error.message });
   }
 };
@@ -69,6 +73,7 @@ const searchClients = async (req, res) => {
     const clientes = await clienteService.searchClients(q);
     res.json(clientes);
   } catch (error) {
+    logger.error('Error al buscar clientes:', error);
     res.status(500).json({ error: 'Error al buscar clientes. ' + error.message });
   }
 };

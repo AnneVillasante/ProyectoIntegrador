@@ -1,12 +1,14 @@
 // backend/controllers/pedidoController.js
 const pedidoDAO = require('../dao/pedidoDAO');
 const clienteService = require('../services/clienteService');
+const logger = require('../config/logger');
 
 exports.getAllOrders = async (req, res) => {
     try {
         const pedidos = await pedidoDAO.findAll();
         res.status(200).json(pedidos);
     } catch (error) {
+        logger.error('Error al obtener todos los pedidos:', error);
         res.status(500).json({ error: 'Error interno del servidor al obtener los pedidos.' });
     }
 };
@@ -71,7 +73,7 @@ exports.createOrder = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error al crear el pedido:', error);
+        logger.error('Error al crear el pedido:', error);
         if (error.message && error.message.includes('Stock insuficiente')) {
             return res.status(409).json({ error: error.message });
         }
@@ -84,6 +86,7 @@ exports.getOrderById = async (req, res) => {
         if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
         res.json(pedido);
     } catch (error) {
+        logger.error('Error al obtener el pedido por ID:', error);
         res.status(500).json({ error: 'Error al obtener el pedido' });
     }
 };
@@ -102,6 +105,7 @@ exports.updateOrderStatus = async (req, res) => {
         
         res.json({ success: true, message: 'Estado del pedido actualizado' });
     } catch (error) {
+        logger.error('Error al actualizar el estado del pedido:', error);
         res.status(500).json({ error: 'Error al actualizar el estado' });
     }
 };
@@ -111,6 +115,7 @@ exports.deleteOrder = async (req, res) => {
         await pedidoDAO.delete(req.params.id);
         res.json({ success: true, message: 'Pedido eliminado correctamente' });
     } catch (error) {
+        logger.error('Error al eliminar el pedido:', error);
         res.status(500).json({ error: 'Error al eliminar el pedido' });
     }
 };

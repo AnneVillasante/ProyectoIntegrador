@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
 const { JWT_SECRET } = require('../config/config');
+const logger = require('../config/logger');
 
 const protect = async (req, res, next) => {
   let token;
@@ -24,7 +25,7 @@ const protect = async (req, res, next) => {
       if (error.name === 'JsonWebTokenError') {
         return res.status(401).json({ message: 'No autorizado, el token es inválido.' });
       }
-      console.error('Error en middleware de protección:', error);
+      logger.error('Error en middleware de protección:', error);
       return res.status(401).json({ message: 'No autorizado, problema con el token.' });
     }
   }

@@ -20,7 +20,7 @@ async function apiCall(endpoint, options = {}) {
     }
     return response.status === 204 ? null : await response.json();
   } catch (error) {
-    console.error('API Call Error:', error);
+    logger.error('API Call Error:', error);
     throw error;
   }
 }
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof loadLogs === 'function') loadLogs();
         break;
       default:
-        console.log(`Pestana ${tabName} seleccionada. Sin acción de precarga.`);
+        logger.log(`Pestana ${tabName} seleccionada. Sin acción de precarga.`);
     }
   }
 
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return response; // Devolvemos la respuesta completa para manejar el blob
     } catch (error) {
-      console.error('API Download Error:', error);
+      logger.error('API Download Error:', error);
       throw error;
     }
   }
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
       users = await apiCall('/usuario');
       renderUsersTable();
     } catch (error) {
-      console.error('Error cargando usuarios:', error);
+      logger.error('Error cargando usuarios:', error);
       alert('Error al cargar usuarios');
     }
   }
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadUsers();
       alert('Usuario eliminado correctamente');
     } catch (error) {
-      console.error('Error eliminando usuario:', error);
+      logger.error('Error eliminando usuario:', error);
       alert('Error al eliminar usuario');
     }
   }
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const logs = await apiCall('/logs');
       renderLogsTable(logs);
     } catch (error) {
-      console.error('Error cargando logs:', error);
+      logger.error('Error cargando logs:', error);
       alert('Error al cargar los logs de actividad.');
     }
   }
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.getElementById('orderDetailsModal').hidden = false;
     } catch (error) {
-      console.error(`Error al cargar detalles del pedido ${idPedido}:`, error);
+      logger.error(`Error al cargar detalles del pedido ${idPedido}:`, error);
       alert('No se pudieron cargar los detalles del pedido.');
     }
   }
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
       categorias = await apiCall('/categorias');
       renderCategorySelect();
     } catch (error) {
-      console.error('Error cargando categorías:', error);
+      logger.error('Error cargando categorías:', error);
     }
   }
 
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
       subcategorias = await apiCall(`/subcategorias/categoria/${idCategoria}`);
       renderSubcategorySelect();
     } catch (error) {
-      console.error('Error cargando subcategorías:', error);
+      logger.error('Error cargando subcategorías:', error);
       document.getElementById('idSubcategoria').innerHTML = '<option value="">-- Sin subcategoría --</option>';
     }
   }
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
       products = Array.isArray(response) ? response : [];
       renderProductsTable();
     } catch (error) {
-      console.error('Error cargando productos:', error);
+      logger.error('Error cargando productos:', error);
       alert('Error al cargar productos');
     }
   }
@@ -446,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadProducts();
       alert('Producto eliminado correctamente');
     } catch (error) {
-      console.error('Error eliminando producto:', error);
+      logger.error('Error eliminando producto:', error);
       alert('Error al eliminar producto');
     }
   }
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
       stocks = Array.isArray(response) ? response : [];
       renderStocksTable();
     } catch (error) {
-      console.error('Error cargando stocks:', error);
+      logger.error('Error cargando stocks:', error);
       alert('Error al cargar stocks');
     }
   }
@@ -519,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadStocks();
       alert('Stocks actualizados correctamente');
     } catch (error) {
-      console.error('Error actualizando stocks:', error);
+      logger.error('Error actualizando stocks:', error);
       alert('Error al actualizar stocks');
     }
   }
@@ -532,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderCategoriesTable();
       renderSubcategoriesTable();
     } catch (error) {
-      console.error('Error cargando clasificaciones:', error);
+      logger.error('Error cargando clasificaciones:', error);
       alert('Error al cargar clasificaciones');
     }
   }
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
       subcategorias = await apiCall('/subcategorias');
       return subcategorias;
     } catch (error) {
-      console.error('Error cargando todas las subcategorías:', error);
+      logger.error('Error cargando todas las subcategorías:', error);
       return [];
     }
   }
@@ -656,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadClassifications();
       alert('Categoría eliminada correctamente');
     } catch (error) {
-      console.error('Error eliminando categoría:', error);
+      logger.error('Error eliminando categoría:', error);
       alert('Error al eliminar categoría');
     }
   }
@@ -712,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadClassifications();
       alert('Subcategoría eliminada correctamente');
     } catch (error) {
-      console.error('Error eliminando subcategoría:', error);
+      logger.error('Error eliminando subcategoría:', error);
       alert('Error al eliminar subcategoría');
     }
   }
@@ -756,11 +756,11 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         // Si la respuesta no es un PDF, es probable que sea un error en formato JSON.
         const errorData = await response.json().catch(() => ({ error: 'Respuesta inesperada del servidor.' }));
-        console.error('Respuesta no válida del servidor:', errorData);
+        logger.error('Respuesta no válida del servidor:', errorData);
         alert(`Error al generar el reporte: ${errorData.error || 'El servidor no devolvió un archivo PDF válido.'}`);
       }
     } catch (error) {
-      console.error(`Error generando reporte de ${reportName}:`, error);
+      logger.error(`Error generando reporte de ${reportName}:`, error);
       alert(`Error al generar reporte de ${reportName}: ` + (error.message || 'Error desconocido'));
     }
   }
@@ -889,7 +889,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loadUsers();
       alert('Rol actualizado correctamente');
     } catch (error) {
-      console.error('Error actualizando usuario:', error);
+      logger.error('Error actualizando usuario:', error);
       alert('Error al actualizar usuario');
     }
   });
@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('categoryModal').hidden = true;
       await loadClassifications();
     } catch (error) {
-      console.error('Error guardando categoría:', error);
+      logger.error('Error guardando categoría:', error);
       alert('Error al guardar categoría: ' + (error.message || 'Error desconocido'));
     }
   });
@@ -973,7 +973,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('subcategoryModal').hidden = true;
       await loadClassifications();
     } catch (error) {
-      console.error('Error guardando subcategoría:', error);
+      logger.error('Error guardando subcategoría:', error);
       alert('Error al guardar subcategoría: ' + (error.message || 'Error desconocido'));
     }
   });
@@ -1029,7 +1029,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadStocks();
       }
     } catch (error) {
-      console.error('Error guardando producto:', error);
+      logger.error('Error guardando producto:', error);
       alert('Error al guardar producto: ' + (error.message || 'Error desconocido'));
     }
   });
@@ -1093,7 +1093,7 @@ async function loadMetrics(params = {}) {
     }
 
   } catch (error) {
-    console.error('Error cargando métricas:', error);
+    logger.error('Error cargando métricas:', error);
     // No mostrar alerta intrusiva en carga inicial, solo log
   }
 }

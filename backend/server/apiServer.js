@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs').promises;
 const ProductService = require('../services/productoService');
+const logger = require('../config/logger');
 
 // Configuramos jsreport con puerto 0, pero el verdadero control
 // lo haremos más abajo en startApi.
@@ -160,7 +161,7 @@ apiApp.get('/productos', async (req, res) => {
     
     res.send(html);
   } catch (err) {
-    console.error('Error render productos:', err);
+    logger.error('Error render productos:', err);
     res.status(500).send('Error interno al mostrar productos');
   }
 });
@@ -177,9 +178,9 @@ async function startApi() {
     // Lo borramos del entorno para que jsreport NO lo vea al iniciar
     if (process.env.PORT) delete process.env.PORT;
 
-    console.log('Iniciando jsreport (sin puerto)...');
+    logger.log('Iniciando jsreport (sin puerto)...');
     await jsreport.init();
-    console.log('jsreport iniciado correctamente.');
+    logger.log('jsreport iniciado correctamente.');
 
     // --- RESTAURAR PUERTO ---
     // Devolvemos el puerto a su lugar para que Express lo use
@@ -189,11 +190,11 @@ async function startApi() {
     const PORT = process.env.PORT || 4000;
 
     const apiServer = apiApp.listen(PORT, () =>
-      console.log(`Servidor unificado escuchando en puerto ${PORT}`)
+      logger.log(`Servidor unificado escuchando en puerto ${PORT}`)
     );
     return apiServer;
   } catch (err) {
-    console.error('Error iniciando servidor:', err);
+    logger.error('Error iniciando servidor:', err);
     process.exit(1);
   }
 }

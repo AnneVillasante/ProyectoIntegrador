@@ -4,6 +4,7 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 const path = require('path');
+const logger = require('./logger');
 
 // 1. CONFIGURACIÓN REMOTA (CLOUDINARY)
 cloudinary.config({
@@ -47,10 +48,10 @@ const getStorage = (options) => {
     // Si la aplicación NO está en modo 'production', usa el disco local.
     // Usamos la función isProduction para la lógica
     if (!isProduction()) {
-        console.log("🛠️ Usando almacenamiento local (DEV)");
+        logger.log("🛠️ Usando almacenamiento local (DEV)");
         return diskStorage(options);
     } else {
-        console.log("☁️ Usando Cloudinary (PROD)");
+        logger.log("☁️ Usando Cloudinary (PROD)");
         return cloudinaryStorage(options);
     }
 };

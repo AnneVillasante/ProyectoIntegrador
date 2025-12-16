@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!response.ok) throw new Error(`Error al cargar ${endpoint}`);
       return await response.json();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return [];
     }
   };
@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       alert('¡Producto agregado al carrito!');
 
     } catch (error) {
-      console.error('Error al agregar al carrito:', error);
+      logger.error('Error al agregar al carrito:', error);
       alert(`Error: ${error.message}`);
     }
   };
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     inicializar();
   } catch (error) {
-    console.error('Error cargando productos:', error);
+    logger.error('Error cargando productos:', error);
     productosGrid.innerHTML = `<p class="error">Error al cargar los productos. Por favor, intenta más tarde.</p>`;
   }
 
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (typeof agregarAlCarrito === 'function') {
             agregarAlCarrito(idProducto);
         } else {
-            console.log('Producto agregado:', idProducto);
+            logger.log('Producto agregado:', idProducto);
         }
       });
     });

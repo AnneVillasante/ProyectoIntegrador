@@ -1,5 +1,6 @@
 const carritoService = require('../services/carritoService');
 const clienteService = require('../services/clienteService');
+const logger = require('../config/logger');
 
 /**
  * Middleware para determinar el identificador del carrito.
@@ -27,7 +28,7 @@ exports.getCart = async (req, res) => {
         const cart = await carritoService.getCart(identifier);
         res.status(200).json(cart);
     } catch (error) {
-        console.error('Error al obtener el carrito:', error);
+        logger.error('Error al obtener el carrito:', error);
         res.status(500).json({ error: error.message || 'Error interno del servidor al obtener el carrito.' });
     }
 };
@@ -44,7 +45,7 @@ exports.addItemToCart = async (req, res) => {
         const updatedCart = await carritoService.addItem(identifier, idProducto, cantidad);
         res.status(200).json(updatedCart);
     } catch (error) {
-        console.error('Error al agregar producto al carrito:', error);
+        logger.error('Error al agregar producto al carrito:', error);
         res.status(500).json({ error: error.message || 'Error interno del servidor al agregar producto al carrito.' });
     }
 };
@@ -63,7 +64,7 @@ exports.updateCartItem = async (req, res) => {
         const updatedCart = await carritoService.updateItem(identifier, parseInt(idProducto), cantidad);
         res.status(200).json(updatedCart);
     } catch (error) {
-        console.error('Error al actualizar la cantidad del producto en el carrito:', error);
+        logger.error('Error al actualizar la cantidad del producto en el carrito:', error);
         res.status(500).json({ error: error.message || 'Error interno del servidor al actualizar la cantidad.' });
     }
 };
@@ -77,7 +78,7 @@ exports.removeItemFromCart = async (req, res) => {
         const updatedCart = await carritoService.removeItem(identifier, parseInt(idProducto));
         res.status(200).json(updatedCart);
     } catch (error) {
-        console.error('Error al eliminar producto del carrito:', error);
+        logger.error('Error al eliminar producto del carrito:', error);
         res.status(500).json({ error: error.message || 'Error interno del servidor al eliminar producto del carrito.' });
     }
 };
@@ -88,7 +89,7 @@ exports.clearCart = async (req, res) => {
         const clearedCart = await carritoService.clearCart(identifier);
         res.status(200).json(clearedCart);
     } catch (error) {
-        console.error('Error al vaciar el carrito:', error);
+        logger.error('Error al vaciar el carrito:', error);
         res.status(500).json({ error: error.message || 'Error interno del servidor al vaciar el carrito.' });
     }
 };

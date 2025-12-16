@@ -1,5 +1,5 @@
 const axios = require('axios'); // Asegúrate de tener axios: npm install axios
-
+const logger = require('../../config/logger');
 const TARGET_URL = 'http://localhost:3000/api/auth/login';
 
 const payloads = [
@@ -10,24 +10,24 @@ const payloads = [
 ];
 
 async function runFuzzing() {
-    console.log('🔥 Iniciando Pruebas de Fuzzing/Seguridad...');
+    logger.log('🔥 Iniciando Pruebas de Fuzzing/Seguridad...');
     
     for (const payload of payloads) {
         try {
-            console.log(`Probando payload: ${JSON.stringify(payload).substring(0, 50)}...`);
+            logger.log(`Probando payload: ${JSON.stringify(payload).substring(0, 50)}...`);
             await axios.post(TARGET_URL, payload);
         } catch (error) {
             // Si el servidor responde 400 o 401, es bueno (lo bloqueó).
             // Si responde 500, ¡encontramos un bug!
             if (error.response && error.response.status === 500) {
-                console.error('❌ ALERTA: Error 500 detectado con payload:', payload);
-                console.error('   Posible vulnerabilidad de manejo de excepciones.');
+                logger.error('❌ ALERTA: Error 500 detectado con payload:', payload);
+                logger.error('   Posible vulnerabilidad de manejo de excepciones.');
             } else {
-                console.log(`✅ Servidor respondió: ${error.response ? error.response.status : error.message} (Controlado)`);
+                logger.log(`✅ Servidor respondió: ${error.response ? error.response.status : error.message} (Controlado)`);
             }
         }
     }
-    console.log('🏁 Fuzzing finalizado.');
+    logger.log('🏁 Fuzzing finalizado.');
 }
 
 runFuzzing();   
