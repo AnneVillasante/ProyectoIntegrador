@@ -5,14 +5,14 @@
  * @author Lunaria
  */
 
-const db = require('../config/db');
+const pool = require('../config/db');
 
 const facturaDAO = {
   /**
    * @returns {Promise<Array<object>>}
    */
   async obtenerTodas() {
-    const [rows] = await db.query('SELECT * FROM factura ORDER BY fechaEmision DESC');
+    const [rows] = await pool.query('SELECT * FROM factura ORDER BY fechaEmision DESC');
     return rows;
   },
 
@@ -21,7 +21,7 @@ const facturaDAO = {
    * @returns {Promise<object|null>}
    */
   async obtenerPorId(id) {
-    const [rows] = await db.query('SELECT * FROM factura WHERE idFactura = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM factura WHERE idFactura = ?', [id]);
     return rows[0] || null;
   },
 
@@ -31,7 +31,7 @@ const facturaDAO = {
    */
   async crear(facturaData) {
     const { idPedido, total, numeroFactura, urlDocumento } = facturaData;
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'INSERT INTO factura (idPedido, fechaEmision, total, numeroFactura, urlDocumento) VALUES (?, NOW(), ?, ?, ?)',
       [idPedido, total, numeroFactura, urlDocumento]
     );
@@ -43,7 +43,7 @@ const facturaDAO = {
    * @returns {Promise<number>} El número de filas eliminadas.
    */
   async eliminar(id) {
-    const [result] = await db.query('DELETE FROM factura WHERE idFactura = ?', [id]);
+    const [result] = await pool.query('DELETE FROM factura WHERE idFactura = ?', [id]);
     return result.affectedRows;
   },
 };

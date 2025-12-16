@@ -564,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td title="${cat.nombre || 'Sin nombre'}">${cat.nombre || 'Sin nombre'}</td>
         <td title="${cat.descripcion || 'Sin descripción'}">${cat.descripcion || 'Sin descripción'}</td>
         <td title="${imagenUrl || 'Sin imagen'}">
-          ${imagenUrl ? `<img src="${imagenUrl}" alt="${cat.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
+          ${imagenUrl ? `<img src="${imagenUrl}" alt="${cat.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;">` : 'Sin imagen'}
         </td>
         <td>
           <button class="btn-secondary edit-category-btn">Editar</button>
@@ -573,6 +573,13 @@ document.addEventListener('DOMContentLoaded', () => {
       </tr>
     `;
     }).join('');
+
+    // Manejar errores de imágenes (CSP compliant)
+    tbody.querySelectorAll('img').forEach(img => {
+      img.addEventListener('error', () => {
+        img.style.display = 'none';
+      });
+    });
 
     // Añadir Event Listeners
     tbody.querySelectorAll('.edit-category-btn').forEach(button => {
@@ -607,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td title="${categoria ? categoria.nombre : 'Sin categoría'}">${categoria ? categoria.nombre : 'Sin categoría'}</td>
         <td title="${sub.genero || 'Unisex'}">${sub.genero || 'Unisex'}</td>
         <td title="${imagenUrl || 'Sin imagen'}">
-          ${imagenUrl ? `<img src="${imagenUrl}" alt="${sub.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">` : 'Sin imagen'}
+          ${imagenUrl ? `<img src="${imagenUrl}" alt="${sub.nombre}" style="max-width: 60px; max-height: 60px; border-radius: 8px; object-fit: cover;">` : 'Sin imagen'}
         </td>
         <td>
           <button class="btn-secondary edit-subcategory-btn">Editar</button>
@@ -616,6 +623,13 @@ document.addEventListener('DOMContentLoaded', () => {
       </tr>
     `;
     }).join('');
+
+    // Manejar errores de imágenes (CSP compliant)
+    tbody.querySelectorAll('img').forEach(img => {
+      img.addEventListener('error', () => {
+        img.style.display = 'none';
+      });
+    });
 
     // Añadir Event Listeners
     tbody.querySelectorAll('.edit-subcategory-btn').forEach(button => {
@@ -1094,6 +1108,7 @@ async function loadMetrics(params = {}) {
 
   } catch (error) {
     logger.error('Error cargando métricas:', error);
+    alert('Error al cargar las métricas. Revisa la consola para más detalles.');
     // No mostrar alerta intrusiva en carga inicial, solo log
   }
 }
@@ -1102,6 +1117,11 @@ async function loadMetrics(params = {}) {
 function renderChart(key, canvasId, type, data, label, colors) {
   const ctx = document.getElementById(canvasId);
   if (!ctx) return;
+
+  if (typeof Chart === 'undefined') {
+    console.error('Chart.js no está cargado. No se pueden renderizar los gráficos.');
+    return;
+  }
 
   // Destruir instancia anterior si existe
   if (chartInstances[key]) {

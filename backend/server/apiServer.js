@@ -24,7 +24,7 @@ const jsreport = require('jsreport')({
 });
 
 const helmet = require('helmet');
-const { pool } = require('../config/db');
+const pool = require('../config/db');
 
 // Importación de rutas
 const authRouter = require('../routes/authRoutes');
@@ -72,7 +72,8 @@ apiApp.use(
     directives: {
       defaultSrc: ["'self'"],
       connectSrc: ["'self'", `http://localhost:${PORT}`, "https:"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com", "https://cdn.jsdelivr.net"],
+      scriptSrcAttr: ["'unsafe-inline'"],
       frameSrc: ["'self'", "https://js.stripe.com"],
       imgSrc: ["'self'", "data:", "https:", `http://localhost:${PORT}`],
       fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],

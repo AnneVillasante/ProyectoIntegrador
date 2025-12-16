@@ -1,5 +1,5 @@
 // backend/dao/pedidoDAO.js
-const db = require('../config/db');
+const pool = require('../config/db');
 const carritoDAO = require('./carritoDAO');
 const logger = require('../config/logger');
 
@@ -72,7 +72,7 @@ class PedidoDAO {
                 LEFT JOIN cliente c ON p.idCliente = c.idCliente
                 ORDER BY p.fecha DESC
             `;
-            const [rows] = await db.query(sql);
+            const [rows] = await pool.query(sql);
             return rows;
         } catch (error) {
             throw new Error(`Error al obtener los pedidos: ${error.message}`);
@@ -88,14 +88,14 @@ class PedidoDAO {
             JOIN cliente c ON p.idCliente = c.idCliente
             WHERE p.idPedido = ?
         `;
-        const [rows] = await db.query(sql, [idPedido]);
+        const [rows] = await pool.query(sql, [idPedido]);
         
         if (rows.length === 0) return null;
         
         const pedido = rows[0];
 
         // Obtener los productos del pedido
-        const [detalles] = await db.query(`
+        const [detalles] = await pool.query(`
             SELECT dp.*, pr.nombre as nombreProducto, pr.imagen
             FROM detallepedido dp
             JOIN producto pr ON dp.idProducto = pr.idProducto
@@ -109,7 +109,7 @@ class PedidoDAO {
     // ✅ NUEVO: Actualizar estado del pedido
     async updateStatus(idPedido, estado) {
         const sql = 'UPDATE pedido SET estado = ? WHERE idPedido = ?';
-        const [result] = await db.query(sql, [estado, idPedido]);
+        const [result] = await pool.query(sql, [estado, idPedido]);
         return result.affectedRows > 0;
     }
 

@@ -5,7 +5,7 @@
  * @author Lunaria
  */
 
-const db = require('../config/db');
+const pool = require('../config/db');
 
 const promocionDAO = {
   async crear(promocionData) {
@@ -19,12 +19,12 @@ const promocionDAO = {
   },
 
   async obtenerTodas() {
-    const [rows] = await db.query('SELECT * FROM promocion ORDER BY fechaInicio DESC');
+    const [rows] = await pool.query('SELECT * FROM promocion ORDER BY fechaInicio DESC');
     return rows;
   },
 
   async obtenerPorId(id) {
-    const [rows] = await db.query('SELECT * FROM promocion WHERE idPromocion = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM promocion WHERE idPromocion = ?', [id]);
     return rows[0] || null;
   },
 

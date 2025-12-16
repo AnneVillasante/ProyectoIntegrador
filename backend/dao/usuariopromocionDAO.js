@@ -5,7 +5,7 @@
  * @author Lunaria
  */
 
-const db = require('../config/db');
+const pool = require('../config/db');
 
 const usuariopromocionDAO = {
   /**
@@ -28,7 +28,7 @@ const usuariopromocionDAO = {
    * @returns {Promise<Array<object>>} A list of user promotions with promotion details.
    */
   async obtenerPorUsuario(idUsuario) {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       `SELECT up.*, p.titulo, p.descripcion, p.tipoDescuento, p.valorDescuento 
        FROM usuariopromocion up
        JOIN promocion p ON up.idPromocion = p.idPromocion

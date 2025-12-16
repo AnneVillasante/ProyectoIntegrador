@@ -5,14 +5,14 @@
  * @author Lunaria
  */
 
-const db = require('../config/db');
+const pool = require('../config/db');
 
 class DevolucionDAO {
   /**
    * @returns {Promise<Array<object>>}
    */
   static async obtenerTodas() {
-    const [rows] = await db.query('SELECT * FROM devolucion ORDER BY fechaSolicitud DESC');
+    const [rows] = await pool.query('SELECT * FROM devolucion ORDER BY fechaSolicitud DESC');
     return rows;
   }
 
@@ -21,7 +21,7 @@ class DevolucionDAO {
    * @returns {Promise<object|null>}
    */
   static async obtenerPorId(id) {
-    const [rows] = await db.query('SELECT * FROM devolucion WHERE idDevolucion = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM devolucion WHERE idDevolucion = ?', [id]);
     return rows[0] || null;
   }
 

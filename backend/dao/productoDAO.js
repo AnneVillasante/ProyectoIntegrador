@@ -1,8 +1,8 @@
-const db = require('../config/db');
+const pool = require('../config/db');
 
 const productoDAO = {
   getAll: async () => {
-    const [rows] = await db.query(`
+    const [rows] = await pool.query(`
       SELECT p.*, s.nombre AS subcategoria, c.nombre AS categoria
       FROM producto p
       LEFT JOIN subcategoria s ON p.idSubcategoria = s.idSubcategoria
@@ -12,7 +12,7 @@ const productoDAO = {
   },
 
   getById: async (id) => {
-    const [rows] = await db.query(`
+    const [rows] = await pool.query(`
       SELECT p.*, c.nombre AS categoria, s.nombre AS subcategoria
       FROM producto p
       LEFT JOIN subcategoria s ON p.idSubcategoria = s.idSubcategoria
@@ -24,7 +24,7 @@ const productoDAO = {
 
   create: async (producto) => {
     const { nombre, descripcion, imagen, precio, stock, idCategoria, idSubcategoria } = producto;
-    const [result] = await db.query(`
+    const [result] = await pool.query(`
       INSERT INTO producto (nombre, descripcion, imagen, precio, stock, idSubcategoria)
       VALUES (?, ?, ?, ?, ?, ?)`,
       [nombre, descripcion, imagen, precio, stock, idSubcategoria || null]
@@ -34,7 +34,7 @@ const productoDAO = {
 
   update: async (id, producto) => {
     const { nombre, descripcion, imagen, precio, stock,  idSubcategoria } = producto;
-    await db.query(`
+    await pool.query(`
       UPDATE producto
       SET nombre=?, descripcion=?, imagen=?, precio=?, stock=?, idSubcategoria=?
       WHERE idProducto=?`,
@@ -43,7 +43,7 @@ const productoDAO = {
   },
 
   delete: async (id) => {
-    await db.query('DELETE FROM producto WHERE idProducto=?', [id]);
+    await pool.query('DELETE FROM producto WHERE idProducto=?', [id]);
   }
 };
 

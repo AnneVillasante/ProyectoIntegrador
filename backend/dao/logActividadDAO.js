@@ -5,7 +5,7 @@
  * @author Lunaria
  */
 
-const db = require('../config/db');
+const pool = require('../config/db');
 
 const logActividadDAO = {
   /**
@@ -28,7 +28,7 @@ const logActividadDAO = {
    * @returns {Promise<Array<Object>>} A list of all activity logs.
    */
   async obtenerTodos() {
-    const [rows] = await db.query('SELECT * FROM logactividad ORDER BY fechaHora DESC');
+    const [rows] = await pool.query('SELECT * FROM logactividad ORDER BY fechaHora DESC');
     return rows;
   },
 };

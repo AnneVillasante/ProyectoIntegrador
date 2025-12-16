@@ -1,4 +1,4 @@
-const db = require('../config/db'); // Asumiendo que tienes un archivo de configuración de DB
+const pool = require('../config/db'); // Asumiendo que tienes un archivo de configuración de DB
 
 class CuponDAO {
     async findAll() {

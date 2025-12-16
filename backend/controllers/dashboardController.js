@@ -1,5 +1,5 @@
 // backend/controllers/dashboardController.js
-const db = require('../config/db');
+const pool = require('../config/db');
 const logger = require('../config/logger');
 
 // Función auxiliar para filtros de fecha
@@ -54,29 +54,29 @@ exports.getMetrics = async (req, res) => {
         const completedOrdersCondition = `(p.estado = "pagado" OR p.estado = "entregado")`;
 
         const [
-            [resumenIngresos],      // Ingresos y pedidos filtrados
-            [totalUsuarios],        // Total histórico usuarios
-            [totalProductos],       // Total histórico productos
-            [pedidosPorEstado],     // Gráfico Dona
-            [metodosPago],          // Gráfico Pie
-            [topProductos],         // Gráfico Barras
-            [chartData]             // Gráfico Líneas
+            [resumenIngresosRows],      // Ingresos y pedidos filtrados
+            [totalUsuariosRows],        // Total histórico usuarios
+            [totalProductosRows],       // Total histórico productos
+            [pedidosPorEstado],         // Gráfico Dona (Array de filas)
+            [metodosPago],              // Gráfico Pie (Array de filas)
+            [topProductos],             // Gráfico Barras (Array de filas)
+            [chartData]                 // Gráfico Líneas (Array de filas)
         ] = await Promise.all([
             // 1. Resumen Ingresos/Pedidos (Filtrado por fecha)
-            db.query(`SELECT IFNULL(SUM(total),0) as totalIngresos, COUNT(*) as totalPedidos FROM pedido p ${baseWhere} ${completedOrdersCondition}`, params),
+            pool.query(`SELECT IFNULL(SUM(total),0) as totalIngresos, COUNT(*) as totalPedidos FROM pedido p ${baseWhere} ${completedOrdersCondition}`, params),
             
             // 2. Totales Históricos (Para tarjetas informativas fijas, opcionalmente filtrables si se desea)
-            db.query(`SELECT COUNT(*) as count FROM usuario`),
-            db.query(`SELECT COUNT(*) as count FROM producto`),
+            pool.query(`SELECT COUNT(*) as count FROM usuario`),
+            pool.query(`SELECT COUNT(*) as count FROM producto`),
 
             // 3. Pedidos por Estado (Filtrado)
-            db.query(`SELECT estado as label, COUNT(*) as value FROM pedido p ${whereClause} GROUP BY estado`, params),
+            pool.query(`SELECT estado as label, COUNT(*) as value FROM pedido p ${whereClause} GROUP BY estado`, params),
 
             // 4. Métodos de Pago (Filtrado)
-            db.query(`SELECT metodoPago as label, COUNT(*) as value FROM pedido p ${baseWhere} ${completedOrdersCondition} GROUP BY metodoPago`, params),
+            pool.query(`SELECT metodoPago as label, COUNT(*) as value FROM pedido p ${baseWhere} ${completedOrdersCondition} GROUP BY metodoPago`, params),
 
             // 5. Top 5 Productos (Filtrado)
-            db.query(`
+            pool.query(`
                 SELECT pr.nombre as label, SUM(dp.cantidad) as value
                 FROM detallepedido dp
                 JOIN producto pr ON dp.idProducto = pr.idProducto
@@ -87,7 +87,7 @@ exports.getMetrics = async (req, res) => {
             `, params),
 
             // 6. Datos Gráfico Líneas (Filtrado)
-            db.query(`
+            pool.query(`
                 SELECT ${selectDate} as label, SUM(p.total) as value
                 FROM pedido p
                 ${baseWhere} ${completedOrdersCondition}
@@ -96,14 +96,19 @@ exports.getMetrics = async (req, res) => {
             `, params)
         ]);
 
-        const ingresos = parseFloat(resumenIngresos[0].totalIngresos || 0);
-        const pedidos = resumenIngresos[0].totalPedidos || 0;
+        // Extracción segura de datos (usando optional chaining ?. y valores por defecto)
+        const resumenIngresos = resumenIngresosRows[0] || {};
+        const totalUsuarios = totalUsuariosRows[0] || {};
+        const totalProductos = totalProductosRows[0] || {};
+
+        const ingresos = parseFloat(resumenIngresos.totalIngresos || 0);
+        const pedidos = parseInt(resumenIngresos.totalPedidos || 0);
 
         // Estructura que el Frontend espera ahora
         res.json({
             summary: {
-                usuarios: totalUsuarios[0].count,
-                productos: totalProductos[0].count,
+                usuarios: totalUsuarios.count || 0,
+                productos: totalProductos.count || 0,
                 pedidos: pedidos,
                 ingresos: ingresos.toFixed(2)
             },

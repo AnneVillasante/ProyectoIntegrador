@@ -2,7 +2,7 @@ const { isProduction } = require('../config/cloudinary');
 const usuarioModel = require('../models/usuarioModel');
 const UsuarioDto = require('../dto/usuarioDTO');
 const bcrypt = require('bcryptjs');
-const db = require('../config/db'); // Importar la conexión a la BD
+const pool = require('../config/db'); // Importar la conexión a la BD
 const logger = require('../config/logger');
 
 exports.obtenerUsuarios = async (req, res) => {
@@ -12,7 +12,7 @@ exports.obtenerUsuarios = async (req, res) => {
 
     if (rol === 'Cliente') {
       // Si se pide solo clientes, hacemos un JOIN para obtener también el idCliente
-      const [rows] = await db.query(`
+      const [rows] = await pool.query(`
         SELECT u.*, c.idCliente 
         FROM usuario u 
         LEFT JOIN cliente c ON u.idUsuario = c.fk_idUsuario 

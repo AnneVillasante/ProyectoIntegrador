@@ -1,5 +1,5 @@
 const pagoService = require('../services/pagoService');
-const db = require('../config/db');
+const pool = require('../config/db');
 const logger = require('../config/logger');
 // Se importa el servicio de renderizado de jsreport
 const getJsreportRenderer = (req) => require('../services/jsreportService')(req.app.get('jsreport'));
@@ -57,7 +57,7 @@ const stripeWebhook = async (req, res) => {
                     const render = getJsreportRenderer(req);
 
                     // 1. Obtener datos completos del pedido y cliente
-                    const [pedido] = await db.query(`
+                    const [pedido] = await pool.query(`
                         SELECT p.idPedido, p.fecha, p.total, p.subtotal, p.impuestos,
                                u.nombres, u.apellidos, u.dni, u.correo
                         FROM pedido p
@@ -66,7 +66,7 @@ const stripeWebhook = async (req, res) => {
                         WHERE p.idPedido = ?
                     `, [idPedido]);
 
-                    const [detalles] = await db.query(`
+                    const [detalles] = await pool.query(`
                         SELECT pr.nombre, dp.cantidad, dp.precioUnitario
                         FROM detallepedido dp
                         JOIN producto pr ON dp.idProducto = pr.idProducto
@@ -76,7 +76,7 @@ const stripeWebhook = async (req, res) => {
                     // 2. Preparar datos para la plantilla 'boleta'
                     const boletaData = {
                         numeroPedido: pedido[0].idPedido,
-                        fecha: pedido[0].fecha,
+                        fecha: new Date(pedido[0].fecha).toISOString(), // Convertir a ISO para evitar warnings de moment.js
                         clienteNombre: `${pedido[0].nombres} ${pedido[0].apellidos}`,
                         clienteDocumento: pedido[0].dni,
                         clienteCorreo: pedido[0].correo,

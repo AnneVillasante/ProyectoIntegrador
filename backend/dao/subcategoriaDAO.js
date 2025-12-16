@@ -1,8 +1,8 @@
-const db = require('../config/db');
+const pool = require('../config/db');
 
 const subcategoriaDAO = {
   getAll: async () => {
-    const [rows] = await db.query(`
+    const [rows] = await pool.query(`
       SELECT s.*, c.nombre AS categoria
       FROM subcategoria s
       LEFT JOIN categoria c ON s.idCategoria = c.idCategoria
@@ -11,18 +11,18 @@ const subcategoriaDAO = {
   },
 
   getById: async (id) => {
-    const [rows] = await db.query('SELECT * FROM subcategoria WHERE idSubcategoria = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM subcategoria WHERE idSubcategoria = ?', [id]);
     return rows[0];
   },
 
   getByCategoria: async (idCategoria) => {
-    const [rows] = await db.query('SELECT * FROM subcategoria WHERE idCategoria = ?', [idCategoria]);
+    const [rows] = await pool.query('SELECT * FROM subcategoria WHERE idCategoria = ?', [idCategoria]);
     return rows;
   },
 
   create: async (subcategoria) => {
     const { nombre, descripcion, imagen, idCategoria, genero } = subcategoria;
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'INSERT INTO subcategoria (nombre, descripcion, imagen, idCategoria, genero) VALUES (?, ?, ?, ?, ?)',
       [nombre, descripcion, imagen, idCategoria || null, genero]
     );
@@ -31,14 +31,14 @@ const subcategoriaDAO = {
 
   update: async (id, subcategoria) => {
     const { nombre, descripcion, imagen, idCategoria, genero } = subcategoria;
-    await db.query(
+    await pool.query(
       'UPDATE subcategoria SET nombre=?, descripcion=?, imagen=?, idCategoria=?, genero=? WHERE idSubcategoria=?',
       [nombre, descripcion, imagen, idCategoria || null, genero, id]
     );
   },
 
   delete: async (id) => {
-    await db.query('DELETE FROM subcategoria WHERE idSubcategoria=?', [id]);
+    await pool.query('DELETE FROM subcategoria WHERE idSubcategoria=?', [id]);
   }
 };
 

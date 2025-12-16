@@ -1,6 +1,6 @@
 const reporteDAO = require('../dao/reporteDAO');
 const productoDAO = require('../dao/productoDAO');
-const db = require('../config/db');
+const pool = require('../config/db');
 const ReporteDTO = require('../dto/reporteDTO');
 const logger = require('../config/logger');
 // Se importa el servicio de renderizado de jsreport
@@ -32,7 +32,7 @@ function convertToCSV(data) {
 
 // Obtener datos de ventas (pedidos)
 async function getVentasData() {
-  const [rows] = await db.query(`
+  const [rows] = await pool.query(`
     SELECT 
       p.idPedido,
       p.fecha,
@@ -193,7 +193,7 @@ exports.generateUsuarioReport = async (req, res) => {
     const { formato = 'json', usuario } = req.body;
     
     // Obtener datos de usuarios
-    const [usuarios] = await db.query(`
+    const [usuarios] = await pool.query(`
       SELECT 
         u.idUsuario,
         u.nombres,
@@ -289,7 +289,7 @@ exports.generateTicket = async (req, res) => {
 
     // 1. Obtener datos del pedido (CORREGIDO con LEFT JOIN)
     // Usamos COALESCE para preferir el nombre del usuario, pero si no existe, usamos el del cliente.
-    const [pedido] = await db.query(`
+    const [pedido] = await pool.query(`
       SELECT 
         p.idPedido, 
         p.fecha, 
@@ -307,7 +307,7 @@ exports.generateTicket = async (req, res) => {
     }
 
     // 2. Obtener detalles del pedido (productos)
-    const [detalles] = await db.query(`
+    const [detalles] = await pool.query(`
       SELECT pr.nombre, dp.cantidad, dp.precioUnitario
       FROM detallepedido dp
       JOIN producto pr ON dp.idProducto = pr.idProducto

@@ -5,14 +5,14 @@
  * @author Lunaria
  */
 
-const db = require('../config/db');
+const pool = require('../config/db');
 
 class CampanaDAO {
   /**
    * @returns {Promise<Array<object>>}
    */
   static async obtenerTodas() {
-    const [rows] = await db.query('SELECT * FROM campana ORDER BY fechaInicio DESC');
+    const [rows] = await pool.query('SELECT * FROM campana ORDER BY fechaInicio DESC');
     return rows;
   }
 
@@ -21,7 +21,7 @@ class CampanaDAO {
    * @returns {Promise<object|null>}
    */
   static async obtenerPorId(id) {
-    const [rows] = await db.query('SELECT * FROM campana WHERE idCampana = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM campana WHERE idCampana = ?', [id]);
     return rows[0] || null;
   }
 

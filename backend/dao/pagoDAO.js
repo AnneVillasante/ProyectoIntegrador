@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const pool = require('../config/db');
 const PagoDTO = require('../dto/pagoDTO');
 
 class PagoDAO {
@@ -11,7 +11,7 @@ class PagoDAO {
                 VALUES (?, ?, ?, ?, ?, ?)
             `;
             
-            const [result] = await db.query(sql, [
+            const [result] = await pool.query(sql, [
                 idPedido,
                 metodoPago,
                 monto,
@@ -30,7 +30,7 @@ class PagoDAO {
     async obtenerPagoPorIntentId(intentId) {
         try {
             const sql = 'SELECT * FROM pago WHERE stripe_payment_intent_id = ?';
-            const [rows] = await db.query(sql, [intentId]);
+            const [rows] = await pool.query(sql, [intentId]);
             
             if (rows.length === 0) return null;
             
@@ -43,7 +43,7 @@ class PagoDAO {
     async findAll() {
         try {
             const sql = 'SELECT * FROM pago ORDER BY fechaPago DESC';
-            const [rows] = await db.query(sql);
+            const [rows] = await pool.query(sql);
             // Mapeamos cada resultado a un DTO para mantener la consistencia
             return rows.map(row => new PagoDTO(row));
         } catch (error) {

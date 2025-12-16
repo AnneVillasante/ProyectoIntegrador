@@ -34,8 +34,6 @@ async function checkDbHealth() {
   }
 }
 
-// Exportamos tanto el pool como la nueva función de chequeo de salud
-module.exports = {
-  pool,
-  checkDbHealth
-};
+pool.checkDbHealth = checkDbHealth;
+
+module.exports = pool;
