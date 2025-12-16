@@ -96,7 +96,6 @@ apiApp.use('/frontend', express.static(frontendRoot));
 apiApp.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Rutas de API
-apiApp.get('/health', (req, res) => res.json({ status: 'ok' }));
 apiApp.use('/api/auth', authRouter);
 apiApp.use('/api/productos', productosRouter);
 apiApp.use('/api/usuario', usuarioRouter);
