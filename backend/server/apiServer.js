@@ -44,6 +44,7 @@ const facturaRoutes = require('../routes/facturaRoutes');
 const logActividadRoutes = require('../routes/logActividadRoutes');
 const cuponRoutes = require('../routes/cuponRoutes');
 const dashboardRoutes = require('../routes/dashboardRoutes');
+const healthRoutes = require('../routes/healthRoutes');
 
 const apiApp = express();
 
@@ -113,6 +114,7 @@ apiApp.use('/api/facturas', facturaRoutes);
 apiApp.use('/api/logs', logActividadRoutes);
 apiApp.use('/api/cupones', cuponRoutes);
 apiApp.use('/api/dashboard', dashboardRoutes);
+apiApp.use('/api/v1/health', healthRoutes); // <-- Añade esta línea
 
 // Rutas de Vistas
 apiApp.get('/', (req, res) => {
