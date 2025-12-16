@@ -43,7 +43,7 @@ const PaymentHandler = (() => {
         } else if (orderPayload.metodoPago === 'efectivo') {
             // Para pago en efectivo, no se necesita un paymentMethodId de Stripe.
             // Simplemente continuamos para crear el pedido en el backend.
-            logger.log('Procesando pedido con pago en efectivo.');
+            logger.info('Procesando pedido con pago en efectivo.');
         }
 
         // Ahora, crea el pedido en el backend con el payload completo.

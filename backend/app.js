@@ -1,7 +1,7 @@
 // backend/app.js
 require('./config/config');
 
-const pool = require('./config/db');
+const { pool } = require('./config/db');
 const logger = require('./config/logger');
 // Importamos SOLO el servidor unificado (que ahora maneja todo)
 const { startApi } = require('./server/apiServer'); 

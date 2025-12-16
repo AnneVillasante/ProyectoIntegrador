@@ -24,7 +24,7 @@ const jsreport = require('jsreport')({
 });
 
 const helmet = require('helmet');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 
 // Importación de rutas
 const authRouter = require('../routes/authRoutes');
@@ -179,9 +179,9 @@ async function startApi() {
     // Lo borramos del entorno para que jsreport NO lo vea al iniciar
     if (process.env.PORT) delete process.env.PORT;
 
-    logger.log('Iniciando jsreport (sin puerto)...');
+    logger.info('Iniciando jsreport (sin puerto)...');
     await jsreport.init();
-    logger.log('jsreport iniciado correctamente.');
+    logger.info('jsreport iniciado correctamente.');
 
     // --- RESTAURAR PUERTO ---
     // Devolvemos el puerto a su lugar para que Express lo use
@@ -191,7 +191,7 @@ async function startApi() {
     const PORT = process.env.PORT || 4000;
 
     const apiServer = apiApp.listen(PORT, () =>
-      logger.log(`Servidor unificado escuchando en puerto ${PORT}`)
+      logger.info(`Servidor unificado escuchando en puerto ${PORT}`)
     );
     return apiServer;
   } catch (err) {

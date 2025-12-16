@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof loadLogs === 'function') loadLogs();
         break;
       default:
-        logger.log(`Pestana ${tabName} seleccionada. Sin acción de precarga.`);
+        logger.info(`Pestana ${tabName} seleccionada. Sin acción de precarga.`);
     }
   }
 

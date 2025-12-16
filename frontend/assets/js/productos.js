@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (typeof agregarAlCarrito === 'function') {
             agregarAlCarrito(idProducto);
         } else {
-            logger.log('Producto agregado:', idProducto);
+            logger.info('Producto agregado:', idProducto);
         }
       });
     });

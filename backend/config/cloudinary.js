@@ -48,10 +48,10 @@ const getStorage = (options) => {
     // Si la aplicación NO está en modo 'production', usa el disco local.
     // Usamos la función isProduction para la lógica
     if (!isProduction()) {
-        logger.log("🛠️ Usando almacenamiento local (DEV)");
+        logger.info("🛠️ Usando almacenamiento local (DEV)");
         return diskStorage(options);
     } else {
-        logger.log("☁️ Usando Cloudinary (PROD)");
+        logger.info("☁️ Usando Cloudinary (PROD)");
         return cloudinaryStorage(options);
     }
 };

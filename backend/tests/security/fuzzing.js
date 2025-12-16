@@ -10,11 +10,11 @@ const payloads = [
 ];
 
 async function runFuzzing() {
-    logger.log('🔥 Iniciando Pruebas de Fuzzing/Seguridad...');
+    logger.info('🔥 Iniciando Pruebas de Fuzzing/Seguridad...');
     
     for (const payload of payloads) {
         try {
-            logger.log(`Probando payload: ${JSON.stringify(payload).substring(0, 50)}...`);
+            logger.info(`Probando payload: ${JSON.stringify(payload).substring(0, 50)}...`);
             await axios.post(TARGET_URL, payload);
         } catch (error) {
             // Si el servidor responde 400 o 401, es bueno (lo bloqueó).
@@ -23,11 +23,11 @@ async function runFuzzing() {
                 logger.error('❌ ALERTA: Error 500 detectado con payload:', payload);
                 logger.error('   Posible vulnerabilidad de manejo de excepciones.');
             } else {
-                logger.log(`✅ Servidor respondió: ${error.response ? error.response.status : error.message} (Controlado)`);
+                logger.info(`✅ Servidor respondió: ${error.response ? error.response.status : error.message} (Controlado)`);
             }
         }
     }
-    logger.log('🏁 Fuzzing finalizado.');
+    logger.info('🏁 Fuzzing finalizado.');
 }
 
 runFuzzing();   
