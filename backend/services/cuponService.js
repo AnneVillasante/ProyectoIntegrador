@@ -78,6 +78,21 @@ class CuponService {
         // NOTA: Por ahora, solo devolvemos montos fijos. La lógica para porcentajes se puede añadir aquí.
         return { descuento: cupon.valorDescuento, mensaje: `Cupón "${cupon.codigo}" aplicado con éxito.` };
     }
+
+    /**
+     * Desactiva cupones que hayan pasado su fecha de vencimiento.
+     * @returns {Promise<object>} Objeto con el recuento de cupones desactivados.
+     */
+    async desactivarCuponesExpirados() {
+        // La lógica exacta dependerá de tu DAO, pero la idea es:
+        const now = new Date();
+        
+        // Asumo que tu DAO tiene un método para actualizar masivamente
+        const result = await cuponDAO.updateExpiredStatus(now); 
+        
+        // Retornamos el número de filas afectadas
+        return { count: result.affectedRows || 0 }; 
+    }
 }
 
 module.exports = new CuponService();

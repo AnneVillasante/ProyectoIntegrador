@@ -5,6 +5,7 @@ const pool = require('./config/db');
 const logger = require('./config/logger');
 // Importamos SOLO el servidor unificado (que ahora maneja todo)
 const { startApi } = require('./server/apiServer'); 
+const initCrons = require('./cron/maintenanceCron'); // <-- Importamos la inicialización de crons
 
 let apiServer;
 
@@ -12,6 +13,7 @@ let apiServer;
   try {
     // Iniciamos únicamente el servidor principal
     apiServer = await startApi();
+    initCrons(); // <-- ¡Llamamos a esta función para iniciar los cron jobs!
     logger.info(`Servidor API iniciado en modo ${process.env.NODE_ENV || 'development'}`); // Usamos logger.info
   } catch (error) {
     logger.error('Error fatal al iniciar la aplicación:', error);
