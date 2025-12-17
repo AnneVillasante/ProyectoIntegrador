@@ -191,10 +191,18 @@ async function startApi() {
     // Usamos el puerto restaurado
     const PORT = process.env.PORT || 4000;
 
-    const apiServer = apiApp.listen(PORT, () =>
-      logger.info(`Servidor unificado escuchando en puerto ${PORT}`)
-    );
-    return apiServer;
+        // Envolvemos el listen en una Promesa para asegurar que el servidor inició correctamente
+    // o capturar el error (como EADDRINUSE) antes de continuar.
+    return new Promise((resolve, reject) => {
+      const apiServer = apiApp.listen(PORT, () => {
+        logger.info(`Servidor unificado escuchando en puerto ${PORT}`);
+        resolve(apiServer);
+      });
+
+      apiServer.on('error', (err) => {
+        reject(err);
+      });
+    });
   } catch (err) {
     logger.error('Error iniciando servidor:', err);
     process.exit(1);

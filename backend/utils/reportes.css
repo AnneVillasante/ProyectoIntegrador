@@ -1,0 +1,209 @@
+/* backend/utils/reportes.css */
+
+/* 1. CONFIGURACIÓN GLOBAL */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+:root {
+    /* Paleta de Colores Lunaria Threads */
+    --primary: #6A0DAD;       /* Morado principal */
+    --primary-light: #F3E5F5; /* Fondo suave lila para cabeceras */
+    --accent: #D81B60;        /* Rosa oscuro para totales o destacados */
+    --text-dark: #333333;     /* Texto principal */
+    --text-light: #666666;    /* Texto secundario (direcciones, notas) */
+    --border: #E0E0E0;        /* Bordes suaves */
+    --white: #ffffff;
+}
+
+body {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    color: var(--text-dark);
+    line-height: 1.5;
+    margin: 0;
+    padding: 40px; /* Margen interior del documento */
+    background-color: var(--white);
+}
+
+/* 2. ENCABEZADO (HEADER) */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.logo-section h1 {
+    color: var(--primary);
+    font-size: 24px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.logo-section small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-light);
+    margin-top: 4px;
+    text-transform: uppercase;
+}
+
+.company-details {
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-light);
+}
+
+.company-details h2 {
+    color: var(--text-dark);
+    font-size: 16px;
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+}
+
+/* 3. PANELES DE INFORMACIÓN (Cliente / Pedido) */
+.info-panel {
+    display: flex;
+    justify-content: space-between;
+    background-color: #fafafa;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid var(--border);
+}
+
+.info-col {
+    flex: 1;
+}
+
+.info-col.right {
+    text-align: right;
+}
+
+.info-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.info-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+/* 4. TÍTULOS DE SECCIÓN */
+.section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* 5. TABLAS DE DATOS */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--primary);
+}
+
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dark);
+}
+
+/* Filas alternas para mejor lectura */
+tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
+
+/* Alineación de columnas numéricas */
+th:last-child, td:last-child,
+th.text-right, td.text-right {
+    text-align: right;
+}
+
+th.text-center, td.text-center {
+    text-align: center;
+}
+
+/* 6. TOTALES Y DINERO */
+.total-box {
+    width: 40%;
+    margin-left: auto; /* Alinear a la derecha */
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fcfcfc;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.total-line.final {
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+    padding-top: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent); /* Color rosado/rojo para el total */
+}
+
+/* 7. ESTADO / BADGES */
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-success { background-color: #e8f5e9; color: #2e7d32; } /* Verde */
+.badge-warning { background-color: #fff3e0; color: #ef6c00; } /* Naranja */
+.badge-danger  { background-color: #ffebee; color: #c62828; } /* Rojo */
+
+/* 8. FOOTER */
+.footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-light);
+    font-size: 10px;
+}
+
+.footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
